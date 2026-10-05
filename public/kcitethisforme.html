@@ -33,7 +33,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+    html { background: #0b1422; }
+    body { background: transparent !important; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+    .ktown-background { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+    #bgCanvas, .grid-overlay { display: none !important; }
+    header { z-index: 30; }
+    main, footer { position: relative; z-index: 1; }
     
     #bgCanvas {
       position: fixed;
@@ -61,12 +66,13 @@
 </head>
 <body class="bg-[#07090e] light:bg-slate-50 text-slate-100 dark:text-slate-100 light:text-slate-900 min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
 
+  <iframe class="ktown-background" src="background.html" title="" aria-hidden="true" tabindex="-1"></iframe>
   <canvas id="bgCanvas"></canvas>
   <div class="grid-overlay"></div>
 
   <header class="bg-[#07090e]/80 dark:bg-[#07090e]/80 light:bg-white/80 backdrop-blur-md border-b border-white/10 light:border-slate-200 sticky top-0 z-30 transition-colors">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-      <a href="index.html" class="flex items-center space-x-3 group">
+      <a href="ktown.html" class="flex items-center space-x-3 group">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-105 transition-transform">
           <i class="fa-solid fa-quote-right text-base"></i>
         </div>
@@ -79,9 +85,6 @@
         <span class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/30 light:bg-purple-50 light:text-purple-700 light:border-purple-200">
           <i class="fa-solid fa-graduation-cap"></i> APA 7th Edition
         </span>
-        <button id="themeToggleBtn" aria-label="Toggle Theme" class="p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 light:bg-slate-100 light:border-slate-300 light:text-slate-700 transition">
-          <i id="themeIcon" class="fa-solid fa-sun text-amber-400"></i>
-        </button>
       </div>
     </div>
   </header>
@@ -186,41 +189,13 @@
     <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
       <div>CiteThisForMe &copy; 2026 — Formatted according to APA 7th Edition standards.</div>
       <div class="flex items-center gap-4">
-        <a href="index.html" class="hover:text-purple-400 transition">kTown Hub</a>
-        <a href="auranotes.html" class="hover:text-purple-400 transition">AuraNotes</a>
+        <a href="ktown.html" class="hover:text-purple-400 transition">kTown Hub</a>
+        <a href="kauranotes.html" class="hover:text-purple-400 transition">kAuraNotes</a>
       </div>
     </div>
   </footer>
 
   <script>
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-    const themeIcon = document.getElementById('themeIcon');
-    const htmlEl = document.documentElement;
-
-    if (localStorage.getItem('theme') === 'light') {
-      htmlEl.classList.remove('dark');
-      htmlEl.classList.add('light');
-      themeIcon.className = 'fa-solid fa-moon text-indigo-600';
-    } else {
-      htmlEl.classList.add('dark');
-      htmlEl.classList.remove('light');
-      themeIcon.className = 'fa-solid fa-sun text-amber-400';
-    }
-
-    themeToggleBtn.addEventListener('click', () => {
-      if (htmlEl.classList.contains('dark')) {
-        htmlEl.classList.remove('dark');
-        htmlEl.classList.add('light');
-        themeIcon.className = 'fa-solid fa-moon text-indigo-600';
-        localStorage.setItem('theme', 'light');
-      } else {
-        htmlEl.classList.add('dark');
-        htmlEl.classList.remove('light');
-        themeIcon.className = 'fa-solid fa-sun text-amber-400';
-        localStorage.setItem('theme', 'dark');
-      }
-    });
-
     let currentData = { author: '', dateStr: '', title: '', siteName: '', url: '' };
     let history = JSON.parse(localStorage.getItem('cite_history') || '[]');
 
@@ -512,6 +487,7 @@
 
   <script>
     const canvas = document.getElementById('bgCanvas');
+    if (getComputedStyle(canvas).display !== 'none') {
     const ctx = canvas.getContext('2d');
 
     function resizeCanvas() {
@@ -620,6 +596,7 @@
       requestAnimationFrame(animate);
     }
     animate();
+    }
   </script>
 </body>
 </html>
