@@ -4,7 +4,7 @@
 
   const IB = (window.IB = window.IB || {});
   IB.subjects = IB.subjects || {};
-  IB.order = ["econ", "chem", "geo", "math", "bio", "engb", "chia"];
+  IB.order = ["chia", "engb", "math", "bio", "chem", "econ", "geo"];
 
   IB.register = function (subject) {
     subject.topics.forEach((t) => {
@@ -277,6 +277,7 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
       } catch (e) {
         IB.toast("Could not save progress in this browser (storage blocked or full).");
       }
+      window.dispatchEvent(new CustomEvent("ib:progress-saved", { detail: d }));
     },
     update(fn) {
       const d = this.get();
@@ -391,7 +392,7 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
   // ---------- AI client ----------
   // Two back ends with one interface:
   //  - hosted on claude.ai: the page's built-in "ask Claude" ability (runs on the viewer's Claude account);
-  //  - self-hosted: server.js (/api/*) with an Anthropic API key.
+  //  - self-hosted: server.js or Vercel (/api/*) with an OpenRouter API key.
   const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", math: "IB Mathematics: Analysis and Approaches SL", bio: "IB Biology SL", engb: "IB English B HL", chia: "IB Chinese A: Language and Literature SL (answer in Traditional Chinese)" };
   const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Biology SL, English B HL and Chinese A: Language & Literature SL. For Chinese A, reply in Traditional Chinese unless the student writes in English.
 - Guide rather than hand over answers: when asked for help with a problem, give the next hint or ask what they have tried, unless they explicitly ask for the full worked solution.
@@ -770,8 +771,10 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
   function chrome() {
     const page = document.body.dataset.page || "";
     const link = (href, label, id) => `<a href="${href}" class="${page === id ? "active" : ""}">${label}</a>`;
+    const background = IB.el('<iframe class="site-background" src="background.html" title="" aria-hidden="true" tabindex="-1"></iframe>');
+    document.body.prepend(background);
     const header = IB.el(`<header class="site-header"><div class="container nav">
-      <a class="brand" href="index.html"><img src="imgs/logo.png" alt="" class="brand-logo">kTown</a>
+      <a class="brand" href="ktown.html"><img src="imgs/logo.png" alt="" class="brand-logo">kTown</a>
       <nav class="nav-links" id="navLinks">
         ${link("krevisionnotes.html", "kRevisionNotes", "notes")}
         ${link("questionbank.html", "Questions", "bank")}
@@ -791,7 +794,6 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
         <button class="auth-open" id="authOpen" type="button">Sign in</button>
         <span class="auth-account" id="authAccount" hidden><span id="authDisplayName"></span><button class="auth-signout" id="authSignOut" type="button">Sign out</button></span>
       </div>
-      <button class="icon-btn" id="themeBtn" title="Toggle dark mode" aria-label="Toggle dark mode">◐</button>
       <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu">☰</button>
     </div></header>`);
     document.body.prepend(header);
@@ -803,17 +805,23 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
     );
     document.dispatchEvent(new Event("ktown:chrome-ready"));
     IB.qs("#menuBtn").onclick = () => IB.qs("#navLinks").classList.toggle("open");
-    IB.qs("#themeBtn").onclick = () => {
-      const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-      const next = cur === "dark" ? "light" : "dark";
-      document.documentElement.dataset.theme = next;
-      try { localStorage.setItem("ibrev:theme", next); } catch (e) { /* ignore */ }
-    };
+    const more = IB.qs(".nav-more");
+    if (more && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      more.addEventListener("pointerenter", () => more.open = true);
+      more.addEventListener("pointerleave", () => more.open = false);
+      const summary = more.querySelector("summary");
+      summary.addEventListener("click", (event) => event.preventDefault());
+      summary.addEventListener("keydown", (event) => {
+        if (["Enter", " ", "ArrowDown"].includes(event.key)) {
+          event.preventDefault();
+          more.open = true;
+          more.querySelector("a")?.focus();
+        } else if (event.key === "Escape") {
+          more.open = false;
+        }
+      });
+    }
   }
-  try {
-    const th = localStorage.getItem("ibrev:theme");
-    if (th) document.documentElement.dataset.theme = th;
-  } catch (e) { /* ignore */ }
 
   // Wrap each page's opening heading + intro paragraph in the dark header band.
   function introBand() {

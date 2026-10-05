@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #0b1422; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body aria-hidden="true">
+<canvas id="background"></canvas>
+<script>
+  const canvas = document.querySelector("#background");
+  const context = canvas.getContext("2d");
+  const blobs = [
+    { x: .16, y: .22, r: .45, color: "49, 91, 190" },
+    { x: .82, y: .18, r: .38, color: "100, 55, 190" },
+    { x: .65, y: .88, r: .48, color: "20, 115, 142" }
+  ];
+  let width = 0, height = 0, frame = 0;
+  const resize = () => {
+    const scale = Math.min(window.devicePixelRatio || 1, 1.5);
+    width = canvas.width = Math.round(innerWidth * scale);
+    height = canvas.height = Math.round(innerHeight * scale);
+    context.setTransform(scale, 0, 0, scale, 0, 0);
+  };
+  const draw = (time) => {
+    const w = width / (window.devicePixelRatio > 1.5 ? 1.5 : (window.devicePixelRatio || 1));
+    const h = height / (window.devicePixelRatio > 1.5 ? 1.5 : (window.devicePixelRatio || 1));
+    context.clearRect(0, 0, w, h);
+    blobs.forEach((blob, index) => {
+      const x = (blob.x + Math.sin(time / 9000 + index) * .035) * w;
+      const y = (blob.y + Math.cos(time / 11000 + index) * .035) * h;
+      const radius = blob.r * Math.max(w, h);
+      const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, `rgba(${blob.color}, .18)`);
+      gradient.addColorStop(1, `rgba(${blob.color}, 0)`);
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, w, h);
+    });
+    frame = requestAnimationFrame(draw);
+  };
+  resize();
+  addEventListener("resize", resize);
+  addEventListener("pagehide", () => cancelAnimationFrame(frame), { once: true });
+  frame = requestAnimationFrame(draw);
+</script>
+</body>
+</html>

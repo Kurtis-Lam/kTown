@@ -8,8 +8,7 @@
     "start": "node server.js",
     "check": "node scripts/check-data.js"
   },
-  "engines": { "node": ">=18" },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.131.0"
+  "engines": {
+    "node": ">=18"
   }
 }

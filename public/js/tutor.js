@@ -8,7 +8,7 @@ IB.page = async function () {
 
   app.innerHTML = `<h1 style="margin-bottom:.2em">AI tutor</h1>
     <p class="muted" style="margin-top:0">Ask for an explanation, a hint, a diagram description, feedback on an essay plan, or a step-by-step method. The tutor guides you like a teacher - ask for the full solution if you want it.</p>
-    ${ai ? "" : `<div class="notice warn small"><strong>AI is offline on this copy of the site.</strong> You'll get answers drawn from the revision notes instead. To switch on the full AI tutor and examiner-style marking, run the site with an Anthropic API key (see README).</div>`}
+    ${ai ? "" : `<div class="notice warn small"><strong>AI is offline on this copy of the site.</strong> You'll get answers drawn from the revision notes instead. To switch on the AI tutor and examiner-style marking, configure an OpenRouter API key on the server (see README).</div>`}
     <div class="card">
       <div class="filters">
         <label class="field">Subject<select id="tSub"><option value="">Any subject</option>${IB.subjectList().map((s) => `<option value="${s.id}">${s.name}</option>`).join("")}</select></label>

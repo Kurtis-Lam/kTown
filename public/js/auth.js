@@ -10,11 +10,25 @@ import {
   signOut,
   updateProfile,
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  serverTimestamp,
+  setDoc,
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
-const auth = getAuth(initializeApp(firebaseConfig));
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 const googleProvider = new GoogleAuthProvider();
+const OWNER_KEY = "ibrev:v1:owner";
+const progressCacheKey = (uid) => `ibrev:v1:user:${uid}`;
 let mode = "login";
+let activeUser = null;
+let syncingRemote = false;
+let saveTimer = null;
 
 function setStatus(message, isError = false) {
   const status = document.getElementById("authStatus");
@@ -35,6 +49,127 @@ function authError(error) {
     "auth/network-request-failed": "Couldn't connect. Check your internet connection and try again.",
   };
   return messages[error.code] || "Sign-in failed. Please try again.";
+}
+
+function mergeProgress(remote, local) {
+  if (!remote) return local;
+  const attempts = new Map();
+  [...(remote.attempts || []), ...(local.attempts || [])].forEach((attempt) => {
+    const key = JSON.stringify([attempt.id, attempt.at, attempt.s, attempt.t, attempt.sc, attempt.mx, attempt.m]);
+    attempts.set(key, attempt);
+  });
+  const read = { ...(remote.read || {}) };
+  Object.entries(local.read || {}).forEach(([id, at]) => {
+    if (Number(at) > Number(read[id] || 0)) read[id] = at;
+  });
+  const mergeRows = (a = [], b = []) => {
+    const rows = new Map();
+    [...a, ...b].forEach((row, index) => rows.set(row.id || `${index}:${JSON.stringify(row)}`, row));
+    return [...rows.values()];
+  };
+  return {
+    ...remote,
+    ...local,
+    attempts: [...attempts.values()].sort((a, b) => a.at - b.at).slice(-5000),
+    read,
+    flags: { ...(remote.flags || {}), ...(local.flags || {}) },
+    exams: mergeRows(remote.exams, local.exams),
+    custom: mergeRows(remote.custom, local.custom),
+    created: Math.min(Number(remote.created) || Date.now(), Number(local.created) || Date.now()),
+  };
+}
+
+function stableJson(value) {
+  if (Array.isArray(value)) return value.map(stableJson);
+  if (value && typeof value === "object") {
+    return Object.keys(value).sort().reduce((result, key) => {
+      result[key] = stableJson(value[key]);
+      return result;
+    }, {});
+  }
+  return value;
+}
+
+function accountOwner() {
+  try { return localStorage.getItem(OWNER_KEY); }
+  catch (error) {
+    console.error("Could not read the kTown progress account marker:", error);
+    return null;
+  }
+}
+
+function setAccountOwner(uid) {
+  try { localStorage.setItem(OWNER_KEY, uid); }
+  catch (error) { console.error("Could not save the kTown progress account marker:", error); }
+}
+
+function cacheAccountProgress(uid, progress) {
+  try { localStorage.setItem(progressCacheKey(uid), JSON.stringify(progress)); }
+  catch (error) {
+    console.error("Could not cache account progress in this browser:", error);
+    window.IB.toast("This browser could not keep a local copy of your account progress.");
+  }
+}
+
+function cachedAccountProgress(uid) {
+  try {
+    const progress = JSON.parse(localStorage.getItem(progressCacheKey(uid)) || "null");
+    return progress && Array.isArray(progress.attempts) ? progress : null;
+  } catch (error) {
+    console.error("Could not read cached account progress:", error);
+    return null;
+  }
+}
+
+async function syncProgress(user) {
+  const progressRef = doc(db, "users", user.uid, "apps", "krevisionnotes");
+  try {
+    const owner = accountOwner();
+    if (owner && owner !== user.uid) {
+      cacheAccountProgress(owner, window.IB.store.get());
+      const accountProgress = cachedAccountProgress(user.uid) || {
+        attempts: [], read: {}, flags: {}, exams: [], custom: [], created: Date.now(),
+      };
+      setAccountOwner(user.uid);
+      syncingRemote = true;
+      window.IB.store.save(accountProgress);
+      syncingRemote = false;
+    } else {
+      setAccountOwner(user.uid);
+    }
+    const snapshot = await getDoc(progressRef);
+    const local = window.IB.store.get();
+    const remote = snapshot.exists() ? snapshot.data().progress : null;
+    const merged = mergeProgress(remote, local);
+    const restoredRemoteProgress = JSON.stringify(stableJson(merged)) !== JSON.stringify(stableJson(local));
+    syncingRemote = true;
+    window.IB.store.save(merged);
+    syncingRemote = false;
+    await setDoc(progressRef, { progress: merged, updatedAt: serverTimestamp() }, { merge: true });
+    if (restoredRemoteProgress) window.location.reload();
+  } catch (error) {
+    syncingRemote = false;
+    console.error("Could not sync kTown progress with Firebase:", error);
+    window.IB.toast("Cloud sync failed. Your progress is still saved in this browser.");
+  }
+}
+
+function queueCloudSave(progress) {
+  if (!activeUser || syncingRemote) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    const user = activeUser;
+    if (!user) return;
+    try {
+      await setDoc(doc(db, "users", user.uid, "apps", "krevisionnotes"), {
+        progress,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+    } catch (error) {
+      console.error("Could not save kTown progress to Firebase:", error);
+      window.IB.toast("Could not sync progress to your account. It remains saved in this browser.");
+    }
+  }, 700);
 }
 
 function renderMode() {
@@ -77,7 +212,7 @@ function setup() {
       <button class="btn auth-google" id="authGoogle" type="button">Continue with Google</button>
       <button class="auth-reset" id="authReset" type="button">Send password reset email</button>
       <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
-      <p class="auth-privacy">Your revision activity stays saved in this browser.</p>
+      <p class="auth-privacy">Sign in to sync your revision progress across devices.</p>
     </section>`;
   document.body.appendChild(overlay);
 
@@ -158,10 +293,18 @@ function setup() {
     }
   });
 
-  onAuthStateChanged(auth, (user) => {
+  window.addEventListener("ib:progress-saved", (event) => {
+    const owner = accountOwner();
+    if (owner) cacheAccountProgress(owner, event.detail);
+    queueCloudSave(event.detail);
+  });
+  onAuthStateChanged(auth, async (user) => {
+    clearTimeout(saveTimer);
+    activeUser = user;
     openButton.hidden = !!user;
     document.getElementById("authAccount").hidden = !user;
     document.getElementById("authDisplayName").textContent = user ? (user.displayName || user.email) : "";
+    if (user) await syncProgress(user);
   });
 }
 

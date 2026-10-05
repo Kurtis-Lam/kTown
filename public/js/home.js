@@ -58,7 +58,15 @@ IB.page = function () {
   </div>
 
   <h2 style="margin-top:44px">Choose a subject</h2>
-  <section class="subject-grid" id="subjects" style="margin-top:16px"></section>`;
+  <section class="subject-grid" id="subjects" style="margin-top:16px"></section>
+
+  <section class="related-apps" aria-labelledby="relatedAppsTitle">
+    <div class="related-apps-heading"><span class="eyebrow">More from kTown</span><h2 id="relatedAppsTitle">Your other workspaces</h2></div>
+    <div class="grid grid-2">
+      <a class="card related-app" href="kauranotes.html"><span class="eyebrow">Notes workspace</span><h3>kAuraNotes</h3><p class="muted">Write, organize and keep your own study notes.</p><span class="f-cta">Open kAuraNotes →</span></a>
+      <a class="card related-app" href="kcitethisforme.html"><span class="eyebrow">Citation tool</span><h3>kCiteThisForMe</h3><p class="muted">Create and manage APA-style citations for your sources.</p><span class="f-cta">Open kCiteThisForMe →</span></a>
+    </div>
+  </section>`;
 
   const grid = IB.qs("#subjects");
   subs.forEach((s) => {
