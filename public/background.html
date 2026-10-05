@@ -5,47 +5,145 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   * { box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #0b1422; }
-  canvas { display: block; width: 100%; height: 100%; }
+  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #07090e; }
+  canvas { position: fixed; inset: 0; display: block; width: 100%; height: 100%; opacity: .8; pointer-events: none; }
 </style>
 </head>
 <body aria-hidden="true">
-<canvas id="background"></canvas>
+<canvas id="bgCanvas"></canvas>
 <script>
-  const canvas = document.querySelector("#background");
-  const context = canvas.getContext("2d");
-  const blobs = [
-    { x: .16, y: .22, r: .45, color: "49, 91, 190" },
-    { x: .82, y: .18, r: .38, color: "100, 55, 190" },
-    { x: .65, y: .88, r: .48, color: "20, 115, 142" }
+(() => {
+  const canvas = document.getElementById("bgCanvas");
+  const ctx = canvas.getContext("2d");
+  const KEY = "ktown-bg-v1";           // shared by every kTown page in this tab (same origin)
+  const PHYS = 90;                      // collision radius of each light
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let w = 0, h = 0, glow = 500;
+  const size = () => {
+    w = canvas.width = innerWidth;
+    h = canvas.height = innerHeight;
+    glow = Math.max(500, Math.min(w, h) * 0.7);
+  };
+  size();
+
+  // ── restore the previous page's colours + positions so navigation feels continuous ──
+  let saved = null;
+  try {
+    const s = JSON.parse(sessionStorage.getItem(KEY));
+    if (s && Array.isArray(s.hues) && s.hues.length === 3 && Array.isArray(s.balls) && s.balls.length === 3) saved = s;
+  } catch (e) {}
+
+  const baseHue = Math.floor(Math.random() * 360);
+  const hues = saved ? saved.hues : [
+    (baseHue + 0   + Math.random() * 20 - 10 + 360) % 360,
+    (baseHue + 120 + Math.random() * 20 - 10) % 360,
+    (baseHue + 240 + Math.random() * 20 - 10) % 360
   ];
-  let width = 0, height = 0, frame = 0;
-  const resize = () => {
-    const scale = Math.min(window.devicePixelRatio || 1, 1.5);
-    width = canvas.width = Math.round(innerWidth * scale);
-    height = canvas.height = Math.round(innerHeight * scale);
-    context.setTransform(scale, 0, 0, scale, 0, 0);
+
+  const balls = hues.map((hue, i) => {
+    const prefix = `hsla(${Math.round(hue)}, 90%, 60%, `;
+    if (saved) {
+      const b = saved.balls[i];
+      return { x: b.x * w, y: b.y * h, vx: b.vx, vy: b.vy, prefix };
+    }
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 0.8 + Math.random() * 0.6;
+    return {
+      x: PHYS + Math.random() * Math.max(50, w - PHYS * 2),
+      y: PHYS + Math.random() * Math.max(50, h - PHYS * 2),
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      prefix
+    };
+  });
+
+  const save = () => {
+    try {
+      sessionStorage.setItem(KEY, JSON.stringify({
+        hues,
+        balls: balls.map(b => ({ x: b.x / w, y: b.y / h, vx: b.vx, vy: b.vy }))
+      }));
+    } catch (e) {}
   };
-  const draw = (time) => {
-    const w = width / (window.devicePixelRatio > 1.5 ? 1.5 : (window.devicePixelRatio || 1));
-    const h = height / (window.devicePixelRatio > 1.5 ? 1.5 : (window.devicePixelRatio || 1));
-    context.clearRect(0, 0, w, h);
-    blobs.forEach((blob, index) => {
-      const x = (blob.x + Math.sin(time / 9000 + index) * .035) * w;
-      const y = (blob.y + Math.cos(time / 11000 + index) * .035) * h;
-      const radius = blob.r * Math.max(w, h);
-      const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
-      gradient.addColorStop(0, `rgba(${blob.color}, .18)`);
-      gradient.addColorStop(1, `rgba(${blob.color}, 0)`);
-      context.fillStyle = gradient;
-      context.fillRect(0, 0, w, h);
-    });
-    frame = requestAnimationFrame(draw);
+  save(); // persist the hues right away
+
+  // `k` normalises speed to a 60fps frame so it looks the same on 120/144Hz screens
+  const step = (k) => {
+    for (const b of balls) {
+      b.vx += (Math.random() - 0.5) * 0.04 * k;
+      b.vy += (Math.random() - 0.5) * 0.04 * k;
+
+      const speed = Math.hypot(b.vx, b.vy) || 1;
+      const min = 0.7, max = 1.4;
+      if (speed < min) { b.vx = b.vx / speed * min; b.vy = b.vy / speed * min; }
+      else if (speed > max) { b.vx = b.vx / speed * max; b.vy = b.vy / speed * max; }
+
+      b.x += b.vx * k;
+      b.y += b.vy * k;
+
+      if (b.x - PHYS < 0)  { b.x = PHYS;     b.vx =  Math.abs(b.vx); }
+      if (b.x + PHYS > w)  { b.x = w - PHYS; b.vx = -Math.abs(b.vx); }
+      if (b.y - PHYS < 0)  { b.y = PHYS;     b.vy =  Math.abs(b.vy); }
+      if (b.y + PHYS > h)  { b.y = h - PHYS; b.vy = -Math.abs(b.vy); }
+    }
+
+    for (let i = 0; i < balls.length; i++) {
+      for (let j = i + 1; j < balls.length; j++) {
+        const a = balls[i], c = balls[j];
+        const dx = c.x - a.x, dy = c.y - a.y;
+        const dist = Math.hypot(dx, dy), minDist = PHYS * 2;
+        if (dist < minDist && dist > 0) {
+          const nx = dx / dist, ny = dy / dist;
+          const overlap = (minDist - dist) / 2;
+          a.x -= nx * overlap; a.y -= ny * overlap;
+          c.x += nx * overlap; c.y += ny * overlap;
+          const p = nx * (a.vx - c.vx) + ny * (a.vy - c.vy);
+          if (p > 0) {
+            a.vx -= p * nx; a.vy -= p * ny;
+            c.vx += p * nx; c.vy += p * ny;
+          }
+        }
+      }
+    }
   };
-  resize();
-  addEventListener("resize", resize);
-  addEventListener("pagehide", () => cancelAnimationFrame(frame), { once: true });
-  frame = requestAnimationFrame(draw);
+
+  const render = () => {
+    ctx.clearRect(0, 0, w, h);
+    ctx.globalCompositeOperation = "screen";
+    for (const b of balls) {
+      const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, glow);
+      g.addColorStop(0,   b.prefix + "0.85)");
+      g.addColorStop(0.3, b.prefix + "0.45)");
+      g.addColorStop(0.7, b.prefix + "0.15)");
+      g.addColorStop(1,   b.prefix + "0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, glow, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  addEventListener("resize", () => {
+    const fx = w, fy = h;
+    size();
+    for (const b of balls) { b.x = b.x / fx * w; b.y = b.y / fy * h; }
+    if (reduceMotion) render();
+  });
+  addEventListener("pagehide", save);
+
+  if (reduceMotion) { render(); return; }   // still frame for people who prefer less motion
+
+  let last = performance.now();
+  const loop = (now) => {
+    const k = Math.min((now - last) / 16.667, 3);
+    last = now;
+    step(k);
+    render();
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+})();
 </script>
 </body>
 </html>
