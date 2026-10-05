@@ -1,7 +1,7 @@
 {
-  "name": "ib-revision-hub",
+  "name": "ktown-revision",
   "version": "1.0.0",
-  "description": "IB revision platform for Economics SL, Chemistry SL, Geography SL and Mathematics AA SL - topic notes, question bank, unlimited quizzes and mock papers, AI tutoring and marking, and progress tracking.",
+  "description": "kTown IB study space with topic notes, questions, quizzes, exam skills, AI tutoring and progress tracking.",
   "type": "module",
   "main": "server.js",
   "scripts": {

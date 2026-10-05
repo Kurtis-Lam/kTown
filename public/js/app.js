@@ -1,4 +1,4 @@
-/* IB Revision Hub - shared core: subject registry, storage, rendering, marking, AI client. */
+/* kTown - shared core: subject registry, storage, rendering, marking, AI client. */
 (function () {
   "use strict";
 
@@ -255,7 +255,7 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
 .callout.formula{background:#EAF0FF}.callout.method{background:#E8F7EE}.callout.trap{background:#FDECEC}.callout.example{background:#F1EBFF}.callout.tip{background:#FFF4DB}.callout.terms{background:#FFF8E1}
 .formula-grid{display:flex;flex-wrap:wrap;gap:8px}.formula{background:#fff;border-radius:8px;padding:6px 12px}.plot-grid{display:flex;flex-wrap:wrap;gap:12px}.plot{margin:0;width:340px}.plot svg{width:100%;--plot-a:#D9480F;--plot-b:#2D5BFF;--plot-c:#1F8A4C;--muted:#666;--text:#222}
 .pl-grid{stroke:#e5e5e5}.pl-axis{stroke:#222;stroke-width:1.2}.pl-asym{stroke:#888;stroke-dasharray:5 4}.pl-lab,.pl-ax{font:11px sans-serif;fill:#333}figcaption{font-size:.85em;color:#555;text-align:center}.page-break{page-break-before:always}@media print{body{margin:0}}</style></head>
-<body>${bodyHtml}<p class="meta" style="margin-top:3em">Downloaded from IB Revision Hub · ${new Date().toLocaleDateString()} · Original IB-style material, not official IB content.</p></body></html>`;
+<body>${bodyHtml}<p class="meta" style="margin-top:3em">Downloaded from kTown · ${new Date().toLocaleDateString()} · Original IB-style material, not official IB content.</p></body></html>`;
   };
 
   // ---------- storage / progress ----------
@@ -771,27 +771,37 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
     const page = document.body.dataset.page || "";
     const link = (href, label, id) => `<a href="${href}" class="${page === id ? "active" : ""}">${label}</a>`;
     const header = IB.el(`<header class="site-header"><div class="container nav">
-      <a class="brand" href="index.html"><span class="brand-mark">IB</span>Revision Hub</a>
+      <a class="brand" href="index.html"><img src="imgs/logo.png" alt="" class="brand-logo">kTown</a>
       <nav class="nav-links" id="navLinks">
-        ${link("notes.html", "Notes", "notes")}
+        ${link("krevisionnotes.html", "kRevisionNotes", "notes")}
         ${link("questionbank.html", "Questions", "bank")}
-        ${link("practice.html", "Quizzes &amp; Mocks", "practice")}
-        ${link("skills.html", "Exam Skills", "skills")}
-        ${link("ia.html", "IA &amp; EE", "ia")}
-        ${link("tutor.html", "AI Tutor", "tutor")}
-        ${link("mypapers.html", "Past Papers", "mypapers")}
+        ${link("practice.html", "Practice", "practice")}
         ${link("progress.html", "Progress", "progress")}
+        <details class="nav-more" ${["skills", "ia", "tutor", "mypapers"].includes(page) ? "data-active='true'" : ""}>
+          <summary>More</summary>
+          <div class="nav-more-menu">
+            ${link("tutor.html", "AI Tutor", "tutor")}
+            ${link("skills.html", "Exam skills", "skills")}
+            ${link("ia.html", "IA &amp; EE", "ia")}
+            ${link("mypapers.html", "Past papers", "mypapers")}
+          </div>
+        </details>
       </nav>
+      <div class="account-actions">
+        <button class="auth-open" id="authOpen" type="button">Sign in</button>
+        <span class="auth-account" id="authAccount" hidden><span id="authDisplayName"></span><button class="auth-signout" id="authSignOut" type="button">Sign out</button></span>
+      </div>
       <button class="icon-btn" id="themeBtn" title="Toggle dark mode" aria-label="Toggle dark mode">◐</button>
       <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu">☰</button>
     </div></header>`);
     document.body.prepend(header);
     document.body.appendChild(
       IB.el(`<footer class="site-footer"><div class="container">
-      <p><strong>IB Revision Hub</strong> · Economics SL · Chemistry SL · Geography SL · Mathematics AA SL · Biology SL · English B HL · 中文A 語言與文學 SL</p>
-      <p>All notes and questions are original IB-style material written for revision. They are not official IB past-paper questions and this site is not affiliated with or endorsed by the International Baccalaureate Organization. Get official past papers and markschemes from your school or the IB store.</p>
+      <p><strong>kTown</strong> · Your IB study space</p>
+      <p class="small">Original revision material; not affiliated with the International Baccalaureate Organization.</p>
     </div></footer>`)
     );
+    document.dispatchEvent(new Event("ktown:chrome-ready"));
     IB.qs("#menuBtn").onclick = () => IB.qs("#navLinks").classList.toggle("open");
     IB.qs("#themeBtn").onclick = () => {
       const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
