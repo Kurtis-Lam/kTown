@@ -81,7 +81,7 @@ IB.page = async function () {
     }
     if (!hits.length) return `<p>I couldn't find that in the notes. Try choosing a subject and topic above, or rephrase with key terms (e.g. "price elasticity", "enthalpy", "binomial").</p>`;
     return `<p>From the notes:</p>` + hits.slice(0, 2).map((h) => `<div class="concept" style="--c:${IB.subjects[h.t.subject].color}"><strong>${h.h}</strong> <span class="small muted">(${IB.esc(h.t.title)})</span>${h.b}</div>`).join("") +
-      `<p><a href="notes.html?subject=${hits[0].t.subject}&topic=${hits[0].t.id}">Open the full notes for ${IB.esc(hits[0].t.title)} →</a></p><p class="small muted">(Offline mode - switch on AI for personalised explanations.)</p>`;
+      `<p><a href="krevisionnotes.html?subject=${hits[0].t.subject}&topic=${hits[0].t.id}">Open the full notes for ${IB.esc(hits[0].t.title)} →</a></p><p class="small muted">(Offline mode - switch on AI for personalised explanations.)</p>`;
   }
 
   let busy = false;

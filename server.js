@@ -1,4 +1,4 @@
-// IB Revision Hub - static file server + AI tutor / marking API.
+// kTown - static file server + AI tutor / marking API.
 //
 // Run:  ANTHROPIC_API_KEY=sk-... npm start   (then open http://localhost:3000)
 //
@@ -318,6 +318,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`IB Revision Hub running at http://localhost:${PORT}`);
+  console.log(`kTown running at http://localhost:${PORT}`);
   console.log(client ? `AI tutor & marking: ON (${MODEL})` : "AI tutor & marking: OFF (set ANTHROPIC_API_KEY) - offline marker will be used");
 });

@@ -73,14 +73,14 @@ IB.page = function () {
           <div><h3 style="margin:0">${s.name}</h3><div class="small muted">${covered}% of topics attempted${mean !== null ? ` · mastery in attempted topics ${mean}%` : ""}</div></div>
           ${weighted !== null ? `<div title="Estimated grade across the whole syllabus"><span class="grade" style="background:${s.color}">${IB.grade(weighted, s.id)}</span></div>` : `<span class="pill">No attempts yet</span>`}
         </div>
-        <div style="margin-top:10px">${rows.map((r) => `<div class="mastery-row"><a href="notes.html?subject=${s.id}&topic=${r.t.id}" title="${r.n} attempt${r.n === 1 ? "" : "s"}">${IB.esc(r.t.code)} ${IB.esc(r.t.title)}</a><div class="bar" title="${r.m === null ? "Not attempted" : r.m + "% mastery from " + r.n + " attempts"}"><span style="width:${r.m ?? 0}%"></span></div><span class="small ${r.m === null ? "muted" : ""}">${r.m === null ? "-" : r.m + "%"}</span></div>`).join("")}</div>
+        <div style="margin-top:10px">${rows.map((r) => `<div class="mastery-row"><a href="krevisionnotes.html?subject=${s.id}&topic=${r.t.id}" title="${r.n} attempt${r.n === 1 ? "" : "s"}">${IB.esc(r.t.code)} ${IB.esc(r.t.title)}</a><div class="bar" title="${r.m === null ? "Not attempted" : r.m + "% mastery from " + r.n + " attempts"}"><span style="width:${r.m ?? 0}%"></span></div><span class="small ${r.m === null ? "muted" : ""}">${r.m === null ? "-" : r.m + "%"}</span></div>`).join("")}</div>
         <div class="btn-row" style="margin-top:10px"><a class="btn small" href="practice.html?subject=${s.id}&mode=smart">Smart quiz</a><a class="btn small" href="practice.html?subject=${s.id}&mode=mock">Mock paper</a></div>
       </div>`));
     });
 
     const weak = allRows.filter((r) => r.m !== null).sort((a, b) => a.m - b.m).slice(0, 6);
     IB.qs("#weak").innerHTML = weak.length
-      ? `<p class="small muted" style="margin-top:0">Your lowest-mastery topics. Re-read the notes, then quiz yourself.</p>` + weak.map((r) => `<div class="mastery-row" style="--c:${IB.subjects[r.t.subject].color}"><span><span class="pill ${r.t.subject}">${IB.subjects[r.t.subject].short}</span> ${IB.esc(r.t.title)}</span><div class="btn-row"><a class="btn small" href="notes.html?subject=${r.t.subject}&topic=${r.t.id}">Notes</a><a class="btn small" href="practice.html?subject=${r.t.subject}&topic=${r.t.id}">Quiz</a><a class="btn small" href="tutor.html?subject=${r.t.subject}&topic=${r.t.id}">Tutor</a></div><span class="small">${r.m}%</span></div>`).join("")
+      ? `<p class="small muted" style="margin-top:0">Your lowest-mastery topics. Re-read the notes, then quiz yourself.</p>` + weak.map((r) => `<div class="mastery-row" style="--c:${IB.subjects[r.t.subject].color}"><span><span class="pill ${r.t.subject}">${IB.subjects[r.t.subject].short}</span> ${IB.esc(r.t.title)}</span><div class="btn-row"><a class="btn small" href="krevisionnotes.html?subject=${r.t.subject}&topic=${r.t.id}">Notes</a><a class="btn small" href="practice.html?subject=${r.t.subject}&topic=${r.t.id}">Quiz</a><a class="btn small" href="tutor.html?subject=${r.t.subject}&topic=${r.t.id}">Tutor</a></div><span class="small">${r.m}%</span></div>`).join("")
       : `<p class="muted" style="margin:0">Attempt some questions and your weakest topics will appear here.</p>`;
 
     const saved = Object.keys(d.flags).map(IB.question).filter(Boolean);

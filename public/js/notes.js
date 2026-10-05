@@ -13,7 +13,7 @@ IB.page = function () {
   const go = (sid, tid) => {
     subjectId = sid;
     topicId = tid || null;
-    history.replaceState(null, "", `notes.html?subject=${sid}${tid ? "&topic=" + tid : ""}`);
+    history.replaceState(null, "", `krevisionnotes.html?subject=${sid}${tid ? "&topic=" + tid : ""}`);
     render();
     window.scrollTo({ top: 0 });
   };

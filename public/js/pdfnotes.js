@@ -247,7 +247,7 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
       const root = doc.body;
       const date = new Date().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
       const title = opts.title || (single ? opts.topics[0].title : `${s.name}`);
-      const footLeft = `IB ${IB.esc(s.short)} · ${IB.esc(single ? opts.topics[0].title : "Revision Notes")} · <b>IB Revision Hub</b>`;
+      const footLeft = `IB ${IB.esc(s.short)} · ${IB.esc(single ? opts.topics[0].title : "Revision Notes")} · <b>kTown</b>`;
       let anchorN = 0;
       const anchor = () => "a" + ++anchorN;
 
@@ -373,7 +373,7 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
         if (i) pdf.addPage();
         pdf.addImage(canvas.toDataURL("image/jpeg", single ? 0.88 : 0.8), "JPEG", 0, 0, 595.28, 841.89, undefined, "FAST");
       }
-      pdf.setProperties({ title: `${title} - Revision Notes`, subject: s.name, creator: "IB Revision Hub" });
+      pdf.setProperties({ title: `${title} - Revision Notes`, subject: s.name, creator: "kTown" });
       const blob = pdf.output("blob");
       prog.set("Done", 1);
       IB.download(opts.filename || `IB-${s.short.replace(/\s+/g, "-")}-${title.replace(/[^\w一-鿿]+/g, "-")}-notes.pdf`, blob, "application/pdf");
