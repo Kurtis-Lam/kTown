@@ -24,8 +24,7 @@ IB.page = function () {
     const content = IB.qs("#content");
     layout.classList.remove("notes-active");
     side.classList.add("hidden");
-    top.innerHTML = `<div class="notes-heading"><h1>kRevisionNotes</h1><span class="eyebrow">Choose a subject</span></div>
-      <p class="muted">Clear topic notes, worked examples and practice for your IB subjects.</p>`;
+    top.innerHTML = `<div class="notes-heading"><h1>kRevisionNotes</h1><span class="eyebrow">Choose a subject</span></div>`;
     content.innerHTML = `<div class="subject-picker">${IB.subjectList().map((s) => `<a class="card subject-picker-card" href="krevisionnotes.html?subject=${s.id}" style="--c:${s.color}">
       <h2>${IB.esc(s.name)}</h2><span class="subject-count">${s.topics.length} topics · ${IB.allQuestions(s.id).length.toLocaleString()} practice questions</span>
       <span class="f-cta">Open notes →</span>
@@ -44,20 +43,18 @@ IB.page = function () {
     IB.qs("#side").classList.remove("hidden");
     IB.qs("#notesTop").innerHTML = `<div class="notes-heading">
       <a class="btn small" href="krevisionnotes.html" id="allSubjects">← All subjects</a>
-      <h1>${IB.esc(s.name)}</h1>
     </div>`;
     IB.qs("#allSubjects").onclick = (event) => { event.preventDefault(); go(null); };
 
-    let side = `<a href="#" data-t="" class="btn small" style="width:100%;margin-bottom:10px;justify-content:center">${s.name} overview</a>`;
+    let side = `<a href="#" data-t="" class="btn small" style="width:100%;margin-bottom:10px;justify-content:center">Subject overview</a>`;
     let unit = "";
     s.topics.forEach((t) => {
       if (t.unit !== unit) {
         if (unit) side += "</ul></details>";
         unit = t.unit;
-        const open = !topicId || s.topics.find((topic) => topic.id === topicId)?.unit === unit;
-        side += `<details class="topic-group" ${open ? "open" : ""}><summary>${IB.esc(unit)}</summary><ul class="topic-list">`;
+        side += `<details class="topic-group"><summary>${IB.esc(unit)}</summary><ul class="topic-list">`;
       }
-      side += `<li><a href="#" data-t="${t.id}" class="${t.id === topicId ? "active" : ""}"><span class="code">${IB.esc(t.code)}</span><span>${IB.esc(t.title)}</span>${data.read[t.id] ? '<span class="done" title="Revised">✓</span>' : ""}</a></li>`;
+      side += `<li><a href="#" data-t="${t.id}" class="${t.id === topicId ? "active" : ""}"><span class="code">${IB.esc(t.code)}</span><span>${IB.esc(t.title)}</span></a></li>`;
     });
     side += "</ul></details>";
     IB.qs("#side").innerHTML = side;
@@ -67,13 +64,9 @@ IB.page = function () {
     t ? renderTopic(s, t, data) : renderOverview(s, data);
   }
 
-  function legend() {
-    return `<div class="legend">${IB.CALLOUTS.map(([k, title, d]) => `<div class="callout ${k} mini"><strong class="callout-title">${title}</strong><span class="small">${d}</span></div>`).join("")}</div>`;
-  }
-
   function renderOverview(s, data) {
     const c = IB.qs("#content");
-    const read = s.topics.filter((t) => data.read[t.id]).length;
+    const practiced = s.topics.filter((t) => IB.mastery(t.id, data) !== null).length;
     const gp = s.gameplan;
     let unit = "", n = 0;
     const topicCards = s.topics.map((t) => {
@@ -83,32 +76,29 @@ IB.page = function () {
       return `${head}<a href="#" data-t="${t.id}" class="topic-card" data-reveal style="--c:${s.color}">
         <span class="topic-num">${String(n).padStart(2, "0")}</span>
         <span class="topic-card-body"><span class="mono small muted">${IB.esc(t.code)}</span><strong>${IB.esc(t.title)}</strong><span class="small muted">${t.summary}</span></span>
-        <span class="topic-card-meta">${data.read[t.id] ? '<span class="pill good">✓ revised</span>' : ""}${m !== null ? `<span class="pill">${m}%</span>` : ""}</span>
+        <span class="topic-card-meta">${m !== null ? `<span class="pill">${m}%</span>` : ""}</span>
       </a>`;
     }).join("");
-    c.innerHTML = `<div class="subject-hero" style="--c:${s.color}" data-reveal>
+    c.innerHTML = `<details class="subject-hero" style="--c:${s.color}" data-reveal>
+      <summary class="subject-hero-summary"><strong>${IB.esc(s.name)} revision notes</strong><span>${s.topics.length} topics · ${practiced} practiced</span></summary>
+      <div class="subject-overview">
       <span class="eyebrow">${IB.esc(s.guide)}</span>
-      <h1>${s.name} revision notes</h1>
-      <div class="chip-row">${s.topics.slice(0, 12).map((t) => `<a href="#" data-t="${t.id}" class="chip">${IB.esc(t.title)}</a>`).join("")}${s.topics.length > 12 ? `<span class="chip">+${s.topics.length - 12} more</span>` : ""}</div>
-      <div class="hero-progress"><div class="bar"><span style="width:${IB.pct(read, s.topics.length)}%"></span></div><span class="small">${read}/${s.topics.length} topics revised</span></div>
+      <div class="hero-progress"><div class="bar"><span style="width:${IB.pct(practiced, s.topics.length)}%"></span></div><span class="small">${practiced}/${s.topics.length} topics practiced</span></div>
       <details class="download-menu no-print"><summary class="btn mark">⬇ Download</summary><div class="download-options">
         <button class="btn small" id="dlAll">PDF · all notes</button><button class="btn small" id="dlAllQ">PDF · notes + practice paper</button><button class="btn small" id="dlHtml">HTML · all notes</button>
       </div></details>
-    </div>
-    <h2>How to read these notes</h2>
-    ${legend()}
-    ${gp ? `<h2>Exam game plan</h2>
-    <div class="card" data-reveal><p style="margin-top:0">${gp.intro}</p>
+      <details class="topics-preview"><summary>Browse topics · ${s.topics.length}</summary><div class="chip-row">${s.topics.map((t) => `<a href="#" data-t="${t.id}" class="chip">${IB.esc(t.title)}</a>`).join("")}</div></details>
+      </div>
+    </details>
+    ${gp ? `<details class="overview-detail"><summary>Exam game plan</summary><div><p style="margin-top:0">${gp.intro}</p>
       <div class="table-wrap"><table class="compare"><tr><th>Part</th><th>What it looks like</th><th>Strategy</th></tr>${gp.rows.map((r) => `<tr><th scope="row">${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div></div>
     ${gp.codes ? `<section class="callout tip" data-reveal><h3 class="callout-title">How the markscheme gives marks</h3><div class="table-wrap"><table class="compare"><tr><th>Code</th><th>Meaning</th><th>What it means for you</th></tr>${gp.codes.map((r) => `<tr><th scope="row" class="mono">${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div></section>` : ""}
     <section class="callout method" data-reveal><h3 class="callout-title">Habits of 7-scorers</h3><ol class="habits">${gp.habits.map((h) => `<li>${h}</li>`).join("")}</ol></section>
-    ${gp.extra ? `<section class="callout formula" data-reveal><h3 class="callout-title">${gp.extra.title}</h3><div class="table-wrap">${gp.extra.html}</div></section>` : ""}` : ""}
-    <h2>Assessment overview</h2>
-    <div class="card" data-reveal><div class="table-wrap"><table class="compare"><tr><th>Component</th><th>Time</th><th>Marks</th><th>Weight</th><th>Format</th></tr>
+    ${gp.extra ? `<section class="callout formula" data-reveal><h3 class="callout-title">${gp.extra.title}</h3><div class="table-wrap">${gp.extra.html}</div></section>` : ""}</div></details>` : ""}
+    <details class="overview-detail"><summary>Assessment overview</summary><div class="card" data-reveal><div class="table-wrap"><table class="compare"><tr><th>Component</th><th>Time</th><th>Marks</th><th>Weight</th><th>Format</th></tr>
       ${s.assessment.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${x}</td>` : `<th scope="row">${x}</th>`)).join("")}</tr>`).join("")}</table></div>
-      <p class="small muted">Always confirm details against the current IB subject guide - assessment details can change between sessions.</p></div>
-    <h2>Command terms</h2>
-    <div class="card" data-reveal><dl>${s.commandTerms.map(([k, v]) => `<div class="keyterm"><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl></div>
+      <p class="small muted">Always confirm details against the current IB subject guide - assessment details can change between sessions.</p></div></details>
+    <details class="overview-detail"><summary>Command terms</summary><div class="card" data-reveal><dl>${s.commandTerms.map(([k, v]) => `<div class="keyterm"><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl></div></details>
     <h2>Topics</h2>
     <div class="topic-cards">${topicCards}</div>`;
     IB.qsa("#content a[data-t]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); go(s.id, a.dataset.t); }));
@@ -145,7 +135,6 @@ IB.page = function () {
       </div>
     </div>
     <div class="btn-row no-print" style="margin:14px 0">
-      <button class="btn ${data.read[t.id] ? "" : "primary"}" id="readBtn">${data.read[t.id] ? "✓ Revised" : "Mark as revised"}</button>
       <a class="btn" href="practice.html?subject=${s.id}&topic=${t.id}">Quiz this topic</a>
       <a class="btn" href="tutor.html?subject=${s.id}&topic=${t.id}">Ask the AI tutor</a>
       <details class="download-menu"><summary class="btn mark">⬇ Download</summary><div class="download-options">
@@ -154,29 +143,50 @@ IB.page = function () {
       <button class="btn ${hlOn() ? "on" : ""}" id="hlBtn" aria-pressed="${hlOn()}">Highlighting ${hlOn() ? "on" : "off"}</button>
     </div>
     <div class="hl-legend no-print ${hlOn() ? "" : "hidden"}">${IB.highlightKey()}</div>
-    <nav class="jumpbar no-print" aria-label="Jump to section" style="--c:${s.color}">
-      ${sections.map(([id, label]) => `<a href="#sec-${id}" class="jump ${id}">${label}</a>`).join("")}<a href="#sec-practice" class="jump practice">Practice · ${nQ}${IB.hasGenerator(t.id) ? "+∞" : ""}</a>
-    </nav>
-    <div class="topic-sections ${hlOn() ? "" : "hl-off"}" style="--c:${s.color}">${sections.map((x) => x[2]).join("")}
-      <section class="card topic-bank" id="sec-practice" data-reveal>
+    <div class="topic-sections ${hlOn() ? "" : "hl-off"}" style="--c:${s.color}">${sections.map(([, label, html]) => `<section class="topic-subtopic"><button class="subtopic-toggle" type="button" aria-expanded="false">${IB.esc(label)}<span aria-hidden="true">＋</span></button><div class="subtopic-content" hidden>${html}</div></section>`).join("")}
+      <section class="topic-subtopic topic-practice"><button class="subtopic-toggle" type="button" aria-expanded="false">Practice questions · ${nQ}<span aria-hidden="true">＋</span></button><div class="subtopic-content" hidden><section class="card topic-bank" id="sec-practice" data-reveal>
         <div class="tb-head"><div><span class="eyebrow">Question bank</span><h3>${nQ} questions on ${IB.esc(t.title)}</h3></div>
           <div class="btn-row no-print">${IB.hasGenerator(t.id) ? '<button class="btn primary small" id="genBtn">+ Fresh calculation</button>' : ""}<a class="btn small" href="questionbank.html?subject=${s.id}&topic=${t.id}">Open in question bank</a><a class="btn small" href="practice.html?subject=${s.id}&topic=${t.id}">Timed quiz</a></div></div>
         <div class="sec-tabs no-print" id="secTabs" role="tablist"></div>
         <p class="small muted" id="secDesc"></p>
         <div id="practiceList"></div>
         <div class="btn-row no-print" style="justify-content:center;margin-top:12px"><button class="btn" id="moreBtn">Show more</button></div>
-      </section>
+      </section></div></section>
     </div>
     <div class="btn-row no-print" style="justify-content:space-between;margin-top:16px">
       ${prev ? `<a class="btn" href="#" data-t="${prev.id}">← ${IB.esc(prev.title)}</a>` : "<span></span>"}
       ${next ? `<a class="btn primary" href="#" data-t="${next.id}">${IB.esc(next.title)} →</a>` : ""}
     </div>`;
 
-    IB.qsa(".jumpbar a", c).forEach((a) => (a.onclick = (e) => {
-      e.preventDefault();
-      const el = document.querySelector(a.getAttribute("href"));
-      if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 150, behavior: "smooth" });
-    }));
+    IB.qsa(".subtopic-toggle", c).forEach((button) => {
+      const content = button.nextElementSibling;
+      button.onclick = () => {
+        const opening = button.getAttribute("aria-expanded") !== "true";
+        content.getAnimations().forEach((animation) => animation.cancel());
+        button.setAttribute("aria-expanded", opening);
+        button.lastElementChild.textContent = opening ? "−" : "＋";
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          content.hidden = !opening;
+          return;
+        }
+        if (opening) {
+          const startHeight = content.hidden ? 0 : content.offsetHeight;
+          content.hidden = false;
+          content.animate([{ height: `${startHeight}px`, opacity: startHeight ? 1 : 0 }, { height: `${content.scrollHeight}px`, opacity: 1 }], {
+            duration: 220,
+            easing: "ease-out",
+          });
+        } else {
+          const animation = content.animate([{ height: `${content.offsetHeight}px`, opacity: 1 }, { height: "0px", opacity: 0 }], {
+            duration: 180,
+            easing: "ease-in",
+          });
+          animation.onfinish = () => {
+            if (button.getAttribute("aria-expanded") === "false") content.hidden = true;
+          };
+        }
+      };
+    });
     const list = IB.qs("#practiceList");
     const groups = IB.topicSections2(t.id);
     const done = {};
@@ -219,12 +229,6 @@ IB.page = function () {
       IB.math(card);
     };
     IB.qsa("a[data-t]", c).forEach((a) => (a.onclick = (e) => { e.preventDefault(); go(s.id, a.dataset.t); }));
-    IB.qs("#readBtn").onclick = (e) => {
-      const was = IB.store.get().read[t.id];
-      IB.markRead(t.id, !was);
-      if (!was) IB.celebrate(e.currentTarget);
-      setTimeout(render, was ? 0 : 450);
-    };
     const pdf = (btn, n) => {
       btn.disabled = true;
       IB.pdfNotes({ subject: s.id, topics: [t], questions: n })

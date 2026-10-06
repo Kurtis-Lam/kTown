@@ -75,7 +75,7 @@ IB.page = function () {
     const tried = rows.filter((m) => m !== null);
     const pct = tried.length ? Math.round(rows.reduce((n, m) => n + (m ?? 0), 0) / rows.length) : 0;
     const next = s.topics.map((t, i) => ({ t, m: rows[i] })).sort((a, b) => (a.m ?? -1) - (b.m ?? -1))[0].t;
-    const mono = { econ: "Ec", chem: "Ch", geo: "Ge", math: "Ma", bio: "Bi", engb: "En", chia: "中" }[s.id] || s.short.slice(0, 2);
+    const mono = { econ: "Ec", chem: "Ch", geo: "Ge", geohl: "GH", physl: "Ph", phyhl: "PH", tok: "TOK", math: "Ma", bio: "Bi", engb: "En", chia: "中" }[s.id] || s.short.slice(0, 2);
     const C = 2 * Math.PI * 26;
     grid.appendChild(
       IB.el(`<a class="card subject-card" href="krevisionnotes.html?subject=${s.id}" style="--c:${s.color}" data-reveal>

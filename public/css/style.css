@@ -22,7 +22,7 @@
   --good: #1F8A4C; --good-soft: #DDF3E6; --good-ink: #155E34;
   --warn: #B26A00; --warn-soft: #FFF1CC; --warn-ink: #6B4A00;
   --bad: #C2410C;  --bad-soft: #FDE7DC;  --bad-ink: #8A2C05;
-  --econ: #D9480F; --chem: #0B8AA8; --geo: #2F9E44; --math: #6741D9; --bio: #C2255C; --engb: #1864AB; --chia: #9C6500;
+  --econ: #D9480F; --chem: #0B8AA8; --geo: #2F9E44; --geohl: #16805D; --physl: #116D86; --phyhl: #1350A4; --tok: #7A4DB3; --math: #6741D9; --bio: #C2255C; --engb: #1864AB; --chia: #9C6500;
   --c-formula: #2D5BFF; --c-formula-bg: #EDF1FF;
   --c-method: #1F8A4C;  --c-method-bg: #EAF8EF;
   --c-trap: #D0312D;    --c-trap-bg: #FDEEEE;
@@ -46,7 +46,7 @@
     --good: #3DDC84; --good-soft: #10331F; --good-ink: #7BEAAB;
     --warn: #FFC53D; --warn-soft: #3A2F0E; --warn-ink: #FFD978;
     --bad: #FF8A65; --bad-soft: #3B1A10; --bad-ink: #FFB59D;
-    --econ: #D9622B; --chem: #1C9FB5; --geo: #2F9E44; --math: #9775FA; --bio: #E64980; --engb: #4D8FDB; --chia: #C08A1E;
+    --econ: #D9622B; --chem: #1C9FB5; --geo: #2F9E44; --geohl: #42C99A; --physl: #3ABBD6; --phyhl: #76A5FF; --tok: #BB91F5; --math: #9775FA; --bio: #E64980; --engb: #4D8FDB; --chia: #C08A1E;
     --shadow: 0 1px 2px rgba(0, 0, 0, .3);
     --c-formula: #8DA6FF; --c-formula-bg: #17244A;
     --c-method: #4ADE80;  --c-method-bg: #10291C;
@@ -66,7 +66,7 @@
   --good: #3DDC84; --good-soft: #10331F; --good-ink: #7BEAAB;
   --warn: #FFC53D; --warn-soft: #3A2F0E; --warn-ink: #FFD978;
   --bad: #FF8A65; --bad-soft: #3B1A10; --bad-ink: #FFB59D;
-  --econ: #D9622B; --chem: #1C9FB5; --geo: #2F9E44; --math: #9775FA; --bio: #E64980; --engb: #4D8FDB; --chia: #C08A1E;
+  --econ: #D9622B; --chem: #1C9FB5; --geo: #2F9E44; --geohl: #42C99A; --physl: #3ABBD6; --phyhl: #76A5FF; --tok: #BB91F5; --math: #9775FA; --bio: #E64980; --engb: #4D8FDB; --chia: #C08A1E;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3);
   --c-formula: #8DA6FF; --c-formula-bg: #17244A;
   --c-method: #4ADE80;  --c-method-bg: #10291C;
@@ -88,7 +88,7 @@
   --good: #3DDC84; --good-soft: #10331F; --good-ink: #7BEAAB;
   --warn: #FFC53D; --warn-soft: #3A2F0E; --warn-ink: #FFD978;
   --bad: #FF8A65; --bad-soft: #3B1A10; --bad-ink: #FFB59D;
-  --econ: #D9622B; --chem: #1C9FB5; --geo: #2F9E44; --math: #9775FA; --bio: #E64980; --engb: #4D8FDB; --chia: #C08A1E;
+  --econ: #D9622B; --chem: #1C9FB5; --geo: #2F9E44; --geohl: #42C99A; --physl: #3ABBD6; --phyhl: #76A5FF; --tok: #BB91F5; --math: #9775FA; --bio: #E64980; --engb: #4D8FDB; --chia: #C08A1E;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3);
   --c-formula: #8DA6FF; --c-formula-bg: #17244A;
   --c-method: #4ADE80; --c-method-bg: #10291C;
@@ -139,13 +139,12 @@ th { background: var(--surface-2); font-weight: 700; font-size: .88em; }
 .nav-links a:hover { color: #FFFFFF; }
 .nav-links a.active { color: #FFFFFF; font-weight: 700; border-bottom-color: var(--mark); }
 .nav-more { position: relative; }
-.nav-more:not([open]) .nav-more-menu { display: none; }
 .nav-more[data-active="true"] > summary { color: #FFFFFF; border-bottom-color: var(--mark); }
 .nav-more-menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 25; min-width: 150px; padding: 6px; background: var(--ink); border: 1px solid #3A4A66; border-radius: 12px; box-shadow: var(--shadow); }
 .nav-more-menu a { display: block; padding: 9px 11px; border-radius: 8px; color: var(--on-ink-muted); font-size: .9rem; }
 .nav-more-menu a.active, .nav-more-menu a:hover { background: var(--ink-2); color: #FFFFFF; border: 0; }
 @media (hover: hover) and (pointer: fine) {
-  .nav-more:hover .nav-more-menu { display: block; }
+  .nav-more:hover > .nav-more-menu, .nav-more:focus-within > .nav-more-menu { display: block; }
 }
 .icon-btn { background: transparent; border: 1.5px solid #3A4A66; color: var(--on-ink); border-radius: 10px; padding: 7px 11px; cursor: pointer; font: inherit; min-height: 40px; }
 .icon-btn:hover { background: var(--ink-2); }
@@ -223,6 +222,10 @@ main { padding-bottom: 72px; min-height: 70vh; }
 .pill.econ { background: color-mix(in srgb, var(--econ) 18%, transparent); color: var(--text); }
 .pill.chem { background: color-mix(in srgb, var(--chem) 18%, transparent); color: var(--text); }
 .pill.geo { background: color-mix(in srgb, var(--geo) 18%, transparent); color: var(--text); }
+.pill.geohl { background: color-mix(in srgb, var(--geohl) 18%, transparent); color: var(--text); }
+.pill.physl { background: color-mix(in srgb, var(--physl) 18%, transparent); color: var(--text); }
+.pill.phyhl { background: color-mix(in srgb, var(--phyhl) 18%, transparent); color: var(--text); }
+.pill.tok { background: color-mix(in srgb, var(--tok) 18%, transparent); color: var(--text); }
 .pill.math { background: color-mix(in srgb, var(--math) 18%, transparent); color: var(--text); }
 .pill.bio { background: color-mix(in srgb, var(--bio) 18%, transparent); color: var(--text); }
 .pill.engb { background: color-mix(in srgb, var(--engb) 18%, transparent); color: var(--text); }

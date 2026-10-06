@@ -7,7 +7,7 @@
   "use strict";
   const IB = window.IB;
   const PW = 794, PH = 1123, FOOT = 44, TOP = 46, SIDE = 56;
-  const HEX = { econ: "#D9480F", chem: "#0B8AA8", geo: "#2F9E44", math: "#6741D9", bio: "#C2255C", engb: "#1864AB", chia: "#9C6500" };
+  const HEX = { econ: "#D9480F", chem: "#0B8AA8", geo: "#2F9E44", geohl: "#16805D", physl: "#116D86", phyhl: "#1350A4", tok: "#7A4DB3", math: "#6741D9", bio: "#C2255C", engb: "#1864AB", chia: "#9C6500" };
   const DOTS = ["#2D5BFF", "#0B8AA8", "#7C3AED", "#E8590C", "#2F9E44", "#D6336C", "#5F3DC4", "#C27803", "#E03131", "#1098AD", "#334155", "#0CA678"];
   const ZH = (s) => s.id === "chia";
   const L = (s, en, zh) => (ZH(s) ? `${en} ${zh}` : en);

@@ -4,7 +4,7 @@
 
   const IB = (window.IB = window.IB || {});
   IB.subjects = IB.subjects || {};
-  IB.order = ["chia", "engb", "math", "bio", "chem", "econ", "geo"];
+  IB.order = ["chia", "engb", "math", "bio", "chem", "econ", "geo", "geohl", "physl", "phyhl", "tok"];
 
   IB.register = function (subject) {
     subject.topics.forEach((t) => {
@@ -73,6 +73,10 @@
     econ: [["P1", "Paper 1"], ["P2", "Paper 2"]],
     chem: [["P1A", "Paper 1A (MCQ)"], ["P1B", "Paper 1B"], ["P2", "Paper 2"]],
     geo: [["P1", "Paper 1"], ["P2", "Paper 2"]],
+    geohl: [["P1", "Paper 1"], ["P2", "Paper 2"], ["P3", "Paper 3"]],
+    physl: [["P1A", "Paper 1A (MCQ)"], ["P1B", "Paper 1B"], ["P2", "Paper 2"]],
+    phyhl: [["P1A", "Paper 1A (MCQ)"], ["P1B", "Paper 1B"], ["P2", "Paper 2"]],
+    tok: [["EXH", "Exhibition"], ["ESSAY", "Essay"]],
     math: [["P1", "Paper 1"], ["P2", "Paper 2"]],
     bio: [["P1A", "Paper 1A (MCQ)"], ["P1B", "Paper 1B"], ["P2", "Paper 2"]],
     engb: [["P1", "Paper 1 (writing)"], ["P2", "Paper 2 (reading/listening)"], ["IO", "Individual oral"]],
@@ -317,12 +321,17 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
     econ: [0, 16, 30, 42, 53, 64, 75],
     chem: [0, 18, 30, 42, 53, 64, 76],
     geo: [0, 15, 28, 40, 51, 62, 73],
+    geohl: [0, 15, 28, 40, 51, 62, 73],
+    physl: [0, 16, 29, 41, 52, 64, 76],
+    phyhl: [0, 16, 29, 41, 52, 64, 76],
+    tok: [0, 13, 26, 40, 54, 68, 82],
     math: [0, 15, 28, 41, 54, 67, 80],
     bio: [0, 17, 29, 41, 52, 63, 74],
     engb: [0, 14, 30, 45, 58, 70, 82],
     chia: [0, 13, 26, 40, 53, 66, 78],
   };
   IB.grade = function (pct, subjectId) {
+    if (subjectId === "tok") return pct >= 75 ? "A" : pct >= 60 ? "B" : pct >= 45 ? "C" : pct >= 30 ? "D" : "E";
     const b = BOUNDS[subjectId] || BOUNDS.math;
     let g = 1;
     for (let i = 0; i < b.length; i++) if (pct >= b[i]) g = i + 1;
@@ -393,11 +402,11 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
   // Two back ends with one interface:
   //  - hosted on claude.ai: the page's built-in "ask Claude" ability (runs on the viewer's Claude account);
   //  - self-hosted: server.js or Vercel (/api/*) with an OpenRouter API key.
-  const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", math: "IB Mathematics: Analysis and Approaches SL", bio: "IB Biology SL", engb: "IB English B HL", chia: "IB Chinese A: Language and Literature SL (answer in Traditional Chinese)" };
-  const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Biology SL, English B HL and Chinese A: Language & Literature SL. For Chinese A, reply in Traditional Chinese unless the student writes in English.
+  const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", geohl: "IB Geography HL", math: "IB Mathematics: Analysis and Approaches SL", bio: "IB Biology SL", engb: "IB English B HL", chia: "IB Chinese A: Language and Literature SL", physl: "IB Physics SL", phyhl: "IB Physics HL", tok: "IB Theory of Knowledge" };
+  const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL and HL, Mathematics: Analysis & Approaches SL, Biology SL, English B HL, Chinese A: Language & Literature SL, Physics SL and HL, and Theory of Knowledge. For Chinese A, reply in Traditional Chinese unless the student writes in English.
 - Guide rather than hand over answers: when asked for help with a problem, give the next hint or ask what they have tried, unless they explicitly ask for the full worked solution.
 - Use IB command terms precisely and say what each demands in marks.
-- Use correct IB terminology, units, significant figures and notation. Economics: say which diagram to draw and how to label it. Geography: push for named, located case studies with data. Chemistry: units, state symbols, s.f. Maths: show working and note Paper 1 (no calculator) vs Paper 2.
+- Use correct IB terminology, units, significant figures and notation. Economics: say which diagram to draw and how to label it. Geography: push for named, located case studies with data. Chemistry: units, state symbols, s.f. Physics: show equations, substitutions, units, and significant figures. TOK: distinguish knowledge claims, evidence, perspectives and implications. Maths: show working and note Paper 1 (no calculator) vs Paper 2.
 - Write maths with LaTeX between \\( and \\) inline and $$ $$ for display. Never use single $ delimiters.
 - Keep answers focused: short paragraphs and bullet points. End with a quick check-for-understanding question when it helps.
 - If unsure about IB rules or assessment changes, say so and suggest checking the current subject guide.`;
@@ -726,7 +735,7 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
       };
     }
 
-    if (!opts.hideActions && opts.mode !== "exam") {
+    if (!opts.hideActions && opts.mode !== "exam" && opts.mode !== "quiz") {
       const flag = IB.el(`<button class="btn small" title="Save to your review list">${flagged ? "★ Saved" : "☆ Save for review"}</button>`);
       flag.onclick = () => {
         IB.toggleFlag(q.id);
@@ -805,22 +814,6 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
     );
     document.dispatchEvent(new Event("ktown:chrome-ready"));
     IB.qs("#menuBtn").onclick = () => IB.qs("#navLinks").classList.toggle("open");
-    const more = IB.qs(".nav-more");
-    if (more && matchMedia("(hover: hover) and (pointer: fine)").matches) {
-      more.addEventListener("pointerenter", () => more.open = true);
-      more.addEventListener("pointerleave", () => more.open = false);
-      const summary = more.querySelector("summary");
-      summary.addEventListener("click", (event) => event.preventDefault());
-      summary.addEventListener("keydown", (event) => {
-        if (["Enter", " ", "ArrowDown"].includes(event.key)) {
-          event.preventDefault();
-          more.open = true;
-          more.querySelector("a")?.focus();
-        } else if (event.key === "Escape") {
-          more.open = false;
-        }
-      });
-    }
   }
 
   // Wrap each page's opening heading + intro paragraph in the dark header band.

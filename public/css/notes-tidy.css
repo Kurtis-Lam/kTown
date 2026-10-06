@@ -1,4 +1,4 @@
-/* kRevisionNotes page tidy-up. Loaded after style.css; layout, spacing and overflow only. */
+/* kRevisionNotes page refinements. Loaded after style.css to tune layout and topic controls. */
 *, *::before, *::after { box-sizing: border-box; }
 html { background: #07090e; min-height: 100%; }
 body { margin: 0; min-height: 100vh; overflow-x: hidden; background: transparent !important; }
@@ -7,7 +7,7 @@ body { margin: 0; min-height: 100vh; overflow-x: hidden; background: transparent
 .site-background { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; z-index: -1; pointer-events: none; }
 
 /* One centred, fluid column */
-main.page-main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 80px; }
+main.page-main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 18px clamp(16px, 4vw, 40px) 48px; }
 .page-main img, .page-main svg { max-width: 100%; height: auto; }
 .page-main .hidden { display: none !important; }
 
@@ -16,9 +16,9 @@ main.page-main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 28px c
 .notes-heading h1 { margin: 0; line-height: 1.1; }
 
 /* Subject picker */
-.subject-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; margin-top: 20px; }
+.subject-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 12px; max-height: max(220px, calc(100vh - 320px)); overflow-y: auto; padding: 3px 6px 8px 3px; overscroll-behavior: contain; }
 .subject-picker-card { display: flex; flex-direction: column; gap: 8px; padding: 22px; text-decoration: none; }
-.subject-picker-card h2 { margin: 0; }
+.subject-picker-card h2 { margin: 0; font-size: 1.2rem; line-height: 1.3; }
 .subject-picker-card .f-cta { margin-top: auto; padding-top: 8px; font-weight: 700; }
 
 /* Sidebar + content */
@@ -34,10 +34,22 @@ main.page-main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 28px c
 .topic-list a .done { margin-left: auto; }
 
 /* Overview: hero, topic cards */
-.subject-hero, .topic-banner { padding: clamp(18px, 3vw, 32px); border-radius: 18px; margin-bottom: 24px; }
+.subject-hero, .topic-banner { padding: clamp(14px, 2vw, 22px); border-radius: 18px; margin-bottom: 16px; }
+.subject-hero { overflow: visible; padding: 0; }
+.subject-hero > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; }
+.subject-hero > summary::-webkit-details-marker { display: none; }
+.subject-hero > summary::after { content: "＋"; font-size: 1.2rem; }
+.subject-hero[open] > summary::after { content: "−"; }
+.subject-hero-summary strong { font-size: 1.08rem; }
+.subject-overview { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 0 18px 16px; }
+.subject-overview > .eyebrow { flex-basis: 100%; }
+.subject-hero h1 { margin: 0; font-size: clamp(1.35rem, 2.4vw, 1.8rem); }
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
-.hero-progress { display: flex; align-items: center; gap: 12px; margin: 14px 0; }
+.hero-progress { display: flex; align-items: center; gap: 12px; margin: 0; flex: 1 1 220px; }
 .hero-progress .bar { flex: 1; }
+.topics-preview { flex: 1 1 100%; min-width: 0; }
+.topics-preview > summary { cursor: pointer; font-weight: 700; }
+.topics-preview .chip-row { max-height: 130px; overflow: auto; padding: 4px; margin: 8px 0 0; }
 #content h2 { margin: 36px 0 14px; }
 .legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
 .topic-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
@@ -52,8 +64,17 @@ main.page-main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 28px c
 .topic-banner h1 { margin: 8px 0; }
 .btn-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .jumpbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 20px; }
-.topic-sections { display: grid; gap: 18px; }
+.topic-sections { display: grid; gap: 10px; }
 .topic-sections > section { scroll-margin-top: 150px; }
+.topic-subtopic { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--surface); }
+.overview-detail { margin: 8px 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.overview-detail > summary { cursor: pointer; padding: 11px 14px; font-weight: 700; }
+.overview-detail > :not(summary) { margin: 0; padding: 14px; }
+.subtopic-toggle { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 12px; padding: 15px 18px; border: 0; background: var(--surface); color: var(--text); text-align: left; font: inherit; font-weight: 700; cursor: pointer; }
+.subtopic-toggle:hover, .subtopic-toggle[aria-expanded="true"] { background: var(--surface-2); }
+.subtopic-toggle > span { color: var(--primary); font-size: 1.2rem; line-height: 1; }
+.subtopic-content { overflow: hidden; }
+.subtopic-content > section { margin: 0 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 .card { padding: clamp(14px, 2vw, 22px); }
 
 /* Download menu */
@@ -61,6 +82,7 @@ main.page-main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 28px c
 .download-menu > summary { list-style: none; cursor: pointer; }
 .download-menu > summary::-webkit-details-marker { display: none; }
 .download-options { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; display: grid; gap: 6px; min-width: 230px; padding: 10px; border-radius: 12px; background: #fff; color: #111; box-shadow: 0 12px 32px rgba(0,0,0,.35); }
+.download-menu:hover > .download-options, .download-menu:focus-within > .download-options { display: grid; }
 
 /* Tables scroll inside their own wrapper, so they keep real table layout */
 .table-wrap { width: 100%; overflow-x: auto; }
@@ -80,6 +102,8 @@ main.page-main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 28px c
   .side { position: static; max-height: 320px; }
 }
 @media (max-width: 560px) {
+  .subject-picker { max-height: max(180px, calc(100vh - 300px)); grid-template-columns: 1fr; }
+  .subject-hero > summary { align-items: flex-start; flex-direction: column; }
   .topic-banner { flex-direction: column; gap: 8px; }
   .topic-cards { grid-template-columns: 1fr; }
   .topic-card { grid-template-columns: auto minmax(0, 1fr); }

@@ -149,6 +149,7 @@ IB.page = function () {
         <div class="btn-row" style="margin-top:14px"><button class="btn primary" id="qStart">Start quiz</button><span class="small muted" id="qInfo"></span></div></div>`;
       const fillTopics = () => {
         const s = IB.subjects[IB.qs("#qSub").value];
+        if (s.id === "tok" && IB.qs("#qFmt").value === "auto") IB.qs("#qFmt").value = "mixed";
         IB.qs("#qTopics").innerHTML = s.topics.map((t) => `<label class="small" style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" value="${t.id}" ${!topicParam || topicParam === t.id ? "checked" : ""}><span><strong>${IB.esc(t.code)}</strong> ${IB.esc(t.title)}${IB.hasGenerator(t.id) ? ' <span class="pill" title="Unlimited generated questions">∞</span>' : ""}</span></label>`).join("");
       };
       fillTopics();
@@ -169,7 +170,7 @@ IB.page = function () {
       const sid = subParam || "econ";
       setup.innerHTML = `<div class="card"><h2 style="margin-top:0">Smart quiz</h2>
         <p class="muted">Picks the topics where your mastery is lowest (and topics you haven't tried yet) and builds a 10-question quiz from them.</p>
-        <div class="filters">${subjectSelect("sSub", sid)}<label class="field">Format<select id="sFmt"><option value="auto">Instant-marked</option><option value="mixed">Mixed</option></select></label></div>
+        <div class="filters">${subjectSelect("sSub", sid)}<label class="field">Format<select id="sFmt"><option value="auto" ${sid === "tok" ? "" : "selected"}>Instant-marked</option><option value="mixed" ${sid === "tok" ? "selected" : ""}>Mixed</option></select></label></div>
         <div id="sPreview" class="small muted" style="margin-top:10px"></div>
         <div class="btn-row" style="margin-top:14px"><button class="btn primary" id="sStart">Start smart quiz</button></div></div>`;
       const weakest = () => {
@@ -272,6 +273,10 @@ IB.page = function () {
       };
       const next = () => {
         const ts = IB.qs("#dTopic").value ? [IB.qs("#dTopic").value] : IB.generatorTopics(IB.qs("#dSub").value);
+        if (!ts.length) {
+          IB.qs("#dQ").innerHTML = `<p class="small muted">No generated calculation drills are available for ${IB.esc(IB.subjects[IB.qs("#dSub").value].name)} yet.</p>`;
+          return;
+        }
         const q = IB.generate(IB.pick(ts));
         const box = IB.qs("#dQ");
         box.innerHTML = `<div class="q-card"><div class="q-meta"><span class="pill ${q.subject}">${IB.esc(IB.topic(q.topic).title)}</span><span class="marks">[${q.marks}]</span></div>
