@@ -1,56 +1,70 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>kRevisionNotes — kTown</title>
-<meta name="description" content="Explore clear IB topic notes, worked examples and practice questions in kRevisionNotes by kTown.">
-<link rel="icon" href="imgs/logo.png" type="image/png">
-<link rel="stylesheet" href="vendor/katex/katex.min.css">
-<script defer src="vendor/katex/katex.min.js"></script>
-<script defer src="vendor/katex/contrib/auto-render.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
-<link rel="stylesheet" href="css/style.css">
-<style>
-  /* shared kTown animated background (background.html) sits behind the whole app */
-  html { background: #07090e; }
-  body { background: transparent !important; }
-  .ktown-background { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; z-index: -1; pointer-events: none; }
-</style>
-<script src="js/app.js"></script>
-<script src="js/data/econ.js"></script>
-<script src="js/data/chem.js"></script>
-<script src="js/data/geo.js"></script>
-<script src="js/data/math.js"></script>
-<script src="js/data/bio.js"></script>
-<script src="js/data/engb.js"></script>
-<script src="js/data/chia.js"></script>
-<script src="js/data/econ-plus.js"></script>
-<script src="js/data/chem-plus.js"></script>
-<script src="js/data/geo-plus.js"></script>
-<script src="js/data/math-plus.js"></script>
-<script src="js/data/bio-plus.js"></script>
-<script src="js/data/engb-plus.js"></script>
-<script src="js/data/chia-plus.js"></script>
-<script src="js/data/econ-bank.js"></script>
-<script src="js/data/chem-bank.js"></script>
-<script src="js/data/geo-bank.js"></script>
-<script src="js/data/math-bank.js"></script>
-<script src="js/data/bio-bank.js"></script>
-<script src="js/data/engb-bank.js"></script>
-<script src="js/data/chia-bank.js"></script>
-<script src="js/generators.js"></script>
-<script src="js/bankbuild.js"></script>
-<script src="js/plot.js"></script>
-<script src="js/motion.js"></script>
-<script src="js/pdfnotes.js"></script>
-<script src="js/notes.js"></script>
-<script type="module" src="js/auth.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>kRevisionNotes — kTown</title>
+  <meta name="description" content="Explore clear IB topic notes, worked examples and practice questions in kRevisionNotes by kTown.">
+  <link rel="icon" href="imgs/logo.png" type="image/png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+
+  <!-- Styles: base first, page tidy-up last so it can refine the base -->
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/notes-tidy.css">
+
+  <!-- Maths rendering -->
+  <script defer src="vendor/katex/katex.min.js"></script>
+  <script defer src="vendor/katex/contrib/auto-render.min.js"></script>
+
+  <!-- App core (must load first) -->
+  <script defer src="js/app.js"></script>
+
+  <!-- Subject content: core notes, extra notes, question banks -->
+  <script defer src="js/data/econ.js"></script>
+  <script defer src="js/data/chem.js"></script>
+  <script defer src="js/data/geo.js"></script>
+  <script defer src="js/data/math.js"></script>
+  <script defer src="js/data/bio.js"></script>
+  <script defer src="js/data/engb.js"></script>
+  <script defer src="js/data/chia.js"></script>
+
+  <script defer src="js/data/econ-plus.js"></script>
+  <script defer src="js/data/chem-plus.js"></script>
+  <script defer src="js/data/geo-plus.js"></script>
+  <script defer src="js/data/math-plus.js"></script>
+  <script defer src="js/data/bio-plus.js"></script>
+  <script defer src="js/data/engb-plus.js"></script>
+  <script defer src="js/data/chia-plus.js"></script>
+
+  <script defer src="js/data/econ-bank.js"></script>
+  <script defer src="js/data/chem-bank.js"></script>
+  <script defer src="js/data/geo-bank.js"></script>
+  <script defer src="js/data/math-bank.js"></script>
+  <script defer src="js/data/bio-bank.js"></script>
+  <script defer src="js/data/engb-bank.js"></script>
+  <script defer src="js/data/chia-bank.js"></script>
+
+  <!-- Tools and page logic (order matters: generators, then bank builder) -->
+  <script defer src="js/generators.js"></script>
+  <script defer src="js/bankbuild.js"></script>
+  <script defer src="js/plot.js"></script>
+  <script defer src="js/motion.js"></script>
+  <script defer src="js/pdfnotes.js"></script>
+  <script defer src="js/notes.js"></script>
+
+  <!-- Accounts / cloud sync -->
+  <script type="module" src="js/auth.js"></script>
 </head>
 <body data-page="notes">
-<iframe class="ktown-background" src="background.html" title="" aria-hidden="true" tabindex="-1"></iframe>
-<main class="container" id="app"></main>
+  <!-- The animated background iframe, header and footer are added by js/app.js,
+       so none is repeated here (the old page had two stacked backgrounds). -->
+  <main class="container page-main" id="app">
+    <noscript><p>kRevisionNotes needs JavaScript to load your notes.</p></noscript>
+  </main>
 </body>
 </html>
