@@ -1,0 +1,110 @@
+/* Geography HL extension: HL core (global interactions), an extra option, Paper 3 and HL papers. */
+IB.extend("geo", {
+  papers: {
+    P1: { name: "Paper 1 (options)", minutes: 90, marks: 40, mix: { short: 6, extended: 2 }, hlVersion: { name: "Paper 1 (three options)", minutes: 135, marks: 60, mix: { short: 9, extended: 3 } } },
+    P2: { name: "Paper 2 (core)", minutes: 75, marks: 40, mix: { short: 6, extended: 1 } },
+    P3: { name: "Paper 3 (HL global interactions)", minutes: 90, marks: 28, hl: true, mix: { short: 1, extended: 1 } },
+  },
+  assessmentHL: [
+    ["Paper 1 - Geographic themes", "2h 15m", "60 marks", "35%", "Three options, each a structured question plus a 10-mark extended answer."],
+    ["Paper 2 - Core", "1h 15m", "50 marks", "25%", "Structured questions on the core, infographic/visual stimulus, and an extended answer."],
+    ["Paper 3 - Global interactions (HL)", "1h", "28 marks", "20%", "Choose one of three questions: a 12-mark part and a 16-mark essay."],
+    ["Internal assessment", "-", "25 marks", "20%", "Fieldwork written report (2 500 words max)."],
+  ],
+});
+
+IB.addTopics("geo", [
+  {
+    id: "geo-h1", code: "HL Core 1", after: "geo-7", unit: "HL core: Geographic perspectives - global interactions", title: "Power, places and networks",
+    summary: "Global interactions and global power, global networks and flows (trade, FDI, aid, remittances, data), and human and physical influences on global interactions (supranational bodies, technology, protectionism).",
+    concepts: [
+      { h: "Measuring global interactions", b: "<p>KOF Globalization Index (economic, social, political dimensions). Global superpowers and emerging powers (G7, G20, BRICS) shape interactions through hard power (military, economic) and soft power (culture, diplomacy).</p>", yue: "全球化可以用 KOF 指數量度；大國用硬實力（軍事、經濟）同軟實力（文化、外交）影響世界。" },
+      { h: "Global networks and flows", b: "<p>Flows of goods, services, capital (FDI, aid, loans, remittances), people and data. TNCs build global production networks (offshoring, outsourcing). Some places are 'switched off' - landlocked, conflict-affected or low connectivity.</p>" },
+      { h: "Influences on global interactions", b: "<p>Supranational organisations (WTO, IMF, World Bank, EU) set rules. Technology (container shipping, broadband, undersea cables) shrinks distance. Physical factors (resources, climate, location) matter. Nationalism and protectionism can slow globalisation.</p>" },
+    ],
+    terms: [["Global interactions", "The connections between people, places and environments around the world, including flows and networks."], ["Soft power", "Influence through attraction - culture, values and diplomacy - rather than force."], ["Remittances", "Money sent home by migrants to their families."], ["Switched-off places", "Places that are poorly connected to global networks."]],
+    skills: [{ h: "Using the 'perspectives' lens", b: "For 16-mark essays, consider different stakeholders, scales (local-global) and places (connected vs switched-off)." }],
+    examples: [{ q: "Outline two ways a country can exert soft power. [4]", a: "Culture (e.g. K-pop and Korean dramas raising South Korea's profile); education scholarships/aid (e.g. China's Confucius Institutes)." }],
+    formulas: [],
+    methods: ["<strong>Case-study detail:</strong> name the place, give a date and a figure in every paragraph."],
+    traps: ["Treating globalisation as equally positive for all places.", "Describing flows without explaining the power behind them."],
+    tips: ["Use contrasting examples: Singapore (hub) vs South Sudan (switched off)."],
+    frame: [
+      { type: "Paper 3 essay [16]", steps: ["Introduction: define key terms; state the argument and the perspectives you will use.", "Paragraph 1: main argument + named case study + data.", "Paragraph 2: counter-argument + case study.", "Paragraph 3: consider scale/stakeholders/time.", "Conclusion: substantiated judgement that answers the question ('to what extent')."], yue: "引言講定義同立場 → 正方論點 + 例子 → 反方 + 例子 → 尺度/持份者/時間 → 有理據嘅結論。" },
+      { type: "Paper 3 part (a) [12]", steps: ["Explain 3-4 distinct points.", "Each point with a named example and data.", "Link back to the command term."], yue: "三至四個重點，每點有實例同數據。" },
+    ],
+    questions: [
+      { type: "mcq", paper: "P3", marks: 1, diff: 1, q: "Which is an example of soft power?", options: ["Military intervention", "Trade sanctions", "Global popularity of a country's films and music", "Tariffs on imports"], answer: 2, ms: ["C."] },
+      { paper: "P3", marks: 4, diff: 2, q: "Outline two ways in which a country can exert soft power.", ms: ["Way 1 identified, e.g. culture/media [1]", "Way 1 developed with example [1]", "Way 2 identified, e.g. aid/education/diplomacy [1]", "Way 2 developed with example [1]"] },
+      { type: "extended", paper: "P3", marks: 12, diff: 3, q: "Explain why some places are less connected to global networks than others.", ms: ["Physical factors: landlocked location, harsh climate, distance [2-3]", "Political factors: conflict, corruption, sanctions [2-3]", "Economic factors: lack of infrastructure, low investment, debt [2-3]", "Named, detailed examples with data [2-3]"] },
+      { type: "extended", paper: "P3", marks: 16, diff: 3, q: "\"Global interactions are controlled by a small number of powerful countries.\" To what extent do you agree with this statement?", ms: ["Clear understanding of global power and networks [3-4]", "Argument: superpowers, G7, TNCs headquartered in HICs [3-4]", "Counter: emerging economies (BRICS), supranational bodies, NGOs, civil society, technology firms [3-4]", "Examples at more than one scale with data [2-3]", "Evaluative conclusion answering 'to what extent' [2-3]"] },
+    ],
+  },
+  {
+    id: "geo-h2", code: "HL Core 2", after: "geo-h1", unit: "HL core: Geographic perspectives - global interactions", title: "Human development and diversity",
+    summary: "Development opportunities (HDI, MPI, gender), changing identities and cultures (cultural diffusion, glocalisation, diaspora) and local responses to global interactions (resistance, civil society, fair trade).",
+    concepts: [
+      { h: "Measuring development", b: "<p>HDI (life expectancy, education, GNI per capita), Multidimensional Poverty Index, Gender Inequality Index. Development opportunities come through trade, aid, migration, technology - unevenly.</p>", yue: "HDI 用壽命、教育同人均收入衡量發展；MPI 量度多重貧窮。" },
+      { h: "Culture and identity", b: "<p>Cultural diffusion (e.g. Western fast food, Korean wave) can lead to homogenisation or hybridisation (glocalisation, e.g. McDonald's menus adapted locally). Diasporas maintain identity and send remittances.</p>" },
+      { h: "Local responses", b: "<p>Anti-globalisation movements, protectionism, local sourcing, Fairtrade, civil society and NGOs (e.g. Greenpeace campaigns), indigenous rights movements.</p>" },
+    ],
+    terms: [["Glocalisation", "Adapting global products or ideas to local cultures and markets."], ["Cultural homogenisation", "The loss of cultural diversity as global culture spreads."], ["Diaspora", "A population living away from its original homeland while keeping links to it."], ["Civil society", "Organisations and groups outside government and business, e.g. NGOs and charities."]],
+    skills: [{ h: "Evaluate cultural change", b: "Weigh homogenisation against hybridisation and resistance with examples from different countries." }],
+    examples: [{ q: "Explain one example of glocalisation. [3]", a: "McDonald's in India sells the McAloo Tikki with no beef, adapting a global brand to local religious and dietary norms." }],
+    formulas: [],
+    methods: ["<strong>Indices:</strong> describe what each indicator measures and its limitations."],
+    traps: ["Treating culture as fixed rather than hybridising.", "Saying HDI measures happiness."],
+    tips: ["Connect identity changes to migration flows from Core Unit 1."],
+    frame: [{ type: "Explain [12] - cultural change", steps: ["Define cultural diffusion and identity.", "Mechanism 1: media/internet + example.", "Mechanism 2: TNCs/glocalisation + example.", "Mechanism 3: migration/diaspora + example.", "Note uneven outcomes."], yue: "定義 → 媒體 → 跨國企業 → 移民，每點都有例子。" }],
+    questions: [
+      { type: "mcq", paper: "P3", marks: 1, diff: 1, q: "Which is NOT a component of the HDI?", options: ["Life expectancy", "Years of schooling", "GNI per capita", "Carbon emissions"], answer: 3, ms: ["D."] },
+      { paper: "P3", marks: 3, diff: 2, q: "Explain one example of glocalisation.", ms: ["Named global product/company [1]", "How it is adapted to local culture [1]", "Why it is adapted (local tastes, religion, law) [1]"] },
+      { type: "extended", paper: "P3", marks: 16, diff: 3, q: "Discuss the view that global interactions are leading to the loss of cultural diversity.", ms: ["Understanding of cultural diffusion and homogenisation [3-4]", "Evidence for loss: global brands, English language dominance, media [3-4]", "Evidence against: hybridisation, glocalisation, revival movements, diasporas [3-4]", "Examples at different scales [2-3]", "Evaluative conclusion [2-3]"] },
+    ],
+  },
+  {
+    id: "geo-h3", code: "HL Core 3", after: "geo-h2", unit: "HL core: Geographic perspectives - global interactions", title: "Global risks and resilience",
+    summary: "Geopolitical and economic risks (conflict, financial crises, cyber-attacks), environmental risks of global interactions (pollution transfer, carbon footprints of trade), and building resilience (re-shoring, international agreements, 'glocal' resilience).",
+    concepts: [
+      { h: "Global risks", b: "<p>Interconnection spreads risk: financial contagion (2008 crisis), pandemics (COVID-19 supply-chain disruption), cyber-attacks, conflict and sanctions affecting energy and grain flows.</p>", yue: "全球化令風險傳播得更快：金融危機、疫情、網絡攻擊、戰爭都會經網絡擴散。" },
+      { h: "Environmental impacts of interactions", b: "<p>Transboundary pollution, e-waste flows, food miles and embedded carbon, deforestation for export crops. Global commons (oceans, atmosphere) are hard to govern.</p>" },
+      { h: "Building resilience", b: "<p>Diversifying supply chains, re-shoring, stockpiling, international agreements (Paris Agreement, Basel Convention), cyber-security cooperation, local food and energy systems.</p>" },
+    ],
+    terms: [["Resilience", "The ability of a system to absorb, adapt to and recover from shocks."], ["Contagion", "The spread of an economic crisis from one country to others through interconnections."], ["Re-shoring", "Bringing production back to the home country."], ["Global commons", "Resources outside national jurisdiction, such as the high seas and atmosphere."]],
+    skills: [{ h: "Risk analysis", b: "Identify the hazard, the network it travels through, who is vulnerable, and responses at different scales." }],
+    examples: [{ q: "Explain how COVID-19 revealed risks in global supply chains. [4]", a: "Factory closures in China halted component supply; just-in-time systems had no buffer; shipping costs rose; firms responded by diversifying suppliers." }],
+    formulas: [],
+    methods: ["<strong>Scale ladder:</strong> individual → local → national → global responses."],
+    traps: ["Listing risks without linking them to global interconnection.", "Ignoring trade-offs of re-shoring (higher costs)."],
+    tips: ["Use recent examples (2020s supply-chain disruption, energy prices after conflict)."],
+    frame: [{ type: "To what extent [16] - resilience", steps: ["Define resilience and risk.", "Strategy 1 (e.g. diversification) - evidence it works.", "Strategy 2 (e.g. international agreements) - limits.", "Who benefits / who is left vulnerable.", "Judgement across scales."], yue: "定義 → 策略一有效證據 → 策略二局限 → 持份者 → 跨尺度判斷。" }],
+    questions: [
+      { type: "mcq", paper: "P3", marks: 1, diff: 1, q: "Bringing manufacturing back to the home country is called:", options: ["offshoring", "outsourcing", "re-shoring", "glocalisation"], answer: 2, ms: ["C."] },
+      { paper: "P3", marks: 4, diff: 2, q: "Explain how a global pandemic can disrupt global supply chains.", ms: ["Factory/port closures in producing countries [1]", "Just-in-time systems have little stock buffer [1]", "Shipping delays and rising costs [1]", "Shortages/price rises for consumers elsewhere [1]"] },
+      { type: "extended", paper: "P3", marks: 16, diff: 3, q: "Evaluate strategies for increasing resilience to the risks of global interactions.", ms: ["Understanding of risk and resilience [3-4]", "Strategies explained with examples (diversification, re-shoring, agreements, stockpiling) [3-4]", "Strengths and limitations of each [3-4]", "Different scales/stakeholders [2-3]", "Substantiated conclusion [2-3]"] },
+    ],
+  },
+  {
+    id: "geo-h4", hl: false, code: "Option: Oceans and coastal margins", after: "geo-11", unit: "Option: Oceans and coastal margins", title: "Oceans and coastal margins",
+    summary: "Ocean-atmosphere interactions (currents, ENSO, carbon sink), interactions between oceans and coastal places (erosion, deposition, landforms), managing coastal margins (hard and soft engineering, ICZM) and ocean management futures (UNCLOS, overfishing, plastics).",
+    concepts: [
+      { h: "Ocean-atmosphere interactions", b: "<p>Ocean conveyor belt (thermohaline circulation) redistributes heat. El Niño: weakened trade winds, warm water moves east, drought in Australia/Indonesia and floods in Peru. Oceans absorb CO₂ → acidification.</p>", yue: "厄爾尼諾：信風減弱，暖水向東流，澳洲旱、秘魯水浸。" },
+      { h: "Coastal processes and landforms", b: "<p>Erosion (hydraulic action, abrasion, solution), longshore drift, deposition. Landforms: cliffs, wave-cut platforms, headlands and bays, spits, bars, tombolos.</p>" },
+      { h: "Managing coasts and oceans", b: "<p>Hard engineering (sea walls, groynes, rock armour) vs soft (beach nourishment, managed retreat, mangrove restoration). ICZM balances stakeholders. UNCLOS defines EEZs (200 nautical miles); overfishing and plastic pollution need international cooperation.</p>" },
+    ],
+    terms: [["Longshore drift", "The movement of sediment along a coast by waves approaching at an angle."], ["EEZ", "Exclusive economic zone, extending 200 nautical miles from the coast."], ["Managed retreat", "Allowing the coastline to move inland in a controlled way."], ["ICZM", "Integrated coastal zone management - holistic management of the whole coastal area."]],
+    skills: [{ h: "Annotated diagrams", b: "Draw spits/wave-cut platforms with arrows for processes and labels for features." }],
+    examples: [{ q: "Explain the formation of a spit. [4]", a: "Longshore drift carries sediment along the coast; where the coast changes direction, sediment is deposited into the sea; spit grows; wind/wave changes create a hooked end; salt marsh forms behind." }],
+    formulas: [],
+    methods: ["<strong>Management evaluation:</strong> cost, effectiveness, environmental impact, impact on other places (terminal groyne effect)."],
+    traps: ["Saying hard engineering is always best.", "Mixing El Niño and La Niña effects."],
+    tips: ["Use a named case study (e.g. Holderness coast, Maldives, Great Pacific Garbage Patch)."],
+    frame: [{ type: "Paper 1 (b) [10] - coastal management", steps: ["Introduction: stakeholders and problem.", "Hard engineering: how it works + example + evaluation.", "Soft engineering: how it works + example + evaluation.", "Conclusion: which is more sustainable and why."], yue: "引言 → 硬工程 + 評估 → 軟工程 + 評估 → 結論。" }],
+    questions: [
+      { type: "mcq", paper: "P1", marks: 1, diff: 1, q: "An exclusive economic zone extends from the coast:", options: ["12 nautical miles", "24 nautical miles", "200 nautical miles", "350 nautical miles"], answer: 2, ms: ["C."] },
+      { paper: "P1", marks: 4, diff: 2, q: "Explain the formation of a spit.", ms: ["Longshore drift transports sediment along the coast [1]", "Coast changes direction / river mouth [1]", "Sediment deposited and builds out into the sea [1]", "Wind/wave changes cause a recurved end; salt marsh may form behind [1]"] },
+      { paper: "P1", marks: 4, diff: 2, q: "Explain two effects of an El Niño event.", ms: ["Effect 1 identified, e.g. drought in Australia/Indonesia [1]", "Explained: warm water/rising air moves east [1]", "Effect 2 identified, e.g. flooding in Peru / collapse of anchovy fishery [1]", "Explained: reduced upwelling of nutrients [1]"] },
+      { type: "extended", paper: "P1", marks: 10, diff: 3, q: "Evaluate the effectiveness of hard engineering strategies in managing coastal erosion.", ms: ["Explanation of hard strategies (sea walls, groynes, rock armour) [2-3]", "Named examples [2]", "Strengths: protection of property, short-term effectiveness [2]", "Limitations: cost, terminal groyne effect, visual/ecological impact [2]", "Judgement [1-2]"] },
+    ],
+  },
+]);
