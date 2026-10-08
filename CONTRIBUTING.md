@@ -8,7 +8,7 @@ Thanks for wanting to help improve kTown! Anyone can suggest changes by opening 
 1. **Fork** the repository on GitHub.
 2. **Clone** your fork and create a branch for your change:
    ```bash
-   git clone https://github.com/<your-username>/kTown.git
+   git clone https://github.com/Kurtis-Lam/kTown.git
    cd kTown
    git checkout -b my-change
    ```
