@@ -16,13 +16,14 @@
         .credit-list { display: grid; gap: 20px; }
         .credit-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 28px; display: flex; gap: 20px; align-items: flex-start; }
         .credit-card.main { border-color: var(--border-accent); background: linear-gradient(135deg, rgba(30, 27, 75, .7), rgba(18, 24, 38, .9)); }
-        .credit-card .card-icon-wrapper { flex: none; }
+        .credit-card .card-icon-wrapper { flex: none; background: transparent !important; }
+        .credit-card .card-icon-wrapper img { width: 40px; height: 40px; object-fit: contain; background: transparent; }
         .credit-card h2 { font-size: 1.3rem; margin-bottom: 4px; }
         .credit-card .role { font-size: .8rem; text-transform: uppercase; letter-spacing: 1px; color: #d8b4fe; font-weight: 700; margin-bottom: 10px; display: block; }
         .credit-card p, .credit-card li { color: #d3dcec; line-height: 1.65; font-size: .98rem; }
         .credit-card ul { padding-left: 1.2em; margin-top: 8px; }
-        .credit-card a { color: #c4b5fd; }
-        .credit-card a:hover { color: #fff; }
+        .credit-card a { color: #c4b5fd; text-decoration: none; }
+        .credit-card a:hover { color: #fff; text-decoration: underline; }
         .credits-back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 26px; color: var(--text-muted); text-decoration: none; font-weight: 600; }
         .credits-back:hover { color: #fff; }
         .credits-note { margin-top: 30px; text-align: center; color: var(--text-muted); font-size: .9rem; line-height: 1.6; }
@@ -51,17 +52,19 @@
                 <div>
                     <span class="role">Main developer</span>
                     <h2>Kurtis Lam</h2>
-                    <p>Created and develops kTown and all of its apps. Find the source code on <a href="https://github.com/Kurtis-Lam/kTown" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+                    <p><a href="https://github.com/Kurtis-Lam" target="_blank" rel="noopener noreferrer">Kurtis Lam</a> created and develops kTown and all of its apps. Find the source code on <a href="https://github.com/Kurtis-Lam/kTown" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
                 </div>
             </article>
 
             <article class="credit-card">
-                <div class="card-icon-wrapper revision-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div class="card-icon-wrapper revision-icon">
+                    <img src="/imgs/logos/krevisionnotes.png" alt="kRevisionNotes logo" width="40" height="40" />
+                </div>
                 <div>
                     <span class="role">kRevisionNotes</span>
                     <h2>Hogan Choi &amp; web-based materials</h2>
                     <ul>
-                        <li><strong>Hogan Choi</strong> contributed to the revision content.</li>
+                        <li><strong><a href="https://github.com/hoganplaz-png" target="_blank" rel="noopener noreferrer">Hogan Choi</a></strong> contributed to the revision content.</li>
                         <li>Web-based materials and the <strong>IB (International Baccalaureate)</strong> syllabus guides were used as reference for topics and exam structure.</li>
                     </ul>
                     <p style="margin-top:8px">Notes and questions are original IB-style material. kRevisionNotes is not official IB content and is not affiliated with or endorsed by the International Baccalaureate Organization.</p>
@@ -69,20 +72,22 @@
             </article>
 
             <article class="credit-card">
-                <div class="card-icon-wrapper auranotes-icon"><i class="fa-solid fa-note-sticky"></i></div>
+                <div class="card-icon-wrapper auranotes-icon">
+                    <img src="/imgs/logos/kauranotes.png" alt="kAuraNotes logo" width="40" height="40" />
+                </div>
                 <div>
                     <span class="role">kAuraNotes</span>
-                    <h2>Kurtis Lam</h2>
-                    <p>Designed and developed by Kurtis Lam.</p>
+                    <p>Designed and developed by Main Developer.</p>
                 </div>
             </article>
 
             <article class="credit-card">
-                <div class="card-icon-wrapper kcite-icon"><i class="fa-solid fa-quote-right"></i></div>
+                <div class="card-icon-wrapper kcite-icon">
+                    <img src="/imgs/logos/kcitethisforme.png" alt="kCiteThisForMe logo" width="40" height="40" />
+                </div>
                 <div>
                     <span class="role">kCiteThisForMe</span>
-                    <h2>Kurtis Lam</h2>
-                    <p>Designed and developed by Kurtis Lam.</p>
+                    <p>Designed and developed by Main Developer.</p>
                 </div>
             </article>
 
@@ -95,8 +100,6 @@
                 </div>
             </article>
         </section>
-
-        <p class="credits-note">Want to help improve kTown? Read the <a href="https://github.com/Kurtis-Lam/kTown/blob/HEAD/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" style="color:#c4b5fd">contributing guide</a> and open a pull request at <a href="https://github.com/Kurtis-Lam/kTown" target="_blank" rel="noopener noreferrer" style="color:#c4b5fd">github.com/Kurtis-Lam/kTown</a>.</p>
     </main>
 
     <script src="/shell.js" defer></script>
