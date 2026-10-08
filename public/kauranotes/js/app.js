@@ -18,7 +18,8 @@ import {
 } from "firebase/firestore";
 
 // ─── OpenRouter API key ───────────────────────────────────────────────
-const OPENROUTER_API_KEY = "sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Replace with your actual OpenRouter API key
+// The key now lives in Vercel (env var OPENROUTER_API_KEY) and is used by /api/openrouter.
+const OPENROUTER_ENDPOINT = "/api/openrouter";
 
 // ─── Firebase config ──────────────────────────────────────────────────
 const firebaseConfig = {
@@ -1208,21 +1209,13 @@ function stripHTML(html) {
 
 // ─── OpenRouter API ─────────────────────────────────────────────────
 async function callOpenRouterAPI(messages, maxTokens = 4096) {
-    if (!OPENROUTER_API_KEY) {
-        throw new Error("Missing valid OpenRouter API Key.");
-    }
-
     try {
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        const response = await fetch(OPENROUTER_ENDPOINT, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-                "Content-Type": "application/json",
-                "HTTP-Referer": window.location.href,
-                "X-Title": "AuraNotes Google Docs AI"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "deepseek/deepseek-v4-flash-vision-exp",
                 max_tokens: maxTokens,
                 messages: messages
             })
