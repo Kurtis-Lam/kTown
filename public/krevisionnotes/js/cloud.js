@@ -15,6 +15,8 @@
   const load = (src) => new Promise((ok, bad) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = () => bad(new Error("Couldn't reach Firebase - check your connection.")); document.head.appendChild(s); });
 
   const cloud = (IB.cloud = { configured: !!window.IB_FIREBASE && !window.IB_HOSTED, user: null, profile: null, ready: false });
+  // Resolves once the first sign-in check has finished, so a page can render ONCE with the right account state.
+  cloud.whenReady = new Promise((ok) => { cloud._resolve = ok; });
   let fb = null, db = null, auth = null, saveTimer = null, starting = null;
 
   // ---------- merging two copies of the progress store ----------
@@ -71,11 +73,13 @@
   async function onUser(u) {
     cloud.user = u;
     if (!u) {
+      const needs = needsRerender(null);
       IB.setStoreKey(null);
       cloud.profile = null;
       cloud.ready = true;
+      cloud._resolve();
       renderSlot();
-      rerender();
+      if (needs) rerender();
       return;
     }
     const key = "ibrev:u:" + u.uid;
@@ -106,11 +110,21 @@
       try { await ref.set(prof, { merge: true }); } catch (e) { /* ignore */ }
     }
     cloud.profile = prof;
+    const needs = needsRerender(u.uid);
     cloud.ready = true;
+    cloud._resolve();
+    renderSlot();
+    if (needs) rerender();
     await saveNow();
     renderSlot();
-    rerender();
-    IB.toast(`Signed in as ${u.displayName || u.email}. Progress is synced.`);
+    if (needs) IB.toast(`Signed in as ${u.displayName || u.email}. Progress is synced.`);
+  }
+
+  // Only redraw if the page on screen was drawn for a different account state (or before sign-in finished).
+  // On a normal page load the page waits for sign-in and draws once, so nothing needs redrawing.
+  function needsRerender(uid) {
+    if (IB._renderedUid === undefined) return false;          // nothing drawn yet: the page will draw itself
+    return IB._renderedUid !== uid || !IB._renderedReady;
   }
 
   function rerender() {
@@ -229,7 +243,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(renderSlot, 0);
-    if (cloud.configured) start().catch((e) => IB.toast(e.message));
-    else cloud.ready = true;
+    if (cloud.configured) start().catch((e) => { cloud.ready = true; cloud._resolve(); IB.toast(e.message); });
+    else { cloud.ready = true; cloud._resolve(); }
   });
 })();

@@ -1,1 +1,0 @@
-Rebuild css/tailwind.css after changing classes: npx tailwindcss@3 -c tools/kcitethisforme/tailwind.config.js -i <(printf '@tailwind base;@tailwind components;@tailwind utilities;') -o public/kcitethisforme/css/tailwind.css --minify
