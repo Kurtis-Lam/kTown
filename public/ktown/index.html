@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kTown — Home</title>
+    <link rel="icon" href="/imgs/logos/ktown.png" type="image/png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/ktown/css/style.css" />
+</head>
+<body>
+
+    <header>
+        <a href="#" class="brand">
+            <img src="/imgs/logos/ktown.png" alt="kTown" width="40" height="40" />
+            <span>kTown</span>
+        </a>
+
+        <div class="header-actions">
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>Connected</span>
+            </div>
+
+            <!-- Guest Controls -->
+            <div id="guestControls" style="display: flex;">
+                <button id="navAuthBtn" class="auth-btn primary" onclick="openAuthModal('login')">
+                    <i class="fa-solid fa-user-lock" style="margin-right: 6px;"></i> Account Access
+                </button>
+            </div>
+
+            <!-- Logged In Controls -->
+            <div id="userMenu" class="user-menu">
+                <img id="navAvatar" src="https://ui-avatars.com/api/?name=User&background=8b5cf6&color=fff" alt="Avatar" />
+                <span id="navUsername">Username</span>
+                <button class="icon-btn" onclick="openSettingsModal()" title="Settings"><i class="fa-solid fa-gear"></i></button>
+                <button class="icon-btn" id="logoutBtn" title="Log Out"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1 id="heroWelcome">Welcome to kTown</h1>
+            <p>The only app you'll ever need to ace your exams.</p>
+            <div class="live-clock-widget" id="liveClock">
+                <i class="fa-regular fa-clock"></i> <span id="clockTime">00:00:00 AM</span>
+            </div>
+        </section>
+
+        <div class="dashboard-title">
+            <span><i class="fa-solid fa-grid-2"></i> Launchpad</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">3 Apps Available</span>
+        </div>
+
+        <section class="dashboard-grid">
+            <a href="/krevisionnotes/index.html" class="app-card app-card-featured">
+                <div class="card-top">
+                    <div class="card-icon-wrapper revision-icon">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="card-tag">Core App</span>
+                        <div class="card-launch-btn">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3>kRevisionNotes <i class="fa-solid fa-circle-check" style="font-size:1rem; color:var(--accent-purple);"></i></h3>
+                    <p>Your IB revision hub. Topic notes, an exam-style question bank, quizzes, mock papers and a mistakes notebook for every subject, at SL and HL.</p>
+                </div>
+            </a>
+
+            <a href="/kauranotes/index.html" class="app-card">
+                <div class="card-top">
+                    <div class="card-icon-wrapper auranotes-icon">
+                        <i class="fa-solid fa-note-sticky"></i>
+                    </div>
+                    <div class="card-launch-btn">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3>kAuraNotes</h3>
+                    <p>Launch your smart workspace. Organize notes by subjects or date timeline, format rich text tables, and edit seamlessly with customized in-app alerts.</p>
+                </div>
+            </a>
+
+            <a href="/kcitethisforme/index.html" class="app-card">
+                <div class="card-top">
+                    <div class="card-icon-wrapper kcite-icon">
+                        <i class="fa-solid fa-quote-right"></i>
+                    </div>
+                    <div class="card-launch-btn">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3>kCiteThisForMe</h3>
+                    <p>Instantly generate accurate APA 7th edition citations and bibliographies for books, journals, and websites.</p>
+                </div>
+            </a>
+        </section>
+
+        <section class="widgets-section">
+            <div class="widget-box">
+                <i class="fa-solid fa-bolt"></i>
+                <div class="widget-info"><h4>System Performance</h4><p>Optimal (99.9%)</p></div>
+            </div>
+            <div class="widget-box">
+                <i class="fa-solid fa-shield-halved"></i>
+                <div class="widget-info"><h4>Local Storage Sync</h4><p>Active &amp; Encrypted</p></div>
+            </div>
+        </section>
+    </main>
+
+
+    <script src="/shell.js" defer></script>
+
+    <!-- ─── AUTH MODAL ─── -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+
+            <div class="auth-toggle-container">
+                <button id="toggleLoginBtn" class="auth-toggle-btn active" onclick="setAuthMode('login')">Log In</button>
+                <button id="toggleSignupBtn" class="auth-toggle-btn" onclick="setAuthMode('signup')">Sign Up</button>
+            </div>
+
+            <form id="authForm">
+                <div class="input-group" id="usernameGroup" style="display: none;">
+                    <label>Unique Username</label>
+                    <input type="text" id="authUsername" placeholder="e.g., kTownPro" />
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="authEmail" required placeholder="you@example.com" />
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" />
+                </div>
+                <button type="submit" id="authSubmitBtn" class="modal-btn">Log In</button>
+            </form>
+
+            <button id="googleAuthBtn" class="modal-btn google-btn">
+                <i class="fa-brands fa-google" style="font-size: 1.1rem; color: #4285F4;"></i>
+                Continue with Google
+            </button>
+        </div>
+    </div>
+
+    <!-- ─── SETTINGS MODAL ─── -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title">Profile Settings</h2>
+
+            <div class="avatar-preview" onclick="document.getElementById('avatarUpload').click()" title="Click to upload new avatar">
+                <img id="settingsAvatarPreview" src="" alt="Avatar" />
+            </div>
+            <p class="avatar-hint">Click image to upload (Powered by Cloudinary)</p>
+            <input type="file" id="avatarUpload" accept="image/*" style="display: none;" />
+
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="settingsUsername" />
+            </div>
+
+            <button id="saveSettingsBtn" class="modal-btn">Save Changes</button>
+            <button id="resetPasswordBtn" class="modal-btn" style="background: transparent; border: 1px solid var(--border); margin-top: 15px;">Send Password Reset Email</button>
+        </div>
+    </div>
+
+    <!-- ─── TOAST CONTAINER ─── -->
+    <div id="toastContainer"></div>
+
+    <!-- ─── FIREBASE + LOGIC ─── -->
+    <script type="module" src="/ktown/js/app.js"></script>
+
+    <!-- ─── CLOCK ─── -->
+    <script src="/ktown/js/app2.js"></script>
+</body>
+</html>
