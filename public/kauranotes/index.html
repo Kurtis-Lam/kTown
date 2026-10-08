@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kAuraNotes — Smart Workspace</title>
+    <link rel="icon" href="/imgs/logos/kauranotes.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="/kauranotes/css/style.css" />
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="brand-container">
+                <a href="#" class="brand">
+                    <img class="brand-logo" src="/imgs/logos/kauranotes.png" alt="kAuraNotes" width="36" height="36" /><span>kAuraNotes</span>
+                </a>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn" id="btnNewNote" style="flex:1;"><i class="fa-solid fa-plus"></i> New Note</button>
+                <button class="btn btn-secondary" id="btnOpenSubjectModal" title="Add Subject"><i class="fa-solid fa-folder-plus"></i></button>
+            </div>
+
+            <div>
+                <div class="section-title">Sort Hierarchy By</div>
+                <div class="view-switcher">
+                    <button class="switch-btn active" id="btnSortSubject"><i class="fa-solid fa-folder"></i> Subject</button>
+                    <button class="switch-btn" id="btnSortDate"><i class="fa-solid fa-calendar"></i> Date</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="section-title" id="treeHeaderTitle">Subjects Navigation</div>
+                <div class="nav-tree" id="navTree"></div>
+            </div>
+
+            <div style="margin-top: auto; display: flex; gap: 8px; flex-direction: column;">
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary btn-sm" id="btnExport" style="flex:1;"><i class="fa-solid fa-download"></i> Export</button>
+                    <button class="btn btn-secondary btn-sm" id="btnImport" style="flex:1;"><i class="fa-solid fa-upload"></i> Import</button>
+                    <input type="file" id="importFileInput" accept=".json" style="display:none">
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-workspace">
+            <div class="top-bar">
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <span style="cursor:pointer;">All Notes</span>
+                </div>
+                <div class="top-right-actions">
+                    <div id="subjectContextBtnContainer"></div>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Search notes...">
+                    </div>
+                    <div class="user-profile-badge" id="userBadge" style="display:none;">
+                        <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=8b5cf6&color=fff" alt="User">
+                        <span id="userName">User</span>
+                        <button class="icon-btn" id="logoutBtn" title="Log Out"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-area" id="contentArea"></div>
+        </main>
+    </div>
+
+    <!-- AUTHENTICATION MODAL -->
+    <div class="modal" id="authModal">
+        <div class="modal-dialog">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-lock" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px;"></i>
+                <h2 style="font-size: 1.4rem; font-weight: 800;">Login Required</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Sign in to sync your notes to Firebase.</p>
+            </div>
+
+            <div class="auth-toggle-container">
+                <button id="toggleLoginBtn" class="auth-toggle-btn active">Log In</button>
+                <button id="toggleSignupBtn" class="auth-toggle-btn">Sign Up</button>
+            </div>
+
+            <form id="authForm" style="display:flex; flex-direction:column; gap:12px;">
+                <div id="usernameGroup" style="display: none;">
+                    <label class="section-title">Unique Username</label>
+                    <input type="text" id="authUsername" placeholder="e.g. NoteMaster">
+                </div>
+                <div>
+                    <label class="section-title">Email Address</label>
+                    <input type="email" id="authEmail" required placeholder="you@example.com">
+                </div>
+                <div>
+                    <label class="section-title">Password</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" id="authSubmitBtn" class="btn" style="width:100%; margin-top:8px;">Log In</button>
+            </form>
+
+            <button id="googleAuthBtn" class="btn google-btn">
+                <i class="fa-brands fa-google" style="font-size: 1.1rem; color: #4285F4;"></i>
+                Continue with Google
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Create / Edit Subject Modal -->
+    <div class="modal" id="subjectModal">
+        <div class="modal-dialog">
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:16px;">
+                <h3 id="subjectModalTitle" style="font-size:1.1rem; font-weight:700;">Create New Subject</h3>
+                <button class="icon-close-btn" id="btnCloseSubjectModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="newSubjectForm" style="display:flex; flex-direction:column; gap:16px;">
+                <input type="hidden" id="editingSubjectId" value="">
+                <div>
+                    <label class="section-title">Subject Name</label>
+                    <input type="text" id="modalSubjectName" placeholder="e.g. Mathematics, Personal, Work" required>
+                </div>
+                <div>
+                    <label class="section-title">Tag Color</label>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="color" id="modalSubjectColor" value="#8b5cf6">
+                        <div class="color-presets">
+                            <div class="color-dot" style="background: #ef4444" data-color="#ef4444" title="Red"></div>
+                            <div class="color-dot" style="background: #f99a16" data-color="#f97316" title="Orange"></div>
+                            <div class="color-dot" style="background: #e6ea08" data-color="#eab308" title="Yellow"></div>
+                            <div class="color-dot" style="background: #22f670" data-color="#86efac" title="Light Green"></div>
+                            <div class="color-dot" style="background: #008f34" data-color="#15803d" title="Mid Dark Green"></div>
+                            <div class="color-dot" style="background: #1d4ed8" data-color="#1d4ed8" title="Mid Dark Blue"></div>
+                            <div class="color-dot" style="background: #38bdf8" data-color="#38bdf8" title="Light Blue"></div>
+                            <div class="color-dot" style="background: #c084fc" data-color="#c084fc" title="Light Purple"></div>
+                            <div class="color-dot" style="background: #8b5cf6" data-color="#8b5cf6" title="Purple"></div>
+                            <div class="color-dot" style="background: #ec4899" data-color="#ec4899" title="Pink"></div>
+                            <div class="color-dot" style="background: #ffffff" data-color="#ffffff" title="White"></div>
+                            <div class="color-dot" style="background: #78350f" data-color="#78350f" title="Brown"></div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn" style="margin-top:8px;">Save Subject</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Note Setup Modal -->
+    <div class="modal" id="noteSetupModal">
+        <div class="modal-dialog">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="font-size:1.1rem; font-weight:700;">Start New Note</h3>
+                <button class="icon-close-btn" id="btnCloseSetupModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="noteSetupForm" style="display:flex; flex-direction:column; gap:16px;">
+                <div>
+                    <label class="section-title">Note Title</label>
+                    <input type="text" id="setupNoteTitle" placeholder="Enter note title..." required>
+                </div>
+                <div>
+                    <label class="section-title">Select Subject</label>
+                    <select id="setupNoteSubject" class="select-subject" required></select>
+                </div>
+                <div>
+                    <label class="section-title">Note Date</label>
+                    <input type="date" id="setupNoteDate" class="select-subject" required>
+                </div>
+                <button type="submit" class="btn" style="margin-top:8px;"><i class="fa-solid fa-arrow-right"></i> Start Writing</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN GOOGLE DOCS STYLE EDITOR MODAL -->
+    <div class="modal" id="editorModal">
+        <div class="modal-content">
+            <div class="editor-header">
+                <i class="fa-solid fa-file-lines" style="color: var(--accent); font-size: 1.2rem;"></i>
+                <input type="text" id="noteTitleInput" placeholder="Note Title..." style="font-weight: 700; font-size: 1.15rem; flex: 1; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 0; padding: 4px 8px;">
+                <input type="date" id="noteDateInput" class="select-subject" style="width: 150px;" title="Edit Note Date">
+                <select id="noteSubjectSelect" class="select-subject" style="width: 180px;"></select>
+                <button class="btn btn-sm" id="btnSaveNote"><i class="fa-solid fa-check"></i> Save</button>
+                <button class="btn btn-secondary btn-sm" id="btnCloseEditor"><i class="fa-solid fa-xmark"></i> Close</button>
+            </div>
+
+            <div class="editor-toolbar">
+                <select id="blockFormatSelect" class="tool-select" title="Text Style">
+                    <option value="p">Normal text</option>
+                    <option value="h1">Title (H1)</option>
+                    <option value="h2">Subtitle (H2)</option>
+                    <option value="h3">Heading (H3)</option>
+                </select>
+
+                <select id="fontSizeSelect" class="tool-select" title="Font Size">
+                    <option value="1">10px (Small)</option>
+                    <option value="2">13px (Normal)</option>
+                    <option value="3" selected>16px (Medium)</option>
+                    <option value="4">18px (Large)</option>
+                    <option value="5">24px (X-Large)</option>
+                    <option value="6">32px (Huge)</option>
+                </select>
+
+                <div class="tool-divider"></div>
+
+                <button class="tool-btn" data-cmd="bold" title="Bold"><i class="fa-solid fa-bold"></i></button>
+                <button class="tool-btn" data-cmd="italic" title="Italic"><i class="fa-solid fa-italic"></i></button>
+                <button class="tool-btn" data-cmd="underline" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                <button class="tool-btn" data-cmd="superscript" title="Superscript (x²)"><i class="fa-solid fa-superscript"></i></button>
+                <button class="tool-btn" data-cmd="subscript" title="Subscript (x₂)"><i class="fa-solid fa-subscript"></i></button>
+
+                <button class="tool-btn" id="btnSketch" title="Toggle Sketch Mode"><i class="fa-solid fa-pen-nib"></i> Sketch</button>
+                <input type="color" id="sketchColorPicker" value="#8b5cf6" title="Brush Color" style="display:none; width:28px; height:28px; border:none; background:none; cursor:pointer;">
+                <select id="sketchSizeSelect" class="tool-select" title="Brush Size" style="display:none; width:65px;">
+                    <option value="2">2px</option>
+                    <option value="5" selected>5px</option>
+                    <option value="10">10px</option>
+                    <option value="20">20px</option>
+                </select>
+
+                <div class="tool-divider"></div>
+                <button class="tool-btn" data-cmd="insertUnorderedList" title="Bullet Points"><i class="fa-solid fa-list-ul"></i></button>
+                <button class="tool-btn" data-cmd="insertOrderedList" title="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
+                <div class="tool-divider"></div>
+                <label class="tool-btn" title="Text Color">
+                    <i class="fa-solid fa-palette"></i> Color
+                    <input type="color" id="textColorPicker" style="display:none;">
+                </label>
+
+                <label class="tool-btn" title="Upload Image">
+                    <i class="fa-solid fa-image"></i> Image
+                    <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
+                </label>
+
+                <button class="tool-btn btn-ai" id="btnSummarizeAi" title="Summarize document with OpenRouter AI">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Summarize with AI
+                </button>
+                <button class="tool-btn btn-ai" id="btnRefineAi" title="Refine and reformat notes with OpenRouter AI">
+                    <i class="fa-solid fa-sparkles"></i> Refine with AI
+                </button>
+
+                <div class="tool-divider"></div>
+                <button class="tool-btn" id="btnInsertTable" title="Insert Table"><i class="fa-solid fa-table"></i> Insert Table</button>
+
+                <button class="tool-btn" id="btnTogglePageNum" title="Toggle Page Numbers"><i class="fa-solid fa-hashtag"></i> Page #</button>
+
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 4px;">
+                    <button class="tool-btn" id="btnZoomOut" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+                    <span id="zoomLabel" style="font-size: 0.85rem; font-weight: 600; min-width: 48px; text-align: center;">100%</span>
+                    <button class="tool-btn" id="btnZoomIn" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+
+            <div class="docs-workspace-container">
+                <div class="refine-banner" id="refineBanner" style="display: none;">
+                    <span style="font-weight: 700; font-size: 0.9rem; color: #fff;">
+                        <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent);"></i> Review AI Refinement
+                    </span>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-success" id="btnAcceptRefine"><i class="fa-solid fa-check"></i> Accept</button>
+                        <button class="btn btn-sm btn-danger" id="btnDeclineRefine"><i class="fa-solid fa-xmark"></i> Decline</button>
+                    </div>
+                </div>
+
+                <div class="docs-page-viewport" id="docsPageViewport">
+                    <div class="split-pane-wrapper" id="originalPaneWrapper">
+                        <span class="split-pane-label" id="originalPaneLabel" style="display: none;">Original Document</span>
+                        <div id="editorPagesContainer">
+                            <!-- .a4-page dynamically generated here -->
+                        </div>
+                        <canvas id="sketchCanvas" contenteditable="false" style="position: absolute; pointer-events: none; z-index: 100; display: none;"></canvas>
+                    </div>
+
+                    <div class="split-pane-wrapper" id="refinedPaneWrapper" style="display: none;">
+                        <span class="split-pane-label">AI Refined Version</span>
+                        <div class="a4-page" id="refinedPreviewBody" contenteditable="false" style="border: 2px solid var(--accent);"></div>
+                    </div>
+                </div>
+
+                <div class="ai-resizer" id="aiResizer"></div>
+
+                <aside class="ai-summary-panel" id="aiSummaryPanel">
+                    <div class="ai-panel-header">
+                        <span style="font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent);"></i> AI Summary & Assistant
+                        </span>
+                        <button class="icon-close-btn" id="btnCloseAiPanel"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <div class="ai-chat-messages" id="aiChatMessages">
+                        <div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin-top: 20px;">
+                            Click "Summarize with AI" to generate a quick summary and chat with your document.
+                        </div>
+                    </div>
+
+                    <form class="ai-chat-input-area" id="aiChatForm">
+                        <input type="text" id="aiChatInput" placeholder="Ask follow-up questions..." style="font-size: 0.85rem;" disabled>
+                        <button type="submit" class="btn btn-sm" id="btnSendChat" disabled><i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Modal -->
+    <div class="modal" id="tableModal">
+        <div class="modal-dialog">
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="font-size:1.1rem; font-weight:700;"><i class="fa-solid fa-table"></i> Insert Table</h3>
+                <button class="icon-close-btn" id="btnCloseTableModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <div>
+                    <label class="section-title" style="display:flex; align-items:center; justify-content:space-between;">
+                        <span>Number of Rows</span>
+                        <span style="color:var(--accent); font-weight:700; text-transform:none;"><i class="fa-solid fa-arrow-down"></i> Vertical (&#8595;)</span>
+                    </label>
+                    <input type="number" id="inputTableRows" value="2" min="1" max="50">
+                </div>
+                <div>
+                    <label class="section-title" style="display:flex; align-items:center; justify-content:space-between;">
+                        <span>Number of Columns</span>
+                        <span style="color:var(--accent); font-weight:700; text-transform:none;"><i class="fa-solid fa-arrow-right"></i> Horizontal (&#8594;)</span>
+                    </label>
+                    <input type="number" id="inputTableCols" value="2" min="1" max="20">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                    <button class="btn btn-secondary btn-sm" id="btnCancelTable">Cancel</button>
+                    <button class="btn btn-sm" id="btnConfirmTable"><i class="fa-solid fa-plus"></i> Insert Table</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unsaved Changes Prompt -->
+    <div class="modal" id="unsavedModal">
+        <div class="modal-dialog">
+            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:8px;">Unsaved Changes</h3>
+            <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px;">You have unsaved changes in this note. What would you like to do?</p>
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+                <button class="btn btn-sm" id="btnUnsavedSave"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                <button class="btn btn-danger btn-sm" id="btnUnsavedDontSave">Don't Save</button>
+                <button class="btn btn-secondary btn-sm" id="btnUnsavedCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-dialog">
+            <h3 id="confirmModalTitle" style="font-size:1.1rem; font-weight:700; margin-bottom:8px;">Confirm Action</h3>
+            <p id="confirmModalMessage" style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px; line-height:1.4;"></p>
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+                <button class="btn btn-secondary btn-sm" id="btnConfirmCancel">Cancel</button>
+                <button class="btn btn-danger btn-sm" id="btnConfirmAction">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="modal" id="alertModal">
+        <div class="modal-dialog">
+            <h3 id="alertModalTitle" style="font-size:1.1rem; font-weight:700; margin-bottom:8px;">Notice</h3>
+            <p id="alertModalMessage" style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px; line-height:1.4;"></p>
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn btn-sm" id="btnAlertOk">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="customContextMenu" class="context-menu">
+        <div id="ctxEditSubject" class="ctx-item"><i class="fa-solid fa-pen"></i> Edit Subject</div>
+        <div id="ctxDeleteNote" class="ctx-item ctx-danger"><i class="fa-solid fa-trash"></i> Delete Note</div>
+        <div id="ctxDeleteSubject" class="ctx-item ctx-danger"><i class="fa-solid fa-folder-minus"></i> Delete Subject & Notes</div>
+    </div>
+
+    <!-- APPLICATION LOGIC MODULE -->
+    <script type="module" src="/kauranotes/js/app.js"></script>
+
+    <script src="/shell.js" defer></script>
+
+</body>
+</html>

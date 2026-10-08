@@ -1,0 +1,11 @@
+git add public/krevisionnotes/js/cloud.js
+git commit -m "Fix pages rendering twice: wait for sign-in check and only redraw when account state changed"
+git add public/krevisionnotes/js/app.js
+git commit -m "Render each page once after the first sign-in check"
+git add public/krevisionnotes/js/home.js
+git commit -m "Home: show SL/HL badge instead of switch buttons and remove mastery caption"
+git add public/krevisionnotes/js/notes.js
+git commit -m "Notes: accordion collapsed topics, collapse button beside overview, SL/HL badge, quiz after notes"
+git add public/krevisionnotes/css/style.css
+git commit -m "Fix invisible text and buttons, add active topic highlight, level badge and quiz styles"
+git push

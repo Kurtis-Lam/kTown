@@ -1,0 +1,140 @@
+/* Economics HL extension: AHL topics, Paper 3 and HL assessment. */
+IB.extend("econ", {
+  papers: {
+    P1: { name: "Paper 1 (extended response)", minutes: 75, marks: 25, mix: { extended: 2 } },
+    P2: { name: "Paper 2 (data response)", minutes: 105, marks: 40, mix: { short: 6, extended: 1 } },
+    P3: { name: "Paper 3 (HL policy paper)", minutes: 105, marks: 60, hl: true, mix: { short: 10, extended: 1 } },
+  },
+  assessmentHL: [
+    ["Paper 1 - Extended response", "1h 15m", "25 marks", "20%", "One two-part essay from a choice of three: (a) 10 marks explain/analyse, (b) 15 marks evaluate."],
+    ["Paper 2 - Data response", "1h 45m", "40 marks", "30%", "One of two data-response questions with definitions, diagrams, calculations and a 15-mark evaluation."],
+    ["Paper 3 - Policy paper (HL)", "1h 45m", "60 marks", "30%", "Two compulsory questions (30 marks each): quantitative calculations from data, then a 10-mark policy recommendation."],
+    ["Internal assessment", "-", "45 marks", "20%", "Portfolio of three commentaries on news articles."],
+  ],
+});
+
+IB.addTopics("econ", [
+  {
+    id: "econ-h1", code: "2.5 AHL", after: "econ-5", unit: "Unit 2: Microeconomics (HL)", title: "Theory of the firm: costs, revenues and profit",
+    summary: "Short-run and long-run costs, the law of diminishing marginal returns, economies of scale, revenue curves, profit maximisation (MC = MR) and alternative business goals.",
+    concepts: [
+      { h: "Short-run costs and diminishing returns", b: "<p>In the short run at least one factor is fixed. As more of a variable factor is added to a fixed factor, <strong>marginal product eventually falls</strong> (law of diminishing marginal returns), so <strong>marginal cost (MC) eventually rises</strong>. MC cuts AVC and ATC at their minimum points.</p><ul><li>TC = TFC + TVC; ATC = TC/Q; AVC = TVC/Q; MC = ΔTC/ΔQ</li></ul>", yue: "短期有固定生產要素，不斷加可變要素，邊際產量最終會下跌，所以邊際成本 MC 最終上升。MC 一定喺 ATC 同 AVC 最低點穿過。" },
+      { h: "Long-run costs", b: "<p>All factors are variable. The LRAC curve is U-shaped because of <strong>economies of scale</strong> (specialisation, bulk buying, financial, technical) and then <strong>diseconomies of scale</strong> (coordination and communication problems, worker alienation).</p>" },
+      { h: "Revenue and profit", b: "<p>TR = P × Q; AR = TR/Q = P; MR = ΔTR/ΔQ. Profit = TR − TC. <strong>Economic profit</strong> includes opportunity cost: normal profit is when TR = TC (AR = ATC). Profit is maximised where <strong>MC = MR</strong> (and MC is rising).</p>", yue: "利潤最大化條件：MC = MR。正常利潤 normal profit 即係 TR = TC，經濟利潤為零。" },
+      { h: "Alternative goals", b: "<p>Revenue maximisation (MR = 0), growth maximisation (AC = AR, max output without loss), satisficing, corporate social responsibility (CSR).</p>" },
+    ],
+    terms: [["Law of diminishing marginal returns", "As more units of a variable factor are added to a fixed factor, the marginal product of the variable factor eventually falls."], ["Economies of scale", "Falls in long-run average cost as a firm increases its scale of output."], ["Normal profit", "The minimum return needed to keep a firm in its current industry; occurs when TR = TC (zero economic profit)."], ["Shut-down price", "The price equal to minimum AVC; below it a firm shuts down in the short run."], ["Break-even price", "The price equal to minimum ATC; the firm earns normal profit."]],
+    skills: [
+      { h: "Cost diagram (8-mark explain)", b: "Draw MC (tick shape), AVC and ATC (U shapes), MC through both minima. Label axes Costs/Revenue and Output (Q)." },
+      { h: "Calculation questions (Paper 3)", b: "Set up a table: Q, TC, ATC, MC, TR, MR, profit. MC and MR go between rows. Profit max = highest TR − TC (or MC = MR)." },
+    ],
+    examples: [{ q: "A firm's TC rises from $500 to $560 when output rises from 20 to 25 units. Calculate MC. [2]", a: "MC = ΔTC/ΔQ = 60/5 = $12 per unit." }],
+    formulas: ["TC = TFC + TVC", "ATC = TC ÷ Q", "MC = ΔTC ÷ ΔQ", "MR = ΔTR ÷ ΔQ", "Profit = TR − TC", "Profit max: MC = MR"],
+    methods: ["<strong>Profit/loss area:</strong> (AR − ATC) × Q at the profit-maximising output.", "<strong>Shut-down rule:</strong> stay open in the short run while P ≥ AVC."],
+    traps: ["Drawing MC cutting ATC away from its minimum.", "Saying normal profit means zero profit (it is zero economic profit).", "Confusing diseconomies of scale (long run) with diminishing returns (short run)."],
+    tips: ["Always show MC = MR on the diagram with a dotted line down to Q*.", "For HL Paper 3, label units ($, units) in every calculation."],
+    frame: [
+      { type: "Explain [10] - cost curves", steps: ["Define short run / law of diminishing marginal returns.", "Diagram: MC, AVC, ATC with MC through the minima.", "Explain why MC falls then rises (marginal product rises then falls).", "Link to AVC/ATC shape; TFC spread over more units.", "Real-world example (e.g. a café adding baristas to a fixed counter)."], yue: "先定義，再畫圖，再解釋點解 MC 先跌後升，最後加真實例子。" },
+      { type: "Calculate [2] - MC / AR / profit", steps: ["Write the formula.", "Substitute with units.", "Answer with $ and units."], yue: "寫公式 → 代數 → 答案加單位。" },
+    ],
+    questions: [
+      { type: "mcq", paper: "P1", marks: 1, diff: 2, q: "In the short run a firm should shut down when price falls below:", options: ["minimum ATC", "minimum AVC", "MC", "MR"], answer: 1, ms: ["B. Below min AVC the firm cannot cover variable costs."] },
+      { paper: "P3", marks: 2, diff: 1, numeric: { value: 12, tol: 0.01 }, q: "A firm's total cost rises from $500 to $560 when output rises from 20 to 25 units. Calculate the marginal cost per unit (in $).", ms: ["MC = ΔTC/ΔQ = 60/5 [M1]", "$12 [A1]"] },
+      { paper: "P3", marks: 2, diff: 2, numeric: { value: 1500, tol: 1 }, q: "A firm sells 300 units at a price of $25. Its average total cost is $20. Calculate its total economic profit (in $).", ms: ["(AR − ATC) × Q = (25 − 20) × 300 [M1]", "$1500 [A1]"] },
+      { paper: "P2", marks: 4, diff: 2, q: "Explain the law of diminishing marginal returns.", ms: ["Applies in the short run, with at least one fixed factor [1]", "Adding more units of a variable factor (e.g. labour) [1]", "Marginal product eventually falls [1]", "So marginal cost eventually rises [1]"] },
+      { paper: "P2", marks: 4, diff: 2, q: "Explain two reasons why a firm may experience economies of scale.", ms: ["Reason 1 identified, e.g. bulk buying / technical / financial / specialisation [1]", "Reason 1 explained: lowers average cost as output rises [1]", "Reason 2 identified [1]", "Reason 2 explained [1]"] },
+      { type: "extended", paper: "P1", marks: 10, diff: 3, q: "Explain why a firm might choose a goal other than profit maximisation.", ms: ["Definition of profit maximisation (MC = MR) [1-2]", "Diagram showing profit max, revenue max (MR = 0) and/or growth max (AR = AC) [2-3]", "Explanation of alternative goals: revenue/growth/satisficing/CSR [3-4]", "Real-world examples and links to stakeholders / principal-agent problem [1-2]"] },
+    ],
+  },
+  {
+    id: "econ-h2", code: "2.11 AHL", after: "econ-h1", unit: "Unit 2: Microeconomics (HL)", title: "Market structures: perfect competition, monopoly, oligopoly",
+    summary: "Characteristics, short- and long-run equilibrium of perfect competition, monopoly and monopolistic competition; oligopoly, game theory, collusion; efficiency and regulation of market power.",
+    concepts: [
+      { h: "Perfect competition", b: "<p>Many firms, homogeneous product, no barriers, perfect information. Firms are <strong>price takers</strong> (P = AR = MR, horizontal). Short run: abnormal profit or loss possible. Long run: entry/exit removes abnormal profit → P = min ATC. Both <strong>allocatively (P = MC)</strong> and <strong>productively (min ATC)</strong> efficient.</p>", yue: "完全競爭：好多廠商、產品一樣、無入行障礙。長期只有正常利潤，又有配置效率（P = MC）又有生產效率（最低 ATC）。" },
+      { h: "Monopoly", b: "<p>Single seller, high barriers (economies of scale, legal, control of resources, brand). Downward-sloping AR, MR below AR. Produces at MC = MR and charges the price on AR → <strong>abnormal profit in the long run</strong>, P > MC (allocative inefficiency), welfare loss. Possible benefits: economies of scale, natural monopoly, R&D (dynamic efficiency).</p>" },
+      { h: "Monopolistic competition", b: "<p>Many firms, differentiated products, low barriers. Short-run abnormal profit; long run AR tangent to ATC → normal profit, excess capacity, not productively or allocatively efficient but offers choice.</p>" },
+      { h: "Oligopoly and game theory", b: "<p>Few interdependent firms. <strong>Collusive</strong> (cartels, like OPEC; usually illegal) or <strong>non-collusive</strong> (price rigidity, non-price competition). Game theory (prisoner's dilemma payoff matrix) shows why firms cheat on agreements: the dominant strategy is often to compete, leading to a worse joint outcome.</p>", yue: "寡頭壟斷：幾間大公司互相依賴。博弈論（囚徒困境）解釋點解大家明知合謀好，但都會出賣對方。" },
+      { h: "Regulating market power", b: "<p>Legislation (competition/anti-trust law), price regulation (P = MC or P = AC for natural monopolies), nationalisation, trade liberalisation, fines.</p>" },
+    ],
+    terms: [["Price taker", "A firm that cannot influence the market price and must accept it."], ["Allocative efficiency", "Producing the combination of goods most wanted by society, where P = MC."], ["Productive efficiency", "Producing at the lowest possible average cost (min ATC)."], ["Natural monopoly", "A market where one firm can supply the whole market at a lower average cost than two or more firms."], ["Collusion", "An agreement among firms to limit competition, e.g. by fixing prices or output."], ["Concentration ratio", "The share of market output/sales held by the largest firms (e.g. CR4)."]],
+    skills: [
+      { h: "Market structure diagram", b: "Label AR = D, MR, MC, ATC. Mark Q where MC = MR, go up to AR for P, and shade (P − ATC) × Q." },
+      { h: "Payoff matrix", b: "For each firm, find the best response to each rival choice. A strategy that is best whatever the rival does is dominant." },
+    ],
+    examples: [{ q: "The largest four firms have sales of $30m, $20m, $15m and $10m in a market worth $100m. Calculate CR4. [2]", a: "CR4 = (30 + 20 + 15 + 10)/100 = 75%." }],
+    formulas: ["Profit max: MC = MR", "Allocative efficiency: P = MC", "Productive efficiency: min ATC", "CR4 = share of 4 largest firms (%)"],
+    methods: ["<strong>Compare structures:</strong> table of number of firms, product, barriers, price-setting, long-run profit, efficiency.", "<strong>Welfare loss:</strong> triangle between P and MC from monopoly output to competitive output."],
+    traps: ["Drawing MR for a monopoly with the same slope as AR (it is twice as steep for linear AR).", "Saying monopolies always charge the highest possible price.", "Forgetting the long-run adjustment in perfect and monopolistic competition."],
+    tips: ["In evaluation, weigh monopoly costs (higher P, lower Q, welfare loss) against benefits (economies of scale, R&D).", "Use real firms: Google (search), Visa/Mastercard (duopoly), OPEC (cartel)."],
+    frame: [
+      { type: "Explain [10] - monopoly equilibrium", steps: ["Define monopoly + barriers to entry.", "Diagram: AR, MR, MC, ATC; Q at MC = MR; P on AR; shade abnormal profit.", "Explain why abnormal profit persists (barriers).", "Compare with perfect competition: higher P, lower Q, P > MC.", "Example (e.g. a utility company)."], yue: "定義 → 畫圖標 MC=MR → 解釋點解長期都有超額利潤 → 同完全競爭比較 → 例子。" },
+      { type: "Evaluate [15] - regulating monopoly", steps: ["Define + diagram of welfare loss.", "Policy 1 (e.g. price regulation): how it works + diagram.", "Policy 2 (e.g. competition law/fines).", "Evaluate with CLASP: costs of information, regulatory capture, natural monopoly, dynamic efficiency.", "Judgement: which policy, under what conditions."], yue: "評估要講利弊同埋前提，最後一定要有判斷（判斷要有條件）。" },
+    ],
+    questions: [
+      { type: "mcq", paper: "P1", marks: 1, diff: 1, q: "In long-run equilibrium, a perfectly competitive firm earns:", options: ["abnormal profit", "normal profit", "a loss", "monopoly profit"], answer: 1, ms: ["B."] },
+      { type: "mcq", paper: "P1", marks: 1, diff: 2, q: "A monopolist maximises profit where:", options: ["P = MC", "AR = ATC", "MC = MR", "MR = 0"], answer: 2, ms: ["C."] },
+      { paper: "P3", marks: 2, diff: 1, numeric: { value: 75, tol: 0.1 }, q: "The four largest firms have sales of $30m, $20m, $15m and $10m in a market with total sales of $100m. Calculate the four-firm concentration ratio (%).", ms: ["(30 + 20 + 15 + 10) ÷ 100 × 100 [M1]", "75% [A1]"] },
+      { paper: "P2", marks: 4, diff: 2, q: "Explain why a perfectly competitive firm earns only normal profit in the long run.", ms: ["Short-run abnormal profit attracts new firms [1]", "No barriers to entry [1]", "Market supply increases, price falls [1]", "Until P = min ATC, so only normal profit remains [1]"] },
+      { paper: "P2", marks: 4, diff: 3, q: "Using game theory, explain why collusive agreements between oligopolists tend to break down.", ms: ["Firms are interdependent [1]", "Payoff matrix / prisoner's dilemma described [1]", "Each firm can gain by cheating (e.g. lowering price) if the other keeps the agreement [1]", "Cheating is the dominant strategy, so the agreement collapses [1]"] },
+      { type: "extended", paper: "P1", marks: 15, diff: 3, q: "Evaluate the view that monopolies are always against the public interest.", ms: ["Definitions and monopoly diagram with welfare loss [1-3]", "Costs: higher P, lower Q, allocative/productive inefficiency, less choice [3-4]", "Benefits: economies of scale, natural monopoly, R&D/dynamic efficiency [3-4]", "Real-world examples [1-2]", "Balanced, supported judgement [2-3]"] },
+    ],
+  },
+  {
+    id: "econ-h3", code: "3.2-3.6 AHL", after: "econ-13", unit: "Unit 3: Macroeconomics (HL)", title: "HL macro: multiplier, Phillips curve and money creation",
+    summary: "The Keynesian multiplier, MPC/MPS/MPT/MPM, Keynesian vs monetarist/new classical AS, short- and long-run Phillips curves, natural rate of unemployment and fractional-reserve money creation.",
+    concepts: [
+      { h: "The multiplier", b: "<p>An injection (G, I, X) causes a larger final change in real GDP because spending becomes someone else's income. \\(k = \\frac{1}{1 - MPC} = \\frac{1}{MPS + MPT + MPM}\\). ΔY = k × Δinjection.</p>", yue: "乘數效應：政府用一蚊，變成人哋收入，再用一部份，最後 GDP 增加多過一蚊。k = 1/(1−MPC)。" },
+      { h: "Keynesian vs monetarist AS", b: "<p>Keynesian AS is horizontal at low output (spare capacity), then upward sloping, then vertical at full employment. Monetarist/new classical: SRAS upward sloping, LRAS vertical at potential output - the economy self-corrects.</p>" },
+      { h: "Phillips curve", b: "<p>Short-run Phillips curve: inverse relationship between inflation and unemployment. Long-run Phillips curve is vertical at the <strong>natural rate of unemployment (NRU)</strong>; attempts to push unemployment below the NRU only raise inflation (expectations adjust). Stagflation (1970s) broke the original relationship.</p>", yue: "短期菲利普斯曲線：通脹同失業反向；長期係垂直喺自然失業率，政府硬推低失業只會令通脹上升。" },
+      { h: "Money creation", b: "<p>Commercial banks lend a share of deposits; the money multiplier \\(= \\frac{1}{\\text{reserve requirement}}\\). Central banks influence money supply through policy rates, open-market operations, reserve requirements and quantitative easing.</p>" },
+    ],
+    terms: [["Marginal propensity to consume (MPC)", "The fraction of additional income spent on domestic consumption."], ["Natural rate of unemployment", "The unemployment rate when the economy is at full employment (structural + frictional + seasonal)."], ["Stagflation", "High inflation together with high unemployment and slow growth."], ["Money multiplier", "The maximum increase in money supply from a new deposit, equal to 1 ÷ reserve requirement."]],
+    skills: [{ h: "Multiplier calculations (Paper 3)", b: "Find k first, then ΔY = k × ΔJ. If asked for the required injection, divide the output gap by k." }],
+    examples: [{ q: "MPC = 0.75. Government spending rises by $20bn. Calculate the change in real GDP. [2]", a: "k = 1/(1 − 0.75) = 4; ΔY = 4 × 20 = $80bn." }],
+    formulas: ["\\(k = \\frac{1}{1-MPC}\\)", "\\(k = \\frac{1}{MPS+MPT+MPM}\\)", "ΔY = k × ΔJ", "Money multiplier = 1 ÷ RRR"],
+    methods: ["<strong>Output gap policy:</strong> required injection = gap ÷ k.", "<strong>Phillips curve diagram:</strong> SRPC1 → movement along → expectations shift SRPC2; LRPC vertical at NRU."],
+    traps: ["Using MPS instead of MPC in 1/(1 − MPC).", "Saying the LRPC slopes downwards.", "Forgetting taxes and imports reduce the multiplier."],
+    tips: ["Show the multiplier as a bigger AD shift than the initial injection.", "Link Phillips curve answers to expectations and the NRU."],
+    frame: [
+      { type: "Explain [10] - multiplier", steps: ["Define injection and multiplier.", "AD/AS diagram: initial shift + further multiplier shift.", "Chain: spending → income → induced consumption, with leakages.", "Formula with numbers.", "Example: stimulus package."], yue: "定義 → AD 圖顯示兩次移動 → 解釋收入循環同漏出 → 公式 → 例子。" },
+      { type: "Calculate [2] - multiplier", steps: ["k = 1/(1 − MPC) or 1/(sum of MPWs).", "ΔY = k × ΔJ.", "Answer with $ and units (bn)."], yue: "先計 k，再乘注入。" },
+    ],
+    questions: [
+      { type: "mcq", paper: "P1", marks: 1, diff: 2, q: "If MPS = 0.1, MPT = 0.2 and MPM = 0.2, the multiplier is:", options: ["1.5", "2", "2.5", "5"], answer: 1, ms: ["B. k = 1/0.5 = 2."] },
+      { paper: "P3", marks: 2, diff: 1, numeric: { value: 80, tol: 0.1 }, q: "The MPC is 0.75. Government spending increases by $20bn. Calculate the final change in real GDP (in $bn).", ms: ["k = 1/(1 − 0.75) = 4 [M1]", "ΔY = 4 × 20 = $80bn [A1]"] },
+      { paper: "P3", marks: 2, diff: 2, numeric: { value: 12, tol: 0.05 }, q: "An economy has a recessionary gap of $30bn and a multiplier of 2.5. Calculate the increase in government spending (in $bn) needed to close the gap.", ms: ["30 ÷ 2.5 [M1]", "$12bn [A1]"] },
+      { paper: "P3", marks: 2, diff: 2, numeric: { value: 10, tol: 0.01 }, q: "The reserve requirement is 10%. Calculate the money multiplier.", ms: ["1 ÷ 0.10 [M1]", "10 [A1]"] },
+      { paper: "P2", marks: 4, diff: 3, q: "Using a Phillips curve diagram, explain why there may be no long-run trade-off between inflation and unemployment.", ms: ["Diagram with SRPC and vertical LRPC at NRU [1]", "Expansionary policy lowers unemployment along SRPC, inflation rises [1]", "Workers' inflation expectations adjust, SRPC shifts up [1]", "Unemployment returns to NRU at higher inflation [1]"] },
+      { type: "extended", paper: "P1", marks: 15, diff: 3, q: "Evaluate the effectiveness of expansionary fiscal policy in reducing unemployment.", ms: ["Definitions; AD/AS diagram with multiplier [2-3]", "Mechanism: G/T changes, multiplier [2-3]", "Evaluation: size of multiplier, time lags, crowding out, debt, supply-side constraints, Keynesian vs monetarist AS [4-5]", "Real-world examples [1-2]", "Supported judgement [2]"] },
+    ],
+  },
+  {
+    id: "econ-h4", code: "4.1-4.7 AHL", after: "econ-17", unit: "Unit 4: The global economy (HL)", title: "HL international: comparative advantage, terms of trade, Marshall-Lerner",
+    summary: "Absolute and comparative advantage with opportunity cost calculations, tariff welfare calculations, terms of trade, Marshall-Lerner condition and J-curve, and current account calculations.",
+    concepts: [
+      { h: "Comparative advantage", b: "<p>A country has a comparative advantage if it produces a good at a <strong>lower opportunity cost</strong> than another. Specialisation and trade according to comparative advantage increase total output and allow consumption beyond the PPC.</p>", yue: "比較優勢睇機會成本，邊個機會成本低就專門生產嗰樣，再貿易，大家都得益。" },
+      { h: "Terms of trade", b: "<p>\\(\\text{ToT} = \\frac{\\text{index of average export prices}}{\\text{index of average import prices}} \\times 100\\). An improvement means each unit of exports buys more imports. Long-term deterioration is a problem for primary-commodity exporters.</p>" },
+      { h: "Marshall-Lerner and J-curve", b: "<p>A depreciation improves the current account only if \\(PED_X + PED_M > 1\\). In the short run demand is inelastic, so the deficit first worsens (J-curve) before improving.</p>" },
+      { h: "Tariff calculations", b: "<p>With a tariff: government revenue = tariff × imports; consumer surplus falls; producer surplus rises; deadweight loss = two triangles (production and consumption inefficiency).</p>" },
+    ],
+    terms: [["Comparative advantage", "The ability to produce a good at a lower opportunity cost than another producer."], ["Terms of trade", "The ratio of a country's export price index to its import price index, × 100."], ["Marshall-Lerner condition", "A depreciation improves the current account balance if the sum of the PEDs for exports and imports is greater than 1."], ["J-curve", "The current account worsens before it improves after a depreciation."]],
+    skills: [{ h: "Opportunity cost tables", b: "For each country divide the output lost by the output gained: OC of 1 unit of X = Y given up / X gained. Lower OC = comparative advantage." }],
+    examples: [{ q: "Export price index rises from 100 to 110; import price index rises from 100 to 125. Calculate the new terms of trade. [2]", a: "ToT = 110/125 × 100 = 88 (a deterioration)." }],
+    formulas: ["ToT = (Px index ÷ Pm index) × 100", "Tariff revenue = tariff × quantity imported", "Marshall-Lerner: PEDx + PEDm > 1"],
+    methods: ["<strong>Tariff diagram:</strong> label Qd and Qs at world price and world price + tariff; shade areas.", "<strong>Current account:</strong> = trade in goods + services + primary income + secondary income."],
+    traps: ["Confusing absolute and comparative advantage.", "Calling a fall in ToT an 'improvement' because exports are cheaper.", "Forgetting the J-curve time dimension."],
+    tips: ["In Paper 3, always show the formula line for ToT and tariff revenue.", "Link ToT changes to current account and living standards in evaluation."],
+    frame: [
+      { type: "Calculate [3] - comparative advantage", steps: ["Opportunity cost of each good in each country.", "Compare: lower OC = comparative advantage.", "State which country specialises in which good."], yue: "計晒兩國兩樣嘢嘅機會成本，邊個低就有比較優勢。" },
+      { type: "Explain [4] - J-curve", steps: ["Define depreciation.", "Short run: PED low, import bill rises → deficit worsens.", "Long run: PED rises (Marshall-Lerner holds) → deficit improves.", "Draw a J-shaped curve over time."], yue: "短期需求無彈性，赤字先惡化；長期有彈性，赤字改善，形成 J 形。" },
+    ],
+    questions: [
+      { type: "mcq", paper: "P1", marks: 1, diff: 2, q: "A depreciation will improve the current account if:", options: ["PEDx + PEDm < 1", "PEDx + PEDm > 1", "PEDx = PEDm", "PEDx > 0"], answer: 1, ms: ["B. Marshall-Lerner condition."] },
+      { paper: "P3", marks: 2, diff: 1, numeric: { value: 88, tol: 0.1 }, q: "A country's export price index rises from 100 to 110 and its import price index rises from 100 to 125. Calculate the new terms of trade.", ms: ["110 ÷ 125 × 100 [M1]", "88 [A1]"] },
+      { paper: "P3", marks: 2, diff: 2, numeric: { value: 600, tol: 0.5 }, q: "A tariff of $3 per unit is imposed. After the tariff, imports are 200 units. Calculate government tariff revenue (in $).", ms: ["3 × 200 [M1]", "$600 [A1]"] },
+      { paper: "P3", marks: 3, diff: 3, q: "Country A can produce 10 cars or 40 tonnes of rice; country B can produce 5 cars or 30 tonnes of rice. Identify which country has a comparative advantage in cars, showing your working.", ms: ["A: OC of 1 car = 4 tonnes rice [1]", "B: OC of 1 car = 6 tonnes rice [1]", "A has comparative advantage in cars (lower opportunity cost) [1]"] },
+      { paper: "P2", marks: 4, diff: 3, q: "Explain the J-curve effect following a depreciation.", ms: ["Imports more expensive / exports cheaper [1]", "In the short run demand is price inelastic (contracts, habits) [1]", "So the current account deficit initially worsens [1]", "Over time PED rises; if Marshall-Lerner holds the deficit improves [1]"] },
+    ],
+  },
+]);
+

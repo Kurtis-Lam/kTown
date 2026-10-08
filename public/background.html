@@ -1,0 +1,287 @@
+<!-- kTown shared background + footer.
+     Loaded into EVERY kTown page by shell.js (ktown, kauranotes, kcitethisforme and all krevisionnotes pages).
+     Edit this one file to change the nebula or the footer everywhere.
+     The nebula code is the original gemini-code, wrapped in a function so it cannot clash with page scripts. -->
+<style>
+  html { background: #07090e; }
+  body { background: transparent !important; }
+  #nebula { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; background: #07090e; }
+  #nebula canvas { position: absolute; opacity: 0; transition: opacity .8s ease; }
+  #nebula.ready canvas { opacity: 1; }
+  #overlay { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+  #ktFooter { position: relative; z-index: 5; flex-shrink: 0; width: 100%; text-align: center; padding: 26px 20px 30px; font: 500 0.85rem/1.6 "Plus Jakarta Sans", system-ui, -apple-system, sans-serif; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(7,9,14,0.82); }
+  #ktFooter .kt-note { max-width: 760px; margin: 8px auto 0; font-size: 0.78rem; opacity: 0.75; }
+
+  /* ---- kTown scrollbar (all pages) ---- */
+  html { scrollbar-width: thin; scrollbar-color: #7c5cff rgba(7,9,14,.7); }
+  @supports selector(::-webkit-scrollbar) {
+    html { scrollbar-width: auto; scrollbar-color: auto; }
+    *::-webkit-scrollbar { width: 11px; height: 11px; }
+    *::-webkit-scrollbar-track { background: rgba(7,9,14,.55); }
+    *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #8b5cf6, #ec4899 60%, #06b6d4); border-radius: 99px; border: 2px solid rgba(7,9,14,.85); }
+    *::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #a78bfa, #f472b6 60%, #22d3ee); }
+    *::-webkit-scrollbar-corner { background: transparent; }
+  }
+  /* ---- cursor glow ---- */
+  #ktGlow { position: fixed; left: 0; top: 0; width: 460px; height: 460px; margin: -230px 0 0 -230px; border-radius: 50%; pointer-events: none; z-index: 9999; opacity: 0; transition: opacity .4s ease; will-change: transform; background: radial-gradient(circle, rgba(167,139,250,.13) 0%, rgba(236,72,153,.06) 38%, rgba(6,182,212,.035) 58%, rgba(0,0,0,0) 72%); }
+  #ktGlow.on { opacity: 1; }
+  @media (hover: none), (prefers-reduced-motion: reduce) { #ktGlow { display: none; } }
+</style>
+<div id="nebula"></div>
+<div id="overlay"></div>
+<div id="ktGlow" aria-hidden="true"></div>
+<footer id="ktFooter"><span class="kt-line">&copy; 2026 kTown</span></footer>
+<script>
+(function () {
+
+    const STATIC_MODE = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);   // true = nothing moves (single rendered frame)
+    const NEB_SPEED = 1;         // speed of the drifting background colours (try 0.5 - 2)
+
+    let width, height;
+
+    function getSize() {
+      const de = document.documentElement;
+      return {
+        w: Math.max(window.innerWidth || 0, de.clientWidth || 0) || screen.width,
+        h: Math.max(window.innerHeight || 0, de.clientHeight || 0) || screen.height
+      };
+    }
+    function resize() {
+      const sz = getSize();
+      width = sz.w;
+      height = sz.h;
+    }
+    resize();
+
+    let resizeTimer;
+    function checkSize() {
+      const sz = getSize();
+      if (sz.w !== width || Math.abs(sz.h - height) > 160) {
+        resize();
+        drawNebula();
+        dirty = true;
+        if (STATIC_MODE) requestAnimationFrame(animate);
+      }
+    }
+    function scheduleCheck() { clearTimeout(resizeTimer); resizeTimer = setTimeout(checkSize, 300); }
+    window.addEventListener('resize', scheduleCheck);
+    if (window.ResizeObserver) new ResizeObserver(scheduleCheck).observe(document.documentElement);
+
+    const ptr = { x: -9999, y: -9999, active: false };
+    window.addEventListener('pointermove', (e) => {
+      ptr.x = e.clientX;
+      ptr.y = e.clientY;
+      ptr.active = true;
+    }, { passive: true });
+
+    document.documentElement.addEventListener('mouseleave', () => {
+      ptr.active = false;
+      ptr.x = ptr.y = -9999;
+    });
+
+    function hash2(x, y) {
+      let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263);
+      h = Math.imul(h ^ (h >>> 13), 1274126177);
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+    }
+    function valueNoise(x, y) {
+      const ix = Math.floor(x), iy = Math.floor(y);
+      const fx = x - ix, fy = y - iy;
+      const u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+      const a = hash2(ix, iy), b = hash2(ix + 1, iy), c = hash2(ix, iy + 1), d = hash2(ix + 1, iy + 1);
+      return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+    }
+
+    // ---------- Procedural Milky Way + nebula ----------
+    const BAND_ANG = -0.45;
+    const neb = document.getElementById('nebula');
+    const nebSeed = Math.random() * 100;
+    const fbm = (x, y) => {
+      let sum = 0, a = 0.5;
+      for (let i = 0; i < 5; i++) { sum += a * valueNoise(x, y); x = x * 2.03 + 17.1; y = y * 2.03 + 9.7; a *= 0.5; }
+      return sum;
+    };
+    const sstep = (a, b, x) => { x = Math.min(1, Math.max(0, (x - a) / (b - a))); return x * x * (3 - 2 * x); };
+    const mix3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+
+    let nebLayers = [], nebCv, nebCtx, nebDim;
+    const TAU = Math.PI * 2, per = sec => TAU / (sec * 1000);
+    const LAYER_SPECS = [
+      { key: 'cool',   ax: 75, ay: 50, tx: 42, ty: 55, tr: 90,  ts: 60, to: 26, rot: 0.010, op: 0.85, pulse: 0.22, par: 18 },
+      { key: 'violet', ax: 65, ay: 58, tx: 51, ty: 38, tr: 75,  ts: 66, to: 33, rot: 0.012, op: 0.85, pulse: 0.30, par: 22 },
+      { key: 'warm',   ax: 85, ay: 52, tx: 35, ty: 47, tr: 80,  ts: 52, to: 24, rot: 0.010, op: 0.75, pulse: 0.35, par: 26 },
+      { key: 'rose',   ax: 90, ay: 62, tx: 29, ty: 44, tr: 70,  ts: 58, to: 21, rot: 0.012, op: 0.70, pulse: 0.42, par: 30 },
+      { key: 'teal',   ax: 60, ay: 64, tx: 60, ty: 33, tr: 85,  ts: 48, to: 30, rot: 0.010, op: 0.85, pulse: 0.30, par: 16 },
+      { key: 'dust',   ax: 45, ay: 34, tx: 70, ty: 80, tr: 110, ts: 90, to: 60, rot: 0.006, op: 0.95, pulse: 0.06, par: 12, plain: true }
+    ];
+
+    let drawToken = 0;
+    function drawNebula() {
+      const my = ++drawToken;
+      neb.innerHTML = '';
+      nebLayers = []; nebCtx = null;
+      const M = 160, W = width + M * 2, H = height + M * 2, sc = 6;
+      const w = Math.ceil(W / sc), h = Math.ceil(H / sc);
+
+      const bc = document.createElement('canvas');
+      bc.width = 2; bc.height = 256;
+      const bg = bc.getContext('2d'), gr = bg.createLinearGradient(0, 0, 0, 256);
+      gr.addColorStop(0, 'rgb(6,8,13)'); gr.addColorStop(0.72, 'rgb(11,18,37)'); gr.addColorStop(1, 'rgb(16,45,60)');
+      bg.fillStyle = gr; bg.fillRect(0, 0, 2, 256);
+
+      const tmp = document.createElement('canvas').getContext('2d');
+      const imgs = LAYER_SPECS.map(() => tmp.createImageData(w, h));
+      const D = imgs.map(im => im.data);
+      const m = Math.min(W, H), ca = Math.cos(BAND_ANG), sa = Math.sin(BAND_ANG);
+      const COOL = [46, 104, 214], VIOLET = [140, 70, 205], WARM = [255, 140, 110], TEAL = [30, 150, 170],
+            ROSE = [225, 70, 140], GOLD = [255, 205, 150];
+      const G = 1.15;
+      const gen = (function* () {
+      let i = 0;
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++, i += 4) {
+          const u = (x * sc) / m, v = (y * sc) / m;
+          const px = u - (W / m) * 0.5, py = v - (H / m) * 0.5;
+          const warp = (fbm(u * 1.3 + nebSeed * 3, v * 1.3) - 0.5) * 0.24;
+          const dist = -px * sa + py * ca + warp, along = px * ca + py * sa;
+          let band = Math.exp(-(dist * dist) / (2 * 0.2 * 0.2));
+          const bulge = Math.exp(-(along * along) / 0.14);
+          band *= 0.6 + 0.6 * Math.exp(-(along * along) / 1.1);
+
+          const gas = fbm(u * 2.2 + nebSeed, v * 2.2);
+          const fine = fbm(u * 6 + nebSeed * 2, v * 6);
+          const hue = fbm(u * 1.6 - nebSeed, v * 1.6 + 5);
+          const dens = band * (0.25 + gas * 1.1) * (0.75 + fine * 0.5);
+          const lane = sstep(0.48, 0.72, fbm(u * 3.5 + 40, v * 3.5 - nebSeed)) * band;
+
+          const s1 = sstep(0.3, 0.6, hue);
+          const wv = sstep(0.6, 0.85, fine) * 0.55 * band;
+          const Ib = dens * 0.55 * G;
+          const Ic = Ib * (1 - s1), Iv = Ib * s1;
+          const gk = Math.min(1, bulge * band * 1.2);
+          const Iw = Ib * wv * 1.1 + bulge * band * 0.16 * G;
+          const wc = mix3(WARM, GOLD, gk);
+          const Ie = sstep(0.6, 0.84, fbm(u * 1.8 + 120 + nebSeed, v * 1.8 - 30)) * (0.25 + 0.75 * band) * 0.5 * 0.6 * G;
+          const It = sstep(0.5, 0.85, fbm(u * 1.4 + 90, v * 1.4)) * 0.11 * (1 - band * 0.5) * G;
+
+          D[0][i] = COOL[0] * Ic;   D[0][i + 1] = COOL[1] * Ic;   D[0][i + 2] = COOL[2] * Ic;   D[0][i + 3] = 255;
+          D[1][i] = VIOLET[0] * Iv; D[1][i + 1] = VIOLET[1] * Iv; D[1][i + 2] = VIOLET[2] * Iv; D[1][i + 3] = 255;
+          D[2][i] = wc[0] * Iw;     D[2][i + 1] = wc[1] * Iw;     D[2][i + 2] = wc[2] * Iw;     D[2][i + 3] = 255;
+          D[3][i] = ROSE[0] * Ie;   D[3][i + 1] = ROSE[1] * Ie;   D[3][i + 2] = ROSE[2] * Ie;   D[3][i + 3] = 255;
+          D[4][i] = TEAL[0] * It;   D[4][i + 1] = TEAL[1] * It * 0.9; D[4][i + 2] = TEAL[2] * It; D[4][i + 3] = 255;
+          D[5][i] = 2; D[5][i + 1] = 3; D[5][i + 2] = 8; D[5][i + 3] = Math.min(255, lane * 0.8 * 255);
+        }
+        yield;
+      }
+      })();
+      const finish = () => {
+      LAYER_SPECS.forEach((sp, k) => {
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').putImageData(imgs[k], 0, 0);
+        nebLayers.push({
+          el: c, plain: !!sp.plain, ax: sp.ax, ay: sp.ay, rot: sp.rot, op: sp.op, pulse: sp.pulse, par: sp.par,
+          fx: per(sp.tx), fy: per(sp.ty), fr: per(sp.tr), fs: per(sp.ts), fo: per(sp.to),
+          px: Math.random() * TAU, py: Math.random() * TAU
+        });
+      });
+      nebCv = document.createElement('canvas');
+      nebCv.width = w; nebCv.height = h;
+      nebCv.style.cssText = `left:${-M}px;top:${-M}px;width:${W}px;height:${H}px`;
+      neb.appendChild(nebCv);
+      nebCtx = nebCv.getContext('2d', { alpha: false });
+      nebDim = { W, H, M, kx: w / W, ky: h / H, bg: bc };
+      updateNebula(0);
+      neb.classList.add('ready');
+      };
+      // build the picture in small slices so the page never freezes while it is generated
+      const step = () => {
+        if (my !== drawToken) return;
+        const t0 = performance.now();
+        while (performance.now() - t0 < 7) { if (gen.next().done) { finish(); return; } }
+        setTimeout(step, 0);
+      };
+      step();
+    }
+
+    const par = { x: 0, y: 0 };
+
+    function updateNebula(t) {
+      t *= NEB_SPEED;
+      if (!nebCtx) return;
+      const g = nebCtx, { W, H, M, kx, ky, bg } = nebDim;
+      g.setTransform(kx, 0, 0, ky, 0, 0);
+      g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+      g.drawImage(bg, 0, M, W, H - 2 * M);
+      for (const L of nebLayers) {
+        const dx = Math.sin(t * L.fx + L.px) * L.ax - par.x * L.par;
+        const dy = Math.cos(t * L.fy + L.py) * L.ay - par.y * L.par;
+        const r = Math.sin(t * L.fr + L.px * 2) * L.rot;
+        const sc = 1 + Math.sin(t * L.fs + L.py) * 0.03;
+        const o = Math.min(1, L.op * (1 + L.pulse * Math.sin(t * L.fo + L.px)));
+        g.setTransform(kx, 0, 0, ky, 0, 0);
+        g.translate(W / 2 + dx, H / 2 + dy); g.rotate(r); g.scale(sc, sc);
+        g.globalCompositeOperation = L.plain ? 'source-over' : 'screen';
+        g.globalAlpha = o;
+        g.drawImage(L.el, -W / 2, -H / 2, W, H);
+      }
+    }
+
+    drawNebula();
+
+    (function addGrain() {
+      const n = 160;
+      const c = document.createElement('canvas');
+      c.width = c.height = n;
+      const g = c.getContext('2d');
+      const img = g.createImageData(n, n);
+      for (let i = 0; i < img.data.length; i += 4) {
+        img.data[i] = img.data[i + 1] = img.data[i + 2] = 255;
+        img.data[i + 3] = Math.random() * 255 * 0.04;
+      }
+      g.putImageData(img, 0, 0);
+      const ov = document.getElementById('overlay');
+      ov.style.backgroundImage = `radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(2,3,10,0.7) 100%), url(${c.toDataURL()})`;
+      ov.style.backgroundSize = `100% 100%, ${n}px ${n}px`;
+    })();
+
+
+    (function cursorGlow() {
+      const g = document.getElementById('ktGlow');
+      if (!g || !window.matchMedia || !matchMedia('(hover: hover)').matches) return;
+      let x = -999, y = -999, gx = x, gy = y, raf = 0;
+      const loop = () => {
+        gx += (x - gx) * 0.16; gy += (y - gy) * 0.16;
+        g.style.transform = 'translate3d(' + gx.toFixed(1) + 'px,' + gy.toFixed(1) + 'px,0)';
+        raf = (Math.abs(x - gx) > 0.4 || Math.abs(y - gy) > 0.4) ? requestAnimationFrame(loop) : 0;
+      };
+      window.addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; x = e.clientX; y = e.clientY; if (!g.classList.contains('on')) { gx = x; gy = y; g.classList.add('on'); } if (!raf) raf = requestAnimationFrame(loop); }, { passive: true });
+      document.documentElement.addEventListener('mouseleave', () => g.classList.remove('on'));
+    })();
+
+    let dirty = true;
+    const NEB_MS = 1000 / 12;
+    let lastNeb = 0;
+
+    function animate(now) {
+      if (STATIC_MODE) { if (!dirty) return; dirty = false; }
+      if (document.hidden) return;
+      const t = STATIC_MODE ? 5000 : (now || performance.now());
+
+      par.x += ((ptr.active ? ptr.x / width - 0.5 : 0) - par.x) * 0.04;
+      par.y += ((ptr.active ? ptr.y / height - 0.5 : 0) - par.y) * 0.04;
+
+      if (!STATIC_MODE && t - lastNeb >= NEB_MS) { lastNeb = t; updateNebula(t); }
+
+      if (!STATIC_MODE) requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    let paused = false;
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { paused = true; }
+      else if (paused) { paused = false; requestAnimationFrame(animate); }
+    });
+  
+})();
+</script>
