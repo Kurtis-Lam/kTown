@@ -9,7 +9,8 @@
       { "source": "/kcitethisforme.html", "destination": "/kcitethisforme/", "type": 301 },
       { "source": "/kauranotes", "destination": "/kauranotes/", "type": 301 },
       { "source": "/kcitethisforme", "destination": "/kcitethisforme/", "type": 301 },
-      { "source": "/krevisionnotes", "destination": "/krevisionnotes/", "type": 301 }
+      { "source": "/krevisionnotes", "destination": "/krevisionnotes/", "type": 301 },
+      { "source": "/credits", "destination": "/credits/", "type": 301 }
     ],
     "rewrites": [
       { "source": "/", "destination": "/ktown/index.html" }

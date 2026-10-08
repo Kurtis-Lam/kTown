@@ -75,22 +75,18 @@
   document.addEventListener("DOMContentLoaded", () => { document.body.appendChild(bar); setBar(); });
   window.addEventListener("scroll", setBar, { passive: true });
 
-  // Cursor spotlight on cards (throttled to one style write per frame; no 3D tilt, so cards never change size).
-  if (!reduce() && matchMedia("(hover: hover)").matches) {
-    let pend = null, raf = 0;
-    document.addEventListener("pointermove", (e) => {
-      const card = e.target.closest && e.target.closest(".card, .callout, .sec-tab, .fw-chip");
-      if (!card) return;
-      pend = { card, x: e.clientX, y: e.clientY };
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const r = pend.card.getBoundingClientRect();
-        pend.card.style.setProperty("--mx", `${pend.x - r.left}px`);
-        pend.card.style.setProperty("--my", `${pend.y - r.top}px`);
-      });
+  // Back-to-top button for long notes.
+  document.addEventListener("DOMContentLoaded", () => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "to-top no-print"; b.setAttribute("aria-label", "Back to top"); b.title = "Back to top"; b.textContent = "\u2191";
+    b.addEventListener("click", () => window.scrollTo({ top: 0, behavior: reduce() ? "auto" : "smooth" }));
+    document.body.appendChild(b);
+    let tick = false;
+    window.addEventListener("scroll", () => {
+      if (tick) return; tick = true;
+      requestAnimationFrame(() => { tick = false; b.classList.toggle("show", window.scrollY > 700); });
     }, { passive: true });
-  }
+  });
 
   // Page enter: the main content fades and rises in each time a page renders.
   IB.pageEnter = function () {

@@ -9,7 +9,8 @@
     { "source": "/kcitethisforme.html", "destination": "/kcitethisforme/", "permanent": true },
     { "source": "/kauranotes", "destination": "/kauranotes/", "permanent": true },
     { "source": "/kcitethisforme", "destination": "/kcitethisforme/", "permanent": true },
-    { "source": "/krevisionnotes", "destination": "/krevisionnotes/", "permanent": true }
+    { "source": "/krevisionnotes", "destination": "/krevisionnotes/", "permanent": true },
+    { "source": "/credits", "destination": "/credits/", "permanent": true }
   ],
   "rewrites": [
     { "source": "/", "destination": "/ktown/index.html" }

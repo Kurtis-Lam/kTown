@@ -7,6 +7,11 @@
   function mount(html) {
     var doc = new DOMParser().parseFromString(html, "text/html");
     var scripts = [];
+    if (!document.querySelector('link[href*="font-awesome"]')) {
+      var fa = document.createElement("link"); fa.rel = "stylesheet";
+      fa.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
+      document.head.appendChild(fa);
+    }
     // styles first (they live in <head> after parsing), then body nodes
     Array.prototype.forEach.call(doc.head.querySelectorAll("style"), function (n) { document.head.appendChild(document.importNode(n, true)); });
     Array.prototype.slice.call(doc.body.childNodes).forEach(function (n) {

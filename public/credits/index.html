@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kTown — Credits</title>
+    <link rel="icon" href="/imgs/logos/ktown.png" type="image/png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/ktown/css/style.css" />
+    <style>
+        .credits-main { max-width: 980px; }
+        .credits-hero { text-align: center; margin-bottom: 44px; }
+        .credits-hero h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; background: linear-gradient(135deg, #fff 30%, #a7f3d0 60%, #93c5fd); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .credits-hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 560px; margin: 0 auto; line-height: 1.6; }
+        .credit-list { display: grid; gap: 20px; }
+        .credit-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 28px; display: flex; gap: 20px; align-items: flex-start; }
+        .credit-card.main { border-color: var(--border-accent); background: linear-gradient(135deg, rgba(30, 27, 75, .7), rgba(18, 24, 38, .9)); }
+        .credit-card .card-icon-wrapper { flex: none; }
+        .credit-card h2 { font-size: 1.3rem; margin-bottom: 4px; }
+        .credit-card .role { font-size: .8rem; text-transform: uppercase; letter-spacing: 1px; color: #d8b4fe; font-weight: 700; margin-bottom: 10px; display: block; }
+        .credit-card p, .credit-card li { color: #d3dcec; line-height: 1.65; font-size: .98rem; }
+        .credit-card ul { padding-left: 1.2em; margin-top: 8px; }
+        .credit-card a { color: #c4b5fd; }
+        .credit-card a:hover { color: #fff; }
+        .credits-back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 26px; color: var(--text-muted); text-decoration: none; font-weight: 600; }
+        .credits-back:hover { color: #fff; }
+        .credits-note { margin-top: 30px; text-align: center; color: var(--text-muted); font-size: .9rem; line-height: 1.6; }
+        @media (max-width: 600px) { .credits-hero h1 { font-size: 2.2rem; } .credit-card { flex-direction: column; padding: 22px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="brand">
+            <img src="/imgs/logos/ktown.png" alt="kTown" width="40" height="40" />
+            <span>kTown</span>
+        </a>
+    </header>
+
+    <main class="credits-main">
+        <a class="credits-back" href="/"><i class="fa-solid fa-arrow-left"></i> Back to kTown</a>
+
+        <section class="credits-hero">
+            <h1>Credits</h1>
+            <p>kTown is built and maintained by Kurtis Lam, with help from the people and tools below.</p>
+        </section>
+
+        <section class="credit-list">
+            <article class="credit-card main">
+                <div class="card-icon-wrapper revision-icon"><i class="fa-solid fa-code"></i></div>
+                <div>
+                    <span class="role">Main developer</span>
+                    <h2>Kurtis Lam</h2>
+                    <p>Created and develops kTown and all of its apps. Find the source code on <a href="https://github.com/Kurtis-Lam/kTown" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+                </div>
+            </article>
+
+            <article class="credit-card">
+                <div class="card-icon-wrapper revision-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div>
+                    <span class="role">kRevisionNotes</span>
+                    <h2>Hogan Choi &amp; web-based materials</h2>
+                    <ul>
+                        <li><strong>Hogan Choi</strong> contributed to the revision content.</li>
+                        <li>Web-based materials and the <strong>IB (International Baccalaureate)</strong> syllabus guides were used as reference for topics and exam structure.</li>
+                    </ul>
+                    <p style="margin-top:8px">Notes and questions are original IB-style material. kRevisionNotes is not official IB content and is not affiliated with or endorsed by the International Baccalaureate Organization.</p>
+                </div>
+            </article>
+
+            <article class="credit-card">
+                <div class="card-icon-wrapper auranotes-icon"><i class="fa-solid fa-note-sticky"></i></div>
+                <div>
+                    <span class="role">kAuraNotes</span>
+                    <h2>Kurtis Lam</h2>
+                    <p>Designed and developed by Kurtis Lam.</p>
+                </div>
+            </article>
+
+            <article class="credit-card">
+                <div class="card-icon-wrapper kcite-icon"><i class="fa-solid fa-quote-right"></i></div>
+                <div>
+                    <span class="role">kCiteThisForMe</span>
+                    <h2>Kurtis Lam</h2>
+                    <p>Designed and developed by Kurtis Lam.</p>
+                </div>
+            </article>
+
+            <article class="credit-card">
+                <div class="card-icon-wrapper ksound-icon"><i class="fa-solid fa-robot"></i></div>
+                <div>
+                    <span class="role">AI features</span>
+                    <h2>OpenRouter</h2>
+                    <p>AI features across kTown (such as the AI tutor and summaries) are powered by the <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer">OpenRouter</a> API.</p>
+                </div>
+            </article>
+        </section>
+
+        <p class="credits-note">Want to help improve kTown? Read the <a href="https://github.com/Kurtis-Lam/kTown/blob/HEAD/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" style="color:#c4b5fd">contributing guide</a> and open a pull request at <a href="https://github.com/Kurtis-Lam/kTown" target="_blank" rel="noopener noreferrer" style="color:#c4b5fd">github.com/Kurtis-Lam/kTown</a>.</p>
+    </main>
+
+    <script src="/shell.js" defer></script>
+</body>
+</html>
