@@ -7,10 +7,8 @@
   "use strict";
   const IB = window.IB;
   const PW = 794, PH = 1123, FOOT = 44, TOP = 46, SIDE = 56;
-  const HEX = { econ: "#D9480F", chem: "#0B8AA8", phys: "#364FC7", geo: "#2F9E44", math: "#6741D9", bio: "#C2255C", engb: "#1864AB", chia: "#9C6500" };
+  const HEX = { econ: "#D9480F", chem: "#0B8AA8", phys: "#364FC7", geo: "#2F9E44", math: "#6741D9", bio: "#C2255C", engb: "#1864AB" };
   const DOTS = ["#2D5BFF", "#0B8AA8", "#7C3AED", "#E8590C", "#2F9E44", "#D6336C", "#5F3DC4", "#C27803", "#E03131", "#1098AD", "#334155", "#0CA678"];
-  const ZH = (s) => s.id === "chia";
-  const L = (s, en, zh) => (ZH(s) ? `${en} ${zh}` : en);
 
   let libs = null;
   const script = (src) => new Promise((ok, bad) => {
@@ -24,7 +22,7 @@
 
   const CSS = (c) => `
 *{box-sizing:border-box}html,body{margin:0;background:#fff}
-body{font:12.6px/1.55 Figtree,"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color:#1B2436;-webkit-font-smoothing:antialiased}
+body{font:12.6px/1.55 Figtree,system-ui,sans-serif;color:#1B2436;-webkit-font-smoothing:antialiased}
 h1,h2,h3,h4,.disp{font-family:"Bricolage Grotesque",Figtree,system-ui,sans-serif}
 p{margin:0 0 8px}ul,ol{margin:4px 0 8px;padding-left:20px}li{margin:2px 0}
 .page{width:${PW}px;height:${PH}px;position:relative;overflow:hidden;background:#fff;padding:${TOP}px ${SIDE}px 0}
@@ -70,7 +68,6 @@ h3.h{font-size:15px;color:#1B4F72;margin:12px 0 6px}
 .co>.ct{font:800 11px Figtree,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--k);margin:2px 0 6px}
 .k-formula{--k:#2D5BFF;--b:#EEF2FF}.k-method{--k:#1F8A4C;--b:#EAF8EF}.k-trap{--k:#D0312D;--b:#FDEEEE}
 .k-example{--k:#6741D9;--b:#F3EEFF}.k-tip{--k:#C27803;--b:#FFF6DF}.k-terms{--k:#8A6A00;--b:#FFF9E5}.k-zh{--k:#7048E8;--b:#F3EFFF}.k-frame{--k:#7048E8;--b:#F7F4FF}
-.yue{background:#F3EFFF;border-radius:8px;padding:5px 10px;margin:6px 0 0;font-size:12.6px}.yue b{color:#7048E8}
 .ahl{display:inline-block;font:800 9.5px Figtree,sans-serif;background:#7048E8;color:#fff;border-radius:4px;padding:2px 5px;vertical-align:middle}
 .fgrid{display:flex;flex-wrap:wrap;gap:6px}.fgrid div{background:#fff;border-radius:8px;padding:5px 10px}
 .concept{border-left:3px solid ${c};padding:2px 0 2px 14px;margin:0 0 10px}
@@ -105,26 +102,25 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
     const b = [];
     const head = (title, sub) => (opts.single ? `<div class="bar" data-anchor="${opts.anchor()}">${title}</div>` : `<h3 class="h">${title}</h3>`) + (sub || "");
     if (t.summary) b.push(`<p class="lead">${t.summary}</p>`);
-    if (t.formulas && t.formulas.length) b.push(head(L(s, "Formulas", "公式")) + box("formula", L(s, "Formula", "公式"), `<div class="fgrid">${t.formulas.map((f) => `<div>${f}</div>`).join("")}</div>`));
-    b.push(head(L(s, "Key concepts", "核心概念")));
-    if (t.yue && !ZH(s)) b.push(box("zh", "廣東話重點", `<p>${t.yue}</p>`));
-    t.concepts.filter((x) => IB.showItem(s.id, x)).forEach((x) => b.push(`<div class="concept"><h3>${x.h}${x.hl ? ' <span class="ahl">AHL</span>' : ""}</h3>${x.b}${x.yue ? `<p class="yue"><b>廣東話：</b>${x.yue}</p>` : ""}</div>`));
-    if (t.table) b.push(head(L(s, "Compare at a glance", "比較")) + `<table><thead><tr>${t.table.head.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${t.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${x}</td>` : `<th>${x}</th>`)).join("")}</tr>`).join("")}</tbody></table>`);
-    if (t.diagrams && t.diagrams.length && IB.plot) b.push(head(L(s, "Diagrams to know", "圖表")) + `<div class="plots">${t.diagrams.map(IB.plot).join("")}</div>`);
+    if (t.formulas && t.formulas.length) b.push(head("Formulas") + box("formula", "Formula", `<div class="fgrid">${t.formulas.map((f) => `<div>${f}</div>`).join("")}</div>`));
+    b.push(head("Key concepts"));
+    t.concepts.filter((x) => IB.showItem(s.id, x)).forEach((x) => b.push(`<div class="concept"><h3>${x.h}${x.hl ? ' <span class="ahl">AHL</span>' : ""}</h3>${x.b}</div>`));
+    if (t.table) b.push(head("Compare at a glance") + `<table><thead><tr>${t.table.head.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${t.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${x}</td>` : `<th>${x}</th>`)).join("")}</tr>`).join("")}</tbody></table>`);
+    if (t.diagrams && t.diagrams.length && IB.plot) b.push(head("Diagrams to know") + `<div class="plots">${t.diagrams.map(IB.plot).join("")}</div>`);
     const methods = (t.methods || []).concat((t.skills || []).map((x) => `<strong>${x.h}:</strong> ${x.b}`));
-    if (methods.length) b.push(head(L(s, "Fastest methods", "最快方法")) + box("method", L(s, "Fastest method", "最快方法"), `<ol>${methods.map((m) => `<li>${m}</li>`).join("")}</ol>`));
-    if (t.traps && t.traps.length) b.push(head(L(s, "Traps", "陷阱")) + box("trap", L(s, "Trap", "陷阱"), `<ul>${t.traps.map((m) => `<li>${m}</li>`).join("")}</ul>`));
+    if (methods.length) b.push(head("Fastest methods") + box("method", "Fastest method", `<ol>${methods.map((m) => `<li>${m}</li>`).join("")}</ol>`));
+    if (t.traps && t.traps.length) b.push(head("Traps") + box("trap", "Trap", `<ul>${t.traps.map((m) => `<li>${m}</li>`).join("")}</ul>`));
     if (t.examples && t.examples.length) {
-      b.push(head(L(s, "Worked examples", "例題")));
-      t.examples.forEach((e, i) => b.push(box("example", `${L(s, "Worked example", "例題")} ${i + 1}`, `<p><strong>${e.q}</strong></p><div class="sol">${e.a}</div>`)));
+      b.push(head("Worked examples"));
+      t.examples.forEach((e, i) => b.push(box("example", `Worked example ${i + 1}`, `<p><strong>${e.q}</strong></p><div class="sol">${e.a}</div>`)));
     }
-    if (t.tips && t.tips.length) b.push(head(L(s, "Exam tips", "考試貼士")) + box("tip", L(s, "Exam tip", "考試貼士"), `<ul>${t.tips.map((m) => `<li>${m}</li>`).join("")}</ul>`));
+    if (t.tips && t.tips.length) b.push(head("Exam tips") + box("tip", "Exam tip", `<ul>${t.tips.map((m) => `<li>${m}</li>`).join("")}</ul>`));
     const frames = IB.topicFrames ? IB.topicFrames(t) : [];
     if (frames.length) {
-      b.push(head("答題框架 · " + L(s, "Answer frameworks", "答題步驟")));
-      frames.forEach((f) => b.push(box("frame", f.type, `<ol>${f.steps.map((x) => `<li>${x}</li>`).join("")}</ol>${f.yue ? `<p class="yue"><b>廣東話：</b>${f.yue}</p>` : ""}`)));
+      b.push(head("Answer frameworks"));
+      frames.forEach((f) => b.push(box("frame", f.type, `<ol>${f.steps.map((x) => `<li>${x}</li>`).join("")}</ol>`)));
     }
-    if (t.terms && t.terms.length) b.push(head(L(s, "Key definitions to learn", "關鍵詞")) + `<table class="defs"><thead><tr><th>${ZH(s) ? "術語" : "Term"}</th><th>${ZH(s) ? "定義" : "Definition"}</th></tr></thead><tbody>${t.terms.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("")}</tbody></table>`);
+    if (t.terms && t.terms.length) b.push(head("Key definitions to learn") + `<table class="defs"><thead><tr><th>${"Term"}</th><th>${"Definition"}</th></tr></thead><tbody>${t.terms.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("")}</tbody></table>`);
     const plans = IB.essayPlansHtml(t);
     if (plans) b.push(head("Practice essay plans") + plans);
     return b;
@@ -263,7 +259,7 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
       const qset = [];
       if (opts.questions) opts.topics.forEach((t) => {
         const exam = (t.questions || []).filter((q) => !q.derived && IB.showItem(s.id, q));
-        const pick = exam.filter((q) => q.type !== "extended" || s.id === "chia" || s.id === "engb").slice(0, opts.questions);
+        const pick = exam.filter((q) => q.type !== "extended" || s.id === "engb").slice(0, opts.questions);
         const ext = exam.filter((q) => q.type === "extended").slice(0, single ? 2 : 1);
         pick.concat(ext.filter((q) => !pick.includes(q))).slice(0, opts.questions + 1).forEach((q) => qset.push(q));
       });
@@ -272,12 +268,12 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
       const cover = doc.createElement("div");
       cover.className = "page cover";
       const chips = single
-        ? ["Key concepts", "Fastest methods", "Traps", "Worked examples", "Exam tips", "答題框架", "Definitions"].concat(IB.essayPlansHtml(opts.topics[0]) ? ["Essay plans"] : []).concat(qset.length ? ["Practice paper"] : [])
+        ? ["Key concepts", "Fastest methods", "Traps", "Worked examples", "Exam tips", "Answer frameworks", "Definitions"].concat(IB.essayPlansHtml(opts.topics[0]) ? ["Essay plans"] : []).concat(qset.length ? ["Practice paper"] : [])
         : opts.topics.map((t) => t.title);
       cover.innerHTML = `<div class="cover-card"><div class="cover-big">${IB.esc(single ? opts.topics[0].code : s.short.replace(/\s.*/, ""))}</div>
         <div class="eyebrow">IB ${IB.esc(s.name)}${single ? " · " + IB.esc(opts.topics[0].unit) : ""}</div>
-        <h1>${IB.esc(title)}<br>${ZH(s) ? "溫習筆記" : "Revision Notes"}</h1>
-        <p class="sub">${single ? IB.esc(opts.topics[0].code) + " · " : ""}${ZH(s) ? "概念 · 方法 · 陷阱 · 例題" : "Concepts · fastest methods · traps · worked examples"}</p>
+        <h1>${IB.esc(title)}<br>Revision Notes</h1>
+        <p class="sub">${single ? IB.esc(opts.topics[0].code) + " · " : ""}Concepts · fastest methods · traps · worked examples</p>
         <div class="chips">${chips.slice(0, 16).map((x) => `<span class="chip">${IB.esc(x)}</span>`).join("")}${chips.length > 16 ? `<span class="chip">+${chips.length - 16} more</span>` : ""}</div>
         <div class="cover-foot">${qset.length ? `Includes a ${qset.length}-question practice paper with IB-style answer boxes and a full markscheme.<br>` : ""}Original IB-style revision material · not official IB content · ${date}</div></div>`;
       root.appendChild(cover);
@@ -293,17 +289,17 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
         : opts.topics.length + (s.gameplan ? 1 : 0) + (qset.length ? 2 : 0);
       toc.innerHTML = Array.from({ length: est }, () => '<div><i></i><span class="t">&nbsp;</span><span class="pg">00</span></div>').join("");
       P.newPage();
-      P.add(Object.assign(doc.createElement("h1"), { className: "toc-h", innerHTML: ZH(s) ? "目錄 Contents" : "Contents" }));
+      P.add(Object.assign(doc.createElement("h1"), { className: "toc-h", innerHTML: "Contents" }));
       P.add(toc);
       toc.className = "toc";
       const legend = doc.createElement("div");
-      legend.innerHTML = `<h2 class="lg">${ZH(s) ? "如何使用這份筆記" : "How to read these notes"}</h2><div class="legend">
-        <div class="k-formula"><b>${L(s, "Formula", "公式")}</b>What to know or recognise.</div>
-        <div class="k-method"><b>${L(s, "Fastest method", "最快方法")}</b>The quickest reliable route to the marks.</div>
-        <div class="k-trap"><b>${L(s, "Trap", "陷阱")}</b>Where marks are usually lost.</div>
-        <div class="k-example"><b>${L(s, "Worked example", "例題")}</b>A full solution in exam layout.</div>
-        <div class="k-tip"><b>${L(s, "Exam tip", "考試貼士")}</b>How the markscheme thinks.</div>
-        <div class="k-terms"><b>${L(s, "Definitions", "定義")}</b>Learn these word-for-word.</div></div>${IB.highlightKey()}`;
+      legend.innerHTML = `<h2 class="lg">How to read these notes</h2><div class="legend">
+        <div class="k-formula"><b>Formula</b>What to know or recognise.</div>
+        <div class="k-method"><b>Fastest method</b>The quickest reliable route to the marks.</div>
+        <div class="k-trap"><b>Trap</b>Where marks are usually lost.</div>
+        <div class="k-example"><b>Worked example</b>A full solution in exam layout.</div>
+        <div class="k-tip"><b>Exam tip</b>How the markscheme thinks.</div>
+        <div class="k-terms"><b>Definitions</b>Learn these word-for-word.</div></div>${IB.highlightKey()}`;
       P.add(legend);
 
       const addHtml = (html, terms) => {
@@ -322,8 +318,8 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
       if (!single && gp) {
         P.breakPage();
         const a = anchor();
-        tocItems.push([a, ZH(s) ? "考試策略" : "How to use + exam game plan"]);
-        addHtml(`<div class="banner" data-anchor="${a}"><span class="n">GP</span><div><h2>${ZH(s) ? "考試策略" : "Exam game plan"}</h2><small>${IB.esc(s.guide)}</small></div></div>
+        tocItems.push([a, "How to use + exam game plan"]);
+        addHtml(`<div class="banner" data-anchor="${a}"><span class="n">GP</span><div><h2>${"Exam game plan"}</h2><small>${IB.esc(s.guide)}</small></div></div>
           <p class="lead">${gp.intro}</p>
           <table><thead><tr><th>Part</th><th>What it looks like</th><th>Strategy</th></tr></thead><tbody>${gp.rows.map((r) => `<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</tbody></table>
           ${gp.codes ? box("tip", "How the markscheme gives marks", `<table><thead><tr><th>Code</th><th>Meaning</th><th>What it means for you</th></tr></thead><tbody>${gp.codes.map((r) => `<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</tbody></table>`) : ""}
@@ -336,11 +332,11 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
         const terms = (t.terms || []).map((x) => x[0]);
         if (single) {
           const a = anchor();
-          tocItems.push([a, ZH(s) ? "概覽" : "Overview"]);
+          tocItems.push([a, "Overview"]);
           let n = 0;
           const secAnchor = () => { const id = anchor(); tocItems.push([id, null]); return id; };
           const blocks = topicBlocks(s, t, { single: true, anchor: secAnchor });
-          addHtml(`<div class="banner" data-anchor="${a}"><span class="n">${String(s.topics.indexOf(t) + 1).padStart(2, "0")}</span><div><h2>${IB.esc(t.title)}</h2><small>${IB.esc(t.code)} · ${IB.esc(t.unit)}</small></div></div>` +
+          addHtml(`<div class="banner" data-anchor="${a}"><span class="n">${s.topics.includes(t) ? String(s.topics.indexOf(t) + 1).padStart(2, "0") : IB.esc(t.code || "OV")}</span><div><h2>${IB.esc(t.title)}</h2><small>${IB.esc(t.code)} · ${IB.esc(t.unit)}</small></div></div>` +
             blocks.join("").replace(/<div class="bar" data-anchor="(a\d+)">([^<]*)<\/div>/g, (m, id, label) => {
               n++;
               const item = tocItems.find((x) => x[0] === id);
@@ -357,10 +353,10 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
       if (qset.length) {
         P.breakPage();
         const a = anchor(), b2 = anchor();
-        tocItems.push([a, ZH(s) ? "練習卷" : "Practice paper"], [b2, ZH(s) ? "評分參考" : "Markscheme"]);
-        addHtml(`<div class="banner" data-anchor="${a}"><span class="n">PP</span><div><h2>${ZH(s) ? "練習卷" : "Practice paper"}</h2><small>${qset.length} questions · ${qset.reduce((n, q) => n + q.marks, 0)} marks · answer in the boxes</small></div></div>` + qset.map((q, i) => questionBlock(q, i + 1)).join(""), []);
+        tocItems.push([a, "Practice paper"], [b2, "Markscheme"]);
+        addHtml(`<div class="banner" data-anchor="${a}"><span class="n">PP</span><div><h2>Practice paper</h2><small>${qset.length} questions · ${qset.reduce((n, q) => n + q.marks, 0)} marks · answer in the boxes</small></div></div>` + qset.map((q, i) => questionBlock(q, i + 1)).join(""), []);
         P.breakPage();
-        addHtml(`<div class="banner" data-anchor="${b2}"><span class="n">MS</span><div><h2>${ZH(s) ? "評分參考" : "Markscheme"}</h2><small>Check your answers - M = method, A = answer, R = reasoning</small></div></div>` + qset.map((q, i) => msBlock(q, i + 1)).join(""), []);
+        addHtml(`<div class="banner" data-anchor="${b2}"><span class="n">MS</span><div><h2>Markscheme</h2><small>Check your answers - M = method, A = answer, R = reasoning</small></div></div>` + qset.map((q, i) => msBlock(q, i + 1)).join(""), []);
       }
 
       // contents with page numbers (cover = page 1)
@@ -384,7 +380,7 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
       pdf.setProperties({ title: `${title} - Revision Notes`, subject: s.name, creator: "IB Revision Hub" });
       const blob = pdf.output("blob");
       prog.set("Done", 1);
-      IB.download(opts.filename || `IB-${s.short.replace(/\s+/g, "-")}-${title.replace(/[^\w一-鿿]+/g, "-")}-notes.pdf`, blob, "application/pdf");
+      IB.download(opts.filename || `IB-${s.short.replace(/\s+/g, "-")}-${title.replace(/[^\w-]+/g, "-")}-notes.pdf`, blob, "application/pdf");
       return all.length;
     } catch (e) {
       IB.toast(e.message || "Couldn't build the PDF.");
@@ -553,7 +549,7 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
       }
       pdf.setProperties({ title, subject: s ? s.name : "IB practice paper", creator: "IB Revision Hub" });
       prog.set("Done", 1);
-      IB.download(opts.filename || `IB-${s ? s.short.replace(/\s+/g, "-") : "Mixed"}-${title.replace(/[^\w一-鿿]+/g, "-")}-paper.pdf`, pdf.output("blob"), "application/pdf");
+      IB.download(opts.filename || `IB-${s ? s.short.replace(/\s+/g, "-") : "Mixed"}-${title.replace(/[^\w-]+/g, "-")}-paper.pdf`, pdf.output("blob"), "application/pdf");
       return all.length;
     } catch (e) {
       IB.toast(e.message || "Couldn't build the PDF.");
