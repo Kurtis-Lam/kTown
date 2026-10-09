@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/png" href="/imgs/logos/ktown.png?v=3">
+<link rel="preload" href="/nebula.css" as="style">
+<link rel="stylesheet" href="/nebula.css">
+<link rel="preload" href="/nebula.js" as="script">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>kTown — Credits</title>
-    <link rel="icon" href="/imgs/logos/ktown.png" type="image/png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/ktown/css/style.css" />
@@ -17,7 +20,7 @@
         .credit-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 28px; display: flex; gap: 20px; align-items: flex-start; }
         .credit-card.main { border-color: var(--border-accent); background: linear-gradient(135deg, rgba(30, 27, 75, .7), rgba(18, 24, 38, .9)); }
         .credit-card .card-icon-wrapper { flex: none; background: transparent !important; }
-        .credit-card .card-icon-wrapper img { width: 40px; height: 40px; object-fit: contain; background: transparent; }
+        .credit-card .card-icon-wrapper img { width: 48px; height: 48px; object-fit: contain; border-radius: 11px; background: transparent; }
         .credit-card h2 { font-size: 1.3rem; margin-bottom: 4px; }
         .credit-card .role { font-size: .8rem; text-transform: uppercase; letter-spacing: 1px; color: #d8b4fe; font-weight: 700; margin-bottom: 10px; display: block; }
         .credit-card p, .credit-card li { color: #d3dcec; line-height: 1.65; font-size: .98rem; }
@@ -92,7 +95,7 @@
             </article>
 
             <article class="credit-card">
-                <div class="card-icon-wrapper ksound-icon"><i class="fa-solid fa-robot"></i></div>
+                <div class="card-icon-wrapper ksound-icon"><img src="/imgs/logos/openrouter.png?v=3" alt="OpenRouter logo" width="48" height="48" /></div>
                 <div>
                     <span class="role">AI features</span>
                     <h2>OpenRouter</h2>
@@ -103,5 +106,6 @@
     </main>
 
     <script src="/shell.js" defer></script>
+<script src="/nebula.js" defer></script>
 </body>
 </html>
