@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/png" href="/imgs/logos/ktown.png?v=3">
+<link rel="preload" href="/nebula.css" as="style">
+<link rel="stylesheet" href="/nebula.css">
+<link rel="preload" href="/nebula.js" as="script">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>kTown — Home</title>
-    <link rel="icon" href="/imgs/logos/ktown.png" type="image/png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/ktown/css/style.css" />
@@ -58,7 +61,7 @@
             <a href="/krevisionnotes/index.html" class="app-card app-card-featured">
                 <div class="card-top">
                     <div class="card-icon-wrapper revision-icon">
-                        <i class="fa-solid fa-graduation-cap"></i>
+                        <img class="app-logo" src="/imgs/logos/krevisionnotes.png?v=3" alt="kRevisionNotes logo" width="48" height="48" />
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span class="card-tag">Core App</span>
@@ -68,7 +71,7 @@
                     </div>
                 </div>
                 <div class="card-content">
-                    <h3>kRevisionNotes <i class="fa-solid fa-circle-check" style="font-size:1rem; color:var(--accent-purple);"></i></h3>
+                    <h3>kRevisionNotes</h3>
                     <p>Your IB revision hub. Topic notes, an exam-style question bank, quizzes, mock papers and a mistakes notebook for every subject, at SL and HL.</p>
                 </div>
             </a>
@@ -76,7 +79,7 @@
             <a href="/kauranotes/index.html" class="app-card">
                 <div class="card-top">
                     <div class="card-icon-wrapper auranotes-icon">
-                        <i class="fa-solid fa-note-sticky"></i>
+                        <img class="app-logo" src="/imgs/logos/kauranotes.png?v=3" alt="kAuraNotes logo" width="48" height="48" />
                     </div>
                     <div class="card-launch-btn">
                         <i class="fa-solid fa-arrow-right"></i>
@@ -91,7 +94,7 @@
             <a href="/kcitethisforme/index.html" class="app-card">
                 <div class="card-top">
                     <div class="card-icon-wrapper kcite-icon">
-                        <i class="fa-solid fa-quote-right"></i>
+                        <img class="app-logo" src="/imgs/logos/kcitethisforme.png?v=3" alt="kCiteThisForMe logo" width="48" height="48" />
                     </div>
                     <div class="card-launch-btn">
                         <i class="fa-solid fa-arrow-right"></i>
@@ -107,6 +110,7 @@
 
 
     <script src="/shell.js" defer></script>
+<script src="/nebula.js" defer></script>
 
     <!-- ─── AUTH MODAL ─── -->
     <div id="authModal" class="modal-overlay">
