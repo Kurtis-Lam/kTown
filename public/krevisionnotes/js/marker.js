@@ -67,7 +67,6 @@
     });
     return out;
   }
-  const cjk = (s) => (plain(s).match(/[\u3400-\u9fff]+/g) || []).flatMap((run) => (run.length < 2 ? [] : Array.from({ length: run.length - 1 }, (_, i) => run.slice(i, i + 2))));
 
   // Does token k (from a markscheme point) appear in the answer, not negated?
   function hit(k, ans, pointNeg) {
@@ -296,7 +295,6 @@
     const terms = new Set(((t && t.terms) || []).flatMap(([k]) => tokens(k, sid).map((x) => x.s).filter(Boolean)));
     let fb;
     if (q.numeric) fb = markNumeric(q, answer, sid);
-    else if (sid === "chia" || /[\u3400-\u9fff]{6,}/.test(plain(q.ms.join("")))) fb = markChinese(q, answer);
     else if (q.type === "extended" || (q.ms || []).some((p) => BAND.test(p))) fb = markExtended(q, answer, sid, terms);
     else {
       const r = markPoints(q, answer, sid, terms);
@@ -315,22 +313,6 @@
     return fb;
   };
 
-  function markChinese(q, answer) {
-    const max = q.marks || 1;
-    const set = new Set(cjk(answer));
-    const awarded = [], missing = [];
-    (q.ms || []).forEach((p) => {
-      const kw = Array.from(new Set(cjk(p)));
-      if (!kw.length) return;
-      const f = kw.filter((k) => set.has(k)).length / kw.length;
-      (f >= 0.5 ? awarded : missing).push(p);
-    });
-    const n = awarded.length + missing.length || 1;
-    let score = Math.round((awarded.length / n) * max);
-    const len = (plain(answer).match(/[\u3400-\u9fff]/g) || []).length;
-    if (q.type === "extended" && len < 200) score = Math.min(score, Math.round(max * 0.4));
-    return { score, max, awarded, missing, summary: `${awarded.length} / ${n} 個評分要點命中。` };
-  }
 
   IB.markTokens = tokens; // exposed for tests
 })();
