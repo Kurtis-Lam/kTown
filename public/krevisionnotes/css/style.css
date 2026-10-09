@@ -642,9 +642,7 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
 .concept.is-ahl { border-left: 4px solid #7048E8; padding-left: 14px; }
 @keyframes popIn { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
 
-/* ---------- 廣東話 explanations and 答題框架 ---------- */
-.yue { margin: 10px 0 4px; padding: 10px 14px; border-radius: 10px; background: color-mix(in srgb, #7048E8 10%, var(--surface)); border: 1px solid color-mix(in srgb, #7048E8 35%, transparent); font-size: .95rem; line-height: 1.65; }
-.yue-tag { display: inline-block; font-size: .72rem; letter-spacing: .04em; padding: 2px 8px; margin-right: 6px; border-radius: 999px; background: #7048E8; color: #fff; }
+/* ---------- Answer framework styles ---------- */
 .frame-sec .frame-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px; }
 .frame-card { border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; background: var(--surface-2, var(--surface)); }
 .frame-type { font-weight: 800; color: var(--c, var(--text)); margin-bottom: 6px; }
@@ -924,7 +922,7 @@ main > h1, main > h2, #app > h2 { text-shadow: 0 1px 14px rgba(0, 0, 0, .55); }
 .subject-card .hero-progress { margin-top: 2px; }
 @media (max-width: 900px) { .notes-layout.collapsed { grid-template-columns: minmax(0, 1fr); } .notes-layout.collapsed > .side { display: none; } }
 .side { overscroll-behavior: contain; }
-/* cards inside grids must not get the stacked-card top margin (it made the first card, e.g. 中文A, look larger) */
+/* Prevent the first card in each grid from inheriting a stacked-card top margin. */
 .subject-grid > *, .features > *, .topic-cards > * { margin-top: 0 !important; }
 
 /* ================= kTown pass 3 ================= */
@@ -1000,7 +998,7 @@ main > h1, main > h2, #app > h2 { text-shadow: 0 1px 14px rgba(0, 0, 0, .55); }
   .callout { background-color: var(--kb); color: var(--text); }
   .topic-sections, .topic-sections p, .topic-sections li, .topic-sections dd, .topic-sections td,
   .topic-sections th, .topic-sections dt, .topic-sections summary, .topic-sections .concept,
-  .topic-sections .worked, .topic-sections .sol, .topic-sections .yue, .topic-sections .formula { color: var(--text); }
+  .topic-sections .worked, .topic-sections .sol, .topic-sections .formula { color: var(--text); }
   .topic-sections .callout-title { color: var(--k); }
   .topic-sections .hl, .topic-sections strong, .topic-sections b { color: #FFFFFF; }
   .topic-sections .muted, .topic-sections .meta, .topic-sections .small.muted { color: var(--muted); }
@@ -1033,3 +1031,24 @@ main > h1, main > h2, #app > h2 { text-shadow: 0 1px 14px rgba(0, 0, 0, .55); }
 
 /* ---- speed: skip painting long off-screen pages, lighter hover work ---- */
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+
+/* Unified notes download picker. */
+.download-picker-box { width: min(760px, 94vw); max-height: min(84vh, 900px); overflow: auto; }
+.download-picker-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.download-picker-options { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); }
+.download-overview-option, .download-questions-option { display: flex; align-items: center; gap: 9px; }
+.download-overview-option { flex: 1 1 260px; flex-wrap: wrap; }
+.download-overview-option .muted { flex-basis: 100%; margin-left: 25px; }
+.download-format-label { display: flex; flex-direction: column; gap: 4px; font-size: .82rem; font-weight: 700; }
+.download-format-label select { min-width: 110px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; }
+.download-group-list { display: grid; gap: 10px; max-height: 45vh; overflow: auto; margin: 14px 0; padding-right: 4px; }
+.download-group { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.download-group-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 11px 13px; background: var(--surface-2); }
+.download-group-head .muted { margin-left: auto; }
+.download-group-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)); gap: 0; padding: 4px 12px; }
+.download-topic-option { display: flex; align-items: flex-start; gap: 9px; padding: 9px 2px; font-size: .9rem; }
+.download-topic-option input, .download-group-head input, .download-overview-option input, .download-questions-option input { flex: none; margin-top: .25em; accent-color: var(--primary); }
+.level-actions { align-items: center; gap: 8px; }
+.level-switch-action { white-space: nowrap; }
+@media (max-width: 560px) { .download-group-items { grid-template-columns: 1fr; } .download-picker-options { align-items: flex-start; flex-direction: column; } .download-group-head .muted { flex-basis: 100%; margin-left: 25px; } }
