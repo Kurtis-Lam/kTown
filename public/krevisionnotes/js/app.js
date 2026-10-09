@@ -4,11 +4,10 @@
 
   const IB = (window.IB = window.IB || {});
   IB.subjects = IB.subjects || {};
-  IB.order = ["chia", "engb", "math", "phys", "chem", "bio", "econ", "geo"];
+  IB.order = ["engb", "math", "phys", "chem", "bio", "econ", "geo"];
 
   // ---------- subject symbols ----------
   const ICONS = {
-    chia: '<text x="12" y="19" text-anchor="middle" font-size="19" font-weight="700" fill="currentColor" stroke="none" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif">文</text>',
     engb: '<path d="M12 6.5C9.8 4.8 6.8 4.2 3.5 4.2v13.6c3.3 0 6.3.6 8.5 2.3 2.2-1.7 5.2-2.3 8.5-2.3V4.2c-3.3 0-6.3.6-8.5 2.3zM12 6.5v13.6"/>',
     math: '<path d="M4.5 7.5h15M9 7.5c0 4-.5 8-2 11M15 7.5c0 4.5 0 8.5 2.8 11"/>',
     phys: '<ellipse cx="12" cy="12" rx="9.5" ry="3.8"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(120 12 12)"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/>',
@@ -63,6 +62,10 @@
   IB.levelSwitch = (sid, opts = {}) => {
     if (!IB.hasHL(sid)) return opts.label ? `<span class="pill">${IB.levelOf(sid)} only</span>` : "";
     const lv = IB.levelOf(sid);
+    if (opts.action) {
+      const target = lv === "HL" ? "SL" : "HL";
+      return `<button type="button" class="btn small level-switch-action" data-lvl-sid="${sid}" data-lv="${target}" aria-label="Switch ${IB.esc(IB.subjects[sid].baseName)} to ${target}">Switch to ${target}</button>`;
+    }
     return `<div class="lvl-switch${opts.small ? " small" : ""}" role="group" aria-label="${IB.esc(IB.subjects[sid].baseName)} level">${["SL", "HL"].map((x) => `<button type="button" data-lvl-sid="${sid}" data-lv="${x}" class="${x === lv ? "on" : ""}" aria-pressed="${x === lv}">${x}</button>`).join("")}</div>`;
   };
   document.addEventListener("click", (e) => {
@@ -198,7 +201,6 @@
     math: [["P1", "Paper 1"], ["P2", "Paper 2"], ["P3", "Paper 3 (HL)"]],
     bio: [["P1A", "Paper 1A (MCQ)"], ["P1B", "Paper 1B"], ["P2", "Paper 2"]],
     engb: [["P1", "Paper 1 (writing)"], ["P2", "Paper 2 (reading/listening)"], ["IO", "Individual oral"]],
-    chia: [["P1", "試卷一"], ["P2", "試卷二"], ["IO", "個人口試"]],
   };
   IB.paperName = (subjectId, code) => ((IB.paperOptions[subjectId] || []).find(([c]) => c === code) || [code, code])[1];
   IB.mySource = (r) => [r.session, IB.paperName(r.subject, r.paper), r.qnum ? "Q" + r.qnum : ""].filter(Boolean).join(" · ");
@@ -466,7 +468,6 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
     math: [0, 15, 28, 41, 54, 67, 80],
     bio: [0, 17, 29, 41, 52, 63, 74],
     engb: [0, 14, 30, 45, 58, 70, 82],
-    chia: [0, 13, 26, 40, 53, 66, 78],
     phys: [0, 16, 28, 40, 51, 63, 75],
     // HL boundaries (approximate - they vary by session)
     "econ:HL": [0, 15, 29, 41, 52, 63, 74],
@@ -488,8 +489,6 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
     "the a an and or of to in on for with by is are be as at that this it its from which their there these those was were has have had will would can could may might into than then also not no more less most least such other each per using use used show shows give state award any one two both e.g. eg i.e. ie owttE owtte accept do don't allow".split(" ")
   );
   const stem = (w) => w.replace(/(ing|ed|es|s|ly)$/i, "");
-  // Chinese has no spaces, so CJK runs are split into overlapping two-character "words".
-  const cjk = (s) => (String(s).replace(/<[^>]+>/g, " ").match(/[\u3400-\u9fff]+/g) || []).flatMap((run) => (run.length < 2 ? [] : Array.from({ length: run.length - 1 }, (_, i) => run.slice(i, i + 2))));
   const words = (s) =>
     String(s)
       .toLowerCase()
@@ -497,8 +496,7 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
       .replace(/[^a-z0-9.%\-+ ]/g, " ")
       .split(/\s+/)
       .filter((w) => w.length > 2 && !STOP.has(w))
-      .map(stem)
-      .concat(cjk(s));
+      .map(stem);
 
   // Offline marker: credits a markscheme point when enough of its key words appear in the answer.
   IB.offlineMark = function (q, answer) {
@@ -547,8 +545,8 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
   // Two back ends with one interface:
   //  - hosted on claude.ai: the page's built-in "ask Claude" ability (runs on the viewer's Claude account);
   //  - self-hosted: server.js (/api/*) with an Anthropic API key.
-  const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", math: "IB Mathematics: Analysis and Approaches SL", bio: "IB Biology SL", engb: "IB English B HL", chia: "IB Chinese A: Language and Literature SL (answer in Traditional Chinese)" };
-  const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Biology SL, English B HL and Chinese A: Language & Literature SL. For Chinese A, reply in Traditional Chinese unless the student writes in English.
+  const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", math: "IB Mathematics: Analysis and Approaches SL", phys: "IB Physics", bio: "IB Biology SL", engb: "IB English B HL" };
+  const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Physics, Biology SL and English B HL.
 - Guide rather than hand over answers: when asked for help with a problem, give the next hint or ask what they have tried, unless they explicitly ask for the full worked solution.
 - Use IB command terms precisely and say what each demands in marks.
 - Use correct IB terminology, units, significant figures and notation. Economics: say which diagram to draw and how to label it. Geography: push for named, located case studies with data. Chemistry: units, state symbols, s.f. Maths: show working and note Paper 1 (no calculator) vs Paper 2.
@@ -936,53 +934,6 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
     t._h = setTimeout(() => (t.style.opacity = 0), 3200);
   };
 
-  // ---------- global "Switch to SL / HL" (header button + confirm popup) ----------
-  // The student's selected subjects = saved subject choices, or every subject for guests.
-  const selectedHLSubjects = () => {
-    const p = IB.getPrefs();
-    return IB.subjectList().filter((x) => IB.hasHL(x.id) && (!p || p.subjects.includes(x.id)));
-  };
-  const overallLevel = () => {
-    const l = selectedHLSubjects();
-    if (!l.length) return "SL";
-    return l.filter((x) => IB.levelOf(x.id) === "HL").length * 2 > l.length ? "HL" : "SL";
-  };
-  const switchLabel = () => "Switch to " + (overallLevel() === "HL" ? "SL" : "HL");
-  function refreshSwitchBtn() { IB.qsa(".lvl-switch-btn").forEach((b) => (b.textContent = switchLabel())); }
-  function confirmSwitch() {
-    if (IB.qs("#lvlConfirm")) return;
-    const target = overallLevel() === "HL" ? "SL" : "HL";
-    const list = selectedHLSubjects();
-    const m = IB.el(`<div class="ib-modal" id="lvlConfirm" role="dialog" aria-modal="true" aria-label="Confirm level change">
-      <div class="ib-modal-box card" style="width:min(460px,100%)">
-        <h2 style="margin:0 0 8px">Switch to ${target}?</h2>
-        <p style="margin:0 0 10px">Are you sure? This will change your selected subjects to <strong>${target}</strong> and update the whole site.</p>
-        <p class="muted small" style="margin:0 0 16px">${list.length ? "Affects: " + list.map((x) => IB.esc(x.baseName)).join(", ") + "." : "No selected subject has an HL option."} Subjects with only one level stay as they are.</p>
-        <div class="btn-row"><button type="button" class="btn primary" id="lvlYes">Confirm</button><button type="button" class="btn" id="lvlNo">Cancel</button></div>
-      </div></div>`);
-    document.body.appendChild(m);
-    const close = () => { m.remove(); document.removeEventListener("keydown", onKey); };
-    const onKey = (e) => { if (e.key === "Escape") close(); };
-    document.addEventListener("keydown", onKey);
-    m.addEventListener("click", (e) => { if (e.target === m) close(); });
-    IB.qs("#lvlNo", m).onclick = close;
-    IB.qs("#lvlYes", m).onclick = () => {
-      list.forEach((x) => IB.setLevel(x.id, target, true));
-      const p = IB.getPrefs();
-      if (p && IB.store) {
-        const lv = Object.assign({}, p.levels);
-        list.forEach((x) => (lv[x.id] = target));
-        IB.savePrefs(p.subjects, lv);
-        if (IB.cloud && IB.cloud.syncNow) IB.cloud.syncNow();
-      }
-      close();
-      refreshSwitchBtn();
-      IB.toast(`Switched your selected subjects to ${target}`);
-      const y = window.scrollY;
-      Promise.resolve(IB.rerender ? IB.rerender() : IB.runPage && IB.runPage()).then(() => window.scrollTo(0, y));
-    };
-  }
-
   function chrome() {
     IB.qsa("body > .site-header, body > .site-footer").forEach((el) => el.remove());
     const page = document.body.dataset.page || "";
@@ -1003,12 +954,10 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
       </nav>
       ${IB.gameChip ? IB.gameChip() : ""}
       <span id="acctSlot"></span>
-      <button class="icon-btn lvl-btn lvl-switch-btn" id="lvlBtn" title="Change all your selected subjects between SL and HL" type="button">${switchLabel()}</button>
       <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu">☰</button>
     </div></header>`);
     document.body.prepend(header);
     IB.qs("#menuBtn").onclick = () => IB.qs("#navLinks").classList.toggle("open");
-    IB.qs("#lvlBtn").onclick = (e) => { e.preventDefault(); confirmSwitch(); };
   }
   document.documentElement.dataset.theme = "dark"; // kTown uses one dark look over the nebula background
 
@@ -1029,6 +978,9 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
   // Run the current page's IB.page(), then the shared intro band and motion.
   IB.renderChrome = chrome;
   IB.runPage = function () {
+    if (IB.subjects) delete IB.subjects.chia;
+    if (IB.frameworks) delete IB.frameworks.chia;
+    if (IB.ia) delete IB.ia.chia;
     IB._renderedUid = (IB.cloud && IB.cloud.user && IB.cloud.user.uid) || null;
     IB._renderedReady = !IB.cloud || !!IB.cloud.ready;
     const ret = typeof IB.page === "function" ? IB.page() : null;
@@ -1042,7 +994,7 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
 
   document.addEventListener("DOMContentLoaded", async () => {
     // Wait (briefly) for the first sign-in check so the page draws once instead of twice.
-    if (IB.cloud && IB.cloud.whenReady) await Promise.race([IB.cloud.whenReady, new Promise((ok) => setTimeout(ok, 3000))]);
+    if (IB.cloud && IB.cloud.whenReady) await IB.cloud.whenReady;
     // The hosted copy is a single page with a router (js/router.js) so every screen keeps the AI connection.
     if (IB.router) return IB.router();
     chrome();
@@ -1064,10 +1016,9 @@ IB.topicSections = function (t, opts = {}) {
   const out = [];
   const box = (kind, title, body, id) => `<section class="callout ${kind}" ${id ? `id="${id}"` : ""} data-reveal><h3 class="callout-title">${title}</h3>${body}</section>`;
   if (t.formulas && t.formulas.length) out.push(["formulas", "Formulas", box("formula", "Formulas", `<div class="formula-grid">${t.formulas.map((f) => `<div class="formula">${f}</div>`).join("")}</div>`, "sec-formulas")]);
-  const yue = (x) => (x.yue ? `<aside class="yue" lang="zh-HK"><strong class="yue-tag">廣東話解釋</strong> ${x.yue}</aside>` : "");
   const ahl = (x) => (x.hl ? ' <span class="ahl-badge" title="Additional higher level">AHL</span>' : "");
   const concepts = t.concepts.filter((x) => IB.showItem(t.subject, x));
-  out.push(["concepts", "Concepts", `<section class="card concepts" id="sec-concepts" data-reveal><h3 class="section-title">Key concepts</h3>${t.yue ? `<aside class="yue yue-top" lang="zh-HK"><strong class="yue-tag">廣東話重點</strong> ${t.yue}</aside>` : ""}${concepts.map((x) => `<div class="concept${x.hl ? " is-ahl" : ""}"><h3>${x.h}${ahl(x)}</h3>${x.b}${yue(x)}</div>`).join("")}</section>`]);
+  out.push(["concepts", "Concepts", `<section class="card concepts" id="sec-concepts" data-reveal><h3 class="section-title">Key concepts</h3>${concepts.map((x) => `<div class="concept${x.hl ? " is-ahl" : ""}"><h3>${x.h}${ahl(x)}</h3>${x.b}</div>`).join("")}</section>`]);
   if (t.table) out.push(["table", "Compare", `<section class="card" id="sec-table" data-reveal><h3 class="section-title">Compare at a glance</h3><div class="table-wrap"><table class="compare"><tr>${t.table.head.map((h) => `<th>${h}</th>`).join("")}</tr>${t.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${x}</td>` : `<th scope="row">${x}</th>`)).join("")}</tr>`).join("")}</table></div></section>`]);
   if (t.diagrams && t.diagrams.length && IB.plot) out.push(["diagrams", "Diagrams", `<section class="card" id="sec-diagrams" data-reveal><h3 class="section-title">Diagrams to know</h3><div class="plot-grid">${t.diagrams.map(IB.plot).join("")}</div></section>`]);
   const methods = (t.methods || []).concat((t.skills || []).map((x) => `<strong>${x.h}:</strong> ${x.b}`));
@@ -1077,7 +1028,7 @@ IB.topicSections = function (t, opts = {}) {
   const plans = IB.essayPlansHtml ? IB.essayPlansHtml(t) : "";
   if (plans) out.push(["plans", "Essay plans", `<section class="card plans" id="sec-plans" data-reveal><h3 class="section-title">Practice essay plans</h3><p class="small muted" style="margin-top:0">Built from the markschemes: intro → for → against → examples → evaluate → conclusion. Use at least two evaluation lenses (scale, time, stakeholders, place, evidence).</p>${plans}</section>`]);
   const frames = IB.topicFrames ? IB.topicFrames(t) : t.frame || [];
-  if (frames.length) out.push(["frame", "答題框架", `<section class="card frame-sec" id="sec-frame" data-reveal><h3 class="section-title">答題框架 · Answer frameworks</h3><p class="small muted" style="margin-top:0">Exam skills for each question type: follow the steps in order and you hit every markscheme point.</p><div class="frame-grid">${frames.map((f) => `<div class="frame-card"><div class="frame-type">${f.type}</div><ol class="frame-steps">${f.steps.map((x) => `<li>${x}</li>`).join("")}</ol>${f.yue ? `<aside class="yue" lang="zh-HK"><strong class="yue-tag">廣東話</strong> ${f.yue}</aside>` : ""}</div>`).join("")}</div></section>`]);
+  if (frames.length) out.push(["frame", "Answer frameworks", `<section class="card frame-sec" id="sec-frame" data-reveal><h3 class="section-title">Answer frameworks</h3><p class="small muted" style="margin-top:0">Exam skills for each question type: follow the steps in order and you hit every markscheme point.</p><div class="frame-grid">${frames.map((f) => `<div class="frame-card"><div class="frame-type">${f.type}</div><ol class="frame-steps">${f.steps.map((x) => `<li>${x}</li>`).join("")}</ol></div>`).join("")}</div></section>`]);
   if (t.tips && t.tips.length) out.push(["tips", "Exam tips", box("tip", "Exam tips", `<ul>${t.tips.map((m) => `<li>${m}</li>`).join("")}</ul>`, "sec-tips")]);
   if (t.terms && t.terms.length) out.push(["terms", "Key terms", box("terms", "Key definitions to learn", `<div class="table-wrap"><table class="def-table"><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody>${t.terms.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("")}</tbody></table></div>`, "sec-terms")]);
   return out;
@@ -1183,7 +1134,7 @@ IB.HIGHLIGHTS = [
 
 /* ---------- essay plans built from extended-response markschemes ---------- */
 IB.essayPlan = function (q) {
-  if (q.type !== "extended" || !q.ms || q.subject === "engb" || q.subject === "chia") return null;
+  if (q.type !== "extended" || !q.ms || q.subject === "engb") return null;
   const rows = { Intro: [], Diagram: [], For: [], Against: [], Examples: [], Evaluate: [] };
   q.ms.forEach((p) => {
     const x = p.replace(/<[^>]+>/g, "").trim();
