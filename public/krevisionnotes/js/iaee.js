@@ -5,7 +5,7 @@ IB.page = function () {
   const save = (key, val) => IB.store.update((d) => { d.ia = d.ia || {}; d.ia[key] = val; });
   let view = IB.param("view") || "ia";
   let sid = IB.param("subject") || "econ";
-  if (!IB.ia[sid]) sid = "econ";
+  if (!IB.ia[sid] || !IB.subjectList().some((x) => x.id === sid)) sid = "econ";
 
   app.innerHTML = `<h1 style="margin-bottom:.2em">IA &amp; Extended Essay</h1>
     <p class="muted" style="margin-top:0">Criteria explained in plain language, a self-assessment marker that predicts your IA mark and subject grade, a research-question checker, and the TOK/EE points calculator.</p>
