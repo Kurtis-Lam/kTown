@@ -117,7 +117,7 @@
     ["hl", "HL", "Higher level", "Practise an AHL topic", (d) => d.attempts.some((a) => { const t = IB.topic(a.t); return t && t.hl; }), "#7048E8"],
     ["poly", "8", "All-rounder", "Practise every one of your subjects", (d) => IB.subjectList().every((s) => d.attempts.some((a) => a.s === s.id)), "#2D5BFF"],
     ["level10", "Lv10", "Scholar", "Reach level 10", (d) => IB.levelInfo(IB.xp(d)).level >= 10, "#0F1B2D"],
-  ].concat(["chia", "engb", "math", "phys", "chem", "bio", "econ", "geo"].map((sid) => [
+  ].concat(["engb", "math", "phys", "chem", "bio", "econ", "geo"].map((sid) => [
     "m-" + sid, "7", `${(IB.subjects[sid] && IB.subjects[sid].baseName) || sid} expert`, "Average mastery 70%+ over 3+ topics", (d) => IB.subjects[sid] && (subjMastery(d, sid) || 0) >= 70, `var(--${sid})`,
   ]));
   IB.badges = (d = IB.store.get()) => {
