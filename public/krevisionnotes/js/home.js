@@ -2,7 +2,6 @@
 
 // One example question per subject for the rotating demo card (same order as the subject grid).
 IB.DEMOS = [
-  { sid: "chia", tag: "中文A SL · Paper 1", marks: 6, q: "分析作者如何運用比喻和對比，表現城市發展對傳統社區的影響。", ans: "作者把新城區比作「水泥森林」，與老街「炊煙裊裊」的畫面對比，突出現代生活的冷漠和傳統人情味的消逝……", score: "4/6", ok: ["辨認比喻「水泥森林」", "指出新舊對比", "連繫文章主題"], miss: "沒有分析對讀者的情感效果" },
   { sid: "engb", tag: "English B HL · Paper 2", marks: 3, q: "Explain how the writer uses statistics to support the argument that cities should ban single-use plastics.", ans: "The writer states that eight million tonnes of plastic enter the oceans every year, which makes the problem sound urgent and measurable…", score: "2/3", ok: ["Identifies the statistic", "Links it to urgency"], miss: "link to the writer's purpose: persuading readers to support a ban" },
   { sid: "math", tag: "Maths AA SL · Paper 1", marks: 4, q: "The function f(x) = 3x² − 12x + 5. Find the coordinates of the vertex of the graph of f, and state the range of f.", ans: "f′(x) = 6x − 12 = 0, so x = 2. f(2) = 12 − 24 + 5 = −7. Vertex (2, −7)…", score: "3/4", ok: ["f′(x) = 0 used", "x = 2", "y = −7"], miss: "state the range: f(x) ≥ −7" },
   { sid: "phys", tag: "Physics SL · Paper 2", marks: 3, q: "A 0.50 kg ball is dropped from rest from a height of 20 m. Calculate its speed just before it hits the ground. Ignore air resistance (g = 9.81 m s⁻²).", ans: "v² = 2gh = 2 × 9.81 × 20 = 392.4, so v = 19.8", score: "2/3", ok: ["Uses v² = 2gh", "Correct substitution"], miss: "the unit in the final answer: m s⁻¹" },
