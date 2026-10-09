@@ -1,31 +1,61 @@
-/* kTown shell: puts the shared nebula background + footer (background.html) on every page.
-   Usage on any page:  <script src="shell.js" defer></script>   (krevisionnotes pages use ../shell.js)
-   A page can add a small note under the footer line with:  window.KT_FOOTER_NOTE = "text";  (set before shell.js runs) */
+/* Shared kTown shell: prime the background immediately, then load the footer separately. */
 (function () {
+  "use strict";
   var me = document.currentScript;
   var base = me && me.src ? me.src.replace(/shell\.js(\?.*)?$/, "") : "/";
-  function mount(html) {
+
+  function ensureLayer(id) {
+    var layer = document.getElementById(id);
+    if (layer) return layer;
+    layer = document.createElement("div");
+    layer.id = id;
+    layer.setAttribute("aria-hidden", "true");
+    document.body.insertBefore(layer, document.body.firstChild);
+    return layer;
+  }
+
+  function primeBackground() {
+    if (!document.body) return;
+    ensureLayer("overlay");
+    ensureLayer("nebula");
+    document.documentElement.style.backgroundColor = "#07090e";
+    document.body.style.backgroundColor = "transparent";
+  }
+
+  function mountFooter(html) {
+    if (document.getElementById("ktFooter")) return;
     var doc = new DOMParser().parseFromString(html, "text/html");
-    var scripts = [];
-    if (!document.querySelector('link[href*="font-awesome"]')) {
-      var fa = document.createElement("link"); fa.rel = "stylesheet";
-      fa.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
-      document.head.appendChild(fa);
+    var footer = doc.body.querySelector("#ktFooter");
+    if (!footer) return;
+    var imported = document.importNode(footer, true);
+    document.body.appendChild(imported);
+    var note = window.KT_FOOTER_NOTE;
+    if (note) {
+      var p = document.createElement("div");
+      p.className = "kt-note";
+      p.textContent = note;
+      imported.appendChild(p);
     }
-    // styles first (they live in <head> after parsing), then body nodes
-    Array.prototype.forEach.call(doc.head.querySelectorAll("style"), function (n) { document.head.appendChild(document.importNode(n, true)); });
-    Array.prototype.slice.call(doc.body.childNodes).forEach(function (n) {
-      if (n.nodeType !== 1) return;
-      if (n.tagName === "SCRIPT") { scripts.push(n); return; }
-      if (n.id === "nebula" || n.id === "overlay") document.body.insertBefore(document.importNode(n, true), document.body.firstChild);
-      else document.body.appendChild(document.importNode(n, true));
-    });
-    var note = window.KT_FOOTER_NOTE, f = document.getElementById("ktFooter");
-    if (note && f) { var p = document.createElement("div"); p.className = "kt-note"; p.textContent = note; f.appendChild(p); }
-    scripts.forEach(function (old) { var s = document.createElement("script"); s.textContent = old.textContent; document.body.appendChild(s); });
   }
+
+  function loadFooter() {
+    fetch(base + "background.html", { cache: "force-cache" })
+      .then(function (response) { if (!response.ok) throw new Error("Footer unavailable"); return response.text(); })
+      .then(mountFooter)
+      .catch(function () { /* Main content remains available if the footer request fails. */ });
+  }
+
   function go() {
-    fetch(base + "background.html", { cache: "no-cache" }).then(function (r) { return r.text(); }).then(mount).catch(function () {});
+    primeBackground();
+    if (document.documentElement.classList.contains("shell-background-ready")) loadFooter();
+    else document.addEventListener("ktown:background-ready", loadFooter, { once: true });
+    // Keep the page usable if the animated background script fails to load.
+    setTimeout(function () {
+      if (document.documentElement.classList.contains("shell-background-ready")) return;
+      document.documentElement.classList.add("shell-background-ready");
+      document.dispatchEvent(new Event("ktown:background-ready"));
+    }, 7000);
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
+  if (document.readyState === "loading" && !document.body) document.addEventListener("DOMContentLoaded", go, { once: true });
+  else go();
 })();
