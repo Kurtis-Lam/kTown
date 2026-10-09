@@ -7,7 +7,7 @@ IB.page = function () {
   let sort = "recent";
 
   app.innerHTML = `<h1 style="margin-bottom:.2em">Mistakes notebook</h1>
-    <p class="muted" style="margin-top:0">Every question where you lost marks is saved automatically, with your answer and the markscheme points you missed. Retry until you get full marks - then it moves to Fixed. 錯題簿：答錯嘅題目自動記錄，做啱先會消失。</p>
+    <p class="muted" style="margin-top:0">Every question where you lost marks is saved automatically, with your answer and the markscheme points you missed. Retry until you get full marks, then it moves to Fixed.</p>
     <div class="mk-stats" id="mkStats"></div>
     <div class="subject-tabs" id="mkSubs"></div>
     <div class="mk-bar card">
