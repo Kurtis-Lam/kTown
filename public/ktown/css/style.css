@@ -657,3 +657,14 @@
             .app-card .card-content, .app-card .card-icon-wrapper, .card-launch-btn { transition: none; }
             .app-card:hover .card-content, .app-card:hover .card-icon-wrapper { transform: none; }
         }
+
+
+/* Consistent product logo badges used by the homepage launchpad. */
+.card-icon-wrapper .app-logo {
+    display: block;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 11px;
+    flex: none;
+}
