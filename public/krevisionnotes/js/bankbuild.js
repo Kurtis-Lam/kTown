@@ -36,7 +36,7 @@
   // Split prose into markscheme-sized points (keeps maths and HTML intact inside each sentence).
   const points = (html, max) => {
     const parts = String(html)
-      .split(/(?<=[.!?。！？])\s+(?=[A-Z一-鿿「（(<])/)
+      .split(/(?<=[.!?])\s+(?=[A-Z(<])/)
       .map((s) => s.trim())
       .filter((s) => strip(s).length > 3);
     if (parts.length <= max) return parts;
@@ -45,15 +45,14 @@
     return out;
   };
 
-  const ZH = (sid) => sid === "chia";
   const T = {
-    define: (sid, k) => (ZH(sid) ? `解釋「${k}」的意思。` : `Define the term <strong>${k}</strong>.`),
-    defMs: (sid) => (ZH(sid) ? "準確定義（關鍵詞到位即可得分）" : "Accurate definition including the key idea"),
-    whichTerm: (sid, v) => (ZH(sid) ? `以下哪一個術語符合這個定義？<br><em>「${v}」</em>` : `Which term matches this definition?<br><em>"${v}"</em>`),
-    whichDef: (sid, k) => (ZH(sid) ? `以下哪一項最能說明「${k}」？` : `Which statement best describes <strong>${k}</strong>?`),
-    explain: (sid, h, m) => (ZH(sid) ? `解釋：${h}。[${m}]` : `Explain: ${h}. [${m}]`),
-    trap: (sid) => (ZH(sid) ? "以下哪一項是考官最常扣分的<strong>錯誤</strong>？（其餘三項都是正確的）" : "Which of these is a <strong>mistake</strong> examiners regularly penalise? (The other three are correct.)"),
-    trapMs: (sid, x) => (ZH(sid) ? `這是常見錯誤：${x}` : `This is the common mistake: ${x}`),
+    define: (sid, k) => `Define the term <strong>${k}</strong>.`,
+    defMs: (sid) => "Accurate definition including the key idea",
+    whichTerm: (sid, v) => `Which term matches this definition?<br><em>"${v}"</em>`,
+    whichDef: (sid, k) => `Which statement best describes <strong>${k}</strong>?`,
+    explain: (sid, h, m) => `Explain: ${h}. [${m}]`,
+    trap: (sid) => "Which of these is a <strong>mistake</strong> examiners regularly penalise? (The other three are correct.)",
+    trapMs: (sid, x) => `This is the common mistake: ${x}`,
   };
 
   function derive(s) {
@@ -101,7 +100,7 @@
 
       // spot the mistake: one trap + three pieces of good practice from the same topic
       const good = (t.methods || []).concat(t.tips || []).map(strip).filter((x) => x.length > 15 && x.length < 260);
-      const facts = (t.terms || []).map(([k, v]) => (ZH(s.id) ? `「${k}」：${v}` : `${k}: ${v}`));
+      const facts = (t.terms || []).map(([k, v]) => `${k}: ${v}`);
       (t.traps || []).forEach((x, i) => {
         const rr = rng(seedOf(t.id + "x" + i));
         const right = Array.from(new Set(shuffle(good, rr).concat(shuffle(facts, rr)))).filter((y) => y !== strip(x)).slice(0, 3);
