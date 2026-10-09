@@ -1,0 +1,75 @@
+git add -- public/background.html
+git commit -m "Separate shared footer markup from the preloaded nebula background"
+git add -- public/credits/index.html
+git commit -m "Show the branded OpenRouter logo on the credits card"
+git add -- public/imgs/logos/kauranotes.png
+git commit -m "Standardize the kAuraNotes logo canvas corners and gradient border"
+git add -- public/imgs/logos/kcitethisforme.png
+git commit -m "Standardize the kCiteThisForMe logo canvas corners and gradient border"
+git add -- public/imgs/logos/krevisionnotes.png
+git commit -m "Standardize the kRevisionNotes logo canvas corners and gradient border"
+git add -- public/imgs/logos/ktown.png
+git commit -m "Standardize the kTown logo canvas corners and gradient border"
+git add -- public/imgs/logos/ktown_legacy.png
+git commit -m "Standardize the legacy kTown logo canvas corners and gradient border"
+git add -- public/imgs/logos/openrouter.png
+git commit -m "Standardize the OpenRouter logo canvas corners and green gradient border"
+git add -- public/kauranotes/index.html
+git commit -m "Add kAuraNotes favicon and preload the shared background before page content"
+git add -- public/kcitethisforme/index.html
+git commit -m "Add kCiteThisForMe favicon and preload the shared background before page content"
+git add -- public/krevisionnotes/css/style.css
+git commit -m "Style the unified notes download picker and remove Cantonese presentation styles"
+git add -- public/krevisionnotes/friends.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for the friends page"
+git add -- public/krevisionnotes/ia.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for the IA page"
+git add -- public/krevisionnotes/index.html
+git commit -m "Add kRevisionNotes favicon and preload shared background before the homepage"
+git add -- public/krevisionnotes/js/app.js
+git commit -m "Avoid duplicate initial rendering and remove Cantonese UI output"
+git add -- public/krevisionnotes/js/bankbuild.js
+git commit -m "Keep generated question-bank labels and controls English-only"
+git add -- public/krevisionnotes/js/game.js
+git commit -m "Remove Chinese-only subject labels from revision game screens"
+git add -- public/krevisionnotes/js/home.js
+git commit -m "Remove the Chinese subject from revision homepage choices"
+git add -- public/krevisionnotes/js/iaee.js
+git commit -m "Use English-only IA and extended-essay interface labels"
+git add -- public/krevisionnotes/js/marker.js
+git commit -m "Remove Chinese-specific essay marking logic and retain English marker behavior"
+git add -- public/krevisionnotes/js/mistakes.js
+git commit -m "Keep the mistakes notebook interface aligned with English-only subjects"
+git add -- public/krevisionnotes/js/notes.js
+git commit -m "Move level switching into notes cards, track read time, and unify downloads"
+git add -- public/krevisionnotes/js/pdfnotes.js
+git commit -m "Keep generated revision PDFs English-only and sanitize download filenames"
+git add -- public/krevisionnotes/mistakes.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for the mistakes page"
+git add -- public/krevisionnotes/mypapers.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for saved papers"
+git add -- public/krevisionnotes/notes.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for revision notes"
+git add -- public/krevisionnotes/practice.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for practice papers"
+git add -- public/krevisionnotes/progress.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for progress tracking"
+git add -- public/krevisionnotes/questionbank.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for the question bank"
+git add -- public/krevisionnotes/skills.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for exam skills"
+git add -- public/krevisionnotes/tutor.html
+git commit -m "Add kRevisionNotes favicon and preload shared background for the tutor"
+git add -- public/ktown/css/style.css
+git commit -m "Align launchpad app logos to a shared rounded presentation"
+git add -- public/ktown/index.html
+git commit -m "Use branded app logos on the launchpad and remove the revision-note tick"
+git add -- public/nebula.css
+git commit -m "Preload a viewport-wide nebula background and reveal page content from below"
+git add -- public/nebula.js
+git commit -m "Render the shared nebula asynchronously and signal when its background is ready"
+git add -- public/shell.js
+git commit -m "Load the footer after background readiness and prime a full-page dark canvas"
+git add -- git_commands.txt
+git commit -m "Add per-file Git command list"
+git push
