@@ -1,61 +1,109 @@
-/* Shared kTown shell: prime the background immediately, then load the footer separately. */
+/* Shared kTown shell.
+   background.html (the animated background layers) and footer.html are fetched in parallel straight away.
+   The footer is appended into the background, and the pair is mounted once. The page content is never held
+   back by the background: it appears as soon as the page reports it is ready. */
 (function () {
   "use strict";
+  var root = document.documentElement;
   var me = document.currentScript;
   var base = me && me.src ? me.src.replace(/shell\.js(\?.*)?$/, "") : "/";
+  var FONT_AWESOME = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
 
-  function ensureLayer(id) {
-    var layer = document.getElementById(id);
-    if (layer) return layer;
-    layer = document.createElement("div");
-    layer.id = id;
-    layer.setAttribute("aria-hidden", "true");
-    document.body.insertBefore(layer, document.body.firstChild);
-    return layer;
+  function get(name) {
+    return fetch(base + name)
+      .then(function (r) { if (!r.ok) throw new Error(name); return r.text(); })
+      .catch(function () { return ""; });
+  }
+  var backgroundReq = get("background.html");
+  var footerReq = get("footer.html");
+
+  function ensureFontAwesome() {
+    if (document.querySelector('link[href*="font-awesome"]')) return;
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = FONT_AWESOME;
+    document.head.appendChild(link);
   }
 
-  function primeBackground() {
-    if (!document.body) return;
-    ensureLayer("overlay");
-    ensureLayer("nebula");
-    document.documentElement.style.backgroundColor = "#07090e";
-    document.body.style.backgroundColor = "transparent";
+  function pick(html, selector) {
+    if (!html) return null;
+    var found = new DOMParser().parseFromString(html, "text/html").body.querySelector(selector);
+    return found ? document.importNode(found, true) : null;
   }
 
-  function mountFooter(html) {
-    if (document.getElementById("ktFooter")) return;
-    var doc = new DOMParser().parseFromString(html, "text/html");
-    var footer = doc.body.querySelector("#ktFooter");
-    if (!footer) return;
-    var imported = document.importNode(footer, true);
-    document.body.appendChild(imported);
-    var note = window.KT_FOOTER_NOTE;
-    if (note) {
-      var p = document.createElement("div");
-      p.className = "kt-note";
-      p.textContent = note;
-      imported.appendChild(p);
+  function fallbackBackground() {
+    var wrap = document.createElement("div");
+    wrap.id = "ktBackground";
+    ["overlay", "nebula"].forEach(function (id) {
+      var layer = document.createElement("div");
+      layer.id = id;
+      layer.setAttribute("aria-hidden", "true");
+      wrap.appendChild(layer);
+    });
+    return wrap;
+  }
+
+  function mount(backgroundHtml, footerHtml) {
+    if (document.getElementById("ktBackground")) return;
+    var background = pick(backgroundHtml, "#ktBackground");
+    if (!background || !background.querySelector("#nebula") || !background.querySelector("#overlay")) background = fallbackBackground();
+    var footer = pick(footerHtml, "#ktFooter");
+    if (footer) {
+      var note = window.KT_FOOTER_NOTE;
+      if (note) {
+        var p = document.createElement("div");
+        p.className = "kt-note";
+        p.textContent = note;
+        footer.appendChild(p);
+      }
+      background.appendChild(footer);
     }
+    root.style.backgroundColor = "#07090e";
+    document.body.appendChild(background);
+    document.dispatchEvent(new Event("ktown:layers-ready"));
   }
 
-  function loadFooter() {
-    fetch(base + "background.html", { cache: "force-cache" })
-      .then(function (response) { if (!response.ok) throw new Error("Footer unavailable"); return response.text(); })
-      .then(mountFooter)
-      .catch(function () { /* Main content remains available if the footer request fails. */ });
+  var contentDone = false;
+  function contentReady() {
+    if (contentDone) return;
+    contentDone = true;
+    root.classList.add("kt-ready");
+    document.dispatchEvent(new Event("ktown:ready"));
+    prefetch();
   }
 
-  function go() {
-    primeBackground();
-    if (document.documentElement.classList.contains("shell-background-ready")) loadFooter();
-    else document.addEventListener("ktown:background-ready", loadFooter, { once: true });
-    // Keep the page usable if the animated background script fails to load.
-    setTimeout(function () {
-      if (document.documentElement.classList.contains("shell-background-ready")) return;
-      document.documentElement.classList.add("shell-background-ready");
-      document.dispatchEvent(new Event("ktown:background-ready"));
-    }, 7000);
+  // Warm the browser cache for the pages and scripts a visitor is likely to open next.
+  function prefetch() {
+    var run = function () {
+      var seen = {};
+      var urls = (window.KT_PREFETCH || []).slice();
+      document.querySelectorAll(".nav-links a[href]").forEach(function (a) { urls.push(a.getAttribute("href")); });
+      urls.forEach(function (u) {
+        if (!u || u.charAt(0) === "#" || /^(https?:)?\/\//i.test(u)) return;
+        var abs = new URL(u, location.href);
+        if (abs.origin !== location.origin || abs.href === location.href || seen[abs.href]) return;
+        seen[abs.href] = 1;
+        var link = document.createElement("link");
+        link.rel = "prefetch";
+        link.href = abs.href;
+        document.head.appendChild(link);
+      });
+    };
+    if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 3000 });
+    else setTimeout(run, 1500);
   }
-  if (document.readyState === "loading" && !document.body) document.addEventListener("DOMContentLoaded", go, { once: true });
-  else go();
+
+  function start() {
+    ensureFontAwesome();
+    Promise.all([backgroundReq, footerReq]).then(function (r) { mount(r[0], r[1]); });
+
+    // Pages that build their content with JavaScript (they carry data-page) report in when it is drawn.
+    var dynamic = document.body.hasAttribute("data-page");
+    if (!dynamic || window.KT_CONTENT_READY) contentReady();
+    else document.addEventListener("ktown:content-ready", contentReady, { once: true });
+    setTimeout(contentReady, 8000);
+  }
+
+  if (document.body) start();
+  else document.addEventListener("DOMContentLoaded", start, { once: true });
 })();
