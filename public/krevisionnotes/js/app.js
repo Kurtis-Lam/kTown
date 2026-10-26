@@ -1005,32 +1005,41 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
 /* Shared document builders (notes & worksheet downloads). */
 // Colour-coded note sections, shared by the notes page and downloads.
 IB.CALLOUTS = [
-  ["formula", "Formulas", "What to know or recognise"],
-  ["method", "Fastest methods", "The quickest reliable route to the marks"],
-  ["trap", "Traps", "Where marks are usually lost"],
-  ["example", "Worked examples", "Full solutions in exam layout"],
-  ["tip", "Exam tips", "How the markscheme thinks"],
-  ["terms", "Key terms", "Learn these word-for-word for 2-mark definitions"],
+  ["formula", "Formulas", "Know or recognise"],
+  ["method", "Methods", "Fastest route to marks"],
+  ["trap", "Traps", "Where marks are lost"],
+  ["example", "Examples", "Exam-layout solutions"],
+  ["tip", "Tips", "How the markscheme thinks"],
+  ["terms", "Terms", "Learn word-for-word"],
 ];
 IB.topicSections = function (t, opts = {}) {
   const out = [];
-  const box = (kind, title, body, id) => `<section class="callout ${kind}" ${id ? `id="${id}"` : ""} data-reveal><h3 class="callout-title">${title}</h3>${body}</section>`;
-  if (t.formulas && t.formulas.length) out.push(["formulas", "Formulas", box("formula", "Formulas", `<div class="formula-grid">${t.formulas.map((f) => `<div class="formula">${f}</div>`).join("")}</div>`, "sec-formulas")]);
+  const fold = !opts.static;
+  const sec = (id, kind, title, body, o = {}) => {
+    const callout = kind !== "card";
+    const cls = callout ? `callout ${kind}` : `card ${o.cls || ""}`;
+    const head = callout ? "callout-title" : "section-title";
+    if (!fold) return `<section class="${cls}" id="sec-${id}" data-reveal><h3 class="${head}">${title}</h3>${body}</section>`;
+    const n = o.n > 1 ? `<span class="fold-n">${o.n}</span>` : "";
+    return `<details class="${cls} fold" id="sec-${id}" data-reveal${o.open ? " open" : ""}><summary class="${head}"><span class="fold-t">${title}</span>${n}<span class="fold-chev" aria-hidden="true"></span></summary><div class="fold-body">${body}</div></details>`;
+  };
+
+  if (t.formulas && t.formulas.length) out.push(["formulas", "Formulas", sec("formulas", "formula", "Formulas", `<div class="formula-grid">${t.formulas.map((f) => `<div class="formula">${f}</div>`).join("")}</div>`, { open: true })]);
   const ahl = (x) => (x.hl ? ' <span class="ahl-badge" title="Additional higher level">AHL</span>' : "");
   const concepts = t.concepts.filter((x) => IB.showItem(t.subject, x));
-  out.push(["concepts", "Concepts", `<section class="card concepts" id="sec-concepts" data-reveal><h3 class="section-title">Key concepts</h3>${concepts.map((x) => `<div class="concept${x.hl ? " is-ahl" : ""}"><h3>${x.h}${ahl(x)}</h3>${x.b}</div>`).join("")}</section>`]);
-  if (t.table) out.push(["table", "Compare", `<section class="card" id="sec-table" data-reveal><h3 class="section-title">Compare at a glance</h3><div class="table-wrap"><table class="compare"><tr>${t.table.head.map((h) => `<th>${h}</th>`).join("")}</tr>${t.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${x}</td>` : `<th scope="row">${x}</th>`)).join("")}</tr>`).join("")}</table></div></section>`]);
-  if (t.diagrams && t.diagrams.length && IB.plot) out.push(["diagrams", "Diagrams", `<section class="card" id="sec-diagrams" data-reveal><h3 class="section-title">Diagrams to know</h3><div class="plot-grid">${t.diagrams.map(IB.plot).join("")}</div></section>`]);
+  out.push(["concepts", "Concepts", sec("concepts", "card", "Key concepts", `${concepts.map((x) => `<div class="concept${x.hl ? " is-ahl" : ""}"><h3>${x.h}${ahl(x)}</h3>${x.b}</div>`).join("")}`, { cls: "concepts", open: true })]);
+  if (t.table) out.push(["table", "Compare", sec("table", "card", "Compare at a glance", `<div class="table-wrap"><table class="compare"><tr>${t.table.head.map((h) => `<th>${h}</th>`).join("")}</tr>${t.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${x}</td>` : `<th scope="row">${x}</th>`)).join("")}</tr>`).join("")}</table></div>`)]);
+  if (t.diagrams && t.diagrams.length && IB.plot) out.push(["diagrams", "Diagrams", sec("diagrams", "card", "Diagrams", `<div class="plot-grid">${t.diagrams.map(IB.plot).join("")}</div>`, { n: t.diagrams.length })]);
   const methods = (t.methods || []).concat((t.skills || []).map((x) => `<strong>${x.h}:</strong> ${x.b}`));
-  if (methods.length) out.push(["methods", "Fastest methods", box("method", "Fastest methods", `<ol>${methods.map((m) => `<li>${m}</li>`).join("")}</ol>`, "sec-methods")]);
-  if (t.traps && t.traps.length) out.push(["traps", "Traps", box("trap", "Traps", `<ul>${t.traps.map((m) => `<li>${m}</li>`).join("")}</ul>`, "sec-traps")]);
-  if (t.examples && t.examples.length) out.push(["examples", "Worked examples", box("example", "Worked examples", t.examples.map((e, i) => `<div class="worked"><strong>Example ${i + 1}.</strong> ${e.q}${opts.static ? `<div class="sol"><strong>Solution:</strong> ${e.a}</div>` : `<details class="sol"><summary>Show solution</summary><div>${e.a}</div></details>`}</div>`).join(""), "sec-examples")]);
+  if (methods.length) out.push(["methods", "Methods", sec("methods", "method", "Fastest methods", `<ol>${methods.map((m) => `<li>${m}</li>`).join("")}</ol>`, { n: methods.length, open: true })]);
+  if (t.traps && t.traps.length) out.push(["traps", "Traps", sec("traps", "trap", "Traps", `<ul>${t.traps.map((m) => `<li>${m}</li>`).join("")}</ul>`, { n: t.traps.length, open: true })]);
+  if (t.examples && t.examples.length) out.push(["examples", "Examples", sec("examples", "example", "Worked examples", t.examples.map((e, i) => `<div class="worked"><strong>Example ${i + 1}.</strong> ${e.q}${opts.static ? `<div class="sol"><strong>Solution:</strong> ${e.a}</div>` : `<details class="sol"><summary>Show solution</summary><div>${e.a}</div></details>`}</div>`).join(""), { n: t.examples.length, open: true })]);
   const plans = IB.essayPlansHtml ? IB.essayPlansHtml(t) : "";
-  if (plans) out.push(["plans", "Essay plans", `<section class="card plans" id="sec-plans" data-reveal><h3 class="section-title">Practice essay plans</h3><p class="small muted" style="margin-top:0">Built from the markschemes: intro → for → against → examples → evaluate → conclusion. Use at least two evaluation lenses (scale, time, stakeholders, place, evidence).</p>${plans}</section>`]);
+  if (plans) out.push(["plans", "Essays", sec("plans", "card", "Essay plans", plans, { cls: "plans" })]);
   const frames = IB.topicFrames ? IB.topicFrames(t) : t.frame || [];
-  if (frames.length) out.push(["frame", "Answer frameworks", `<section class="card frame-sec" id="sec-frame" data-reveal><h3 class="section-title">Answer frameworks</h3><p class="small muted" style="margin-top:0">Exam skills for each question type: follow the steps in order and you hit every markscheme point.</p><div class="frame-grid">${frames.map((f) => `<div class="frame-card"><div class="frame-type">${f.type}</div><ol class="frame-steps">${f.steps.map((x) => `<li>${x}</li>`).join("")}</ol></div>`).join("")}</div></section>`]);
-  if (t.tips && t.tips.length) out.push(["tips", "Exam tips", box("tip", "Exam tips", `<ul>${t.tips.map((m) => `<li>${m}</li>`).join("")}</ul>`, "sec-tips")]);
-  if (t.terms && t.terms.length) out.push(["terms", "Key terms", box("terms", "Key definitions to learn", `<div class="table-wrap"><table class="def-table"><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody>${t.terms.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("")}</tbody></table></div>`, "sec-terms")]);
+  if (frames.length) out.push(["frame", "Frameworks", sec("frame", "card", `Answer frameworks`, `<div class="frame-grid">${frames.map((f) => `<div class="frame-card"><div class="frame-type">${f.type}</div><ol class="frame-steps">${f.steps.map((x) => `<li>${x}</li>`).join("")}</ol></div>`).join("")}</div>`, { cls: "frame-sec", n: frames.length })]);
+  if (t.tips && t.tips.length) out.push(["tips", "Tips", sec("tips", "tip", "Exam tips", `<ul>${t.tips.map((m) => `<li>${m}</li>`).join("")}</ul>`, { n: t.tips.length })]);
+  if (t.terms && t.terms.length) out.push(["terms", "Terms", sec("terms", "terms", "Key terms", `<div class="table-wrap"><table class="def-table"><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody>${t.terms.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("")}</tbody></table></div>`, { n: t.terms.length })]);
   return out;
 };
 
