@@ -668,3 +668,17 @@
     border-radius: 11px;
     flex: none;
 }
+
+/* Launchpad cards show each app's logo directly, with no coloured badge behind it. */
+.app-card .card-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    background: none;
+    border: 0;
+    box-shadow: none;
+}
+.app-card .card-icon-wrapper .app-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 0;
+}
