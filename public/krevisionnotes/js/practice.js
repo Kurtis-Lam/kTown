@@ -3,13 +3,13 @@ IB.page = function () {
   const subParam = IB.param("subject");
   const topicParam = IB.param("topic");
 
-  app.innerHTML = `<h1 style="margin-bottom:.2em">Quizzes & mock exams</h1>
-    <p class="muted" style="margin-top:0">Build a unit quiz, let the smart quiz target your weak topics, sit a timed mock paper, or drill calculations with endless fresh numbers. Every result is saved to <a href="progress.html">My Progress</a>.</p>
+  app.innerHTML = `<h1 style="margin-bottom:.2em">Practice</h1>
+    <p class="muted" style="margin-top:0">Create a topic quiz, focus on weak areas, or sit a timed mock. Results appear in <a href="progress.html">Progress</a>.</p>
     <div class="tabs no-print" id="modes">
       <button data-mode="quiz" class="active">Unit quiz</button>
-      <button data-mode="smart">Smart quiz (weak topics)</button>
+      <button data-mode="smart">Smart quiz</button>
       <button data-mode="mock">Mock exam paper</button>
-      <button data-mode="drill">Calculation drill</button>
+      <button data-mode="drill">Calculation practice</button>
     </div>
     <div id="setup"></div>
     <div id="run"></div>
@@ -264,12 +264,12 @@ IB.page = function () {
     },
     drill() {
       const sid = subParam || "math";
-      setup.innerHTML = `<div class="card"><h2 style="margin-top:0">Calculation drill</h2>
-        <p class="muted">Endless fresh calculation questions with instant marking. Build speed and accuracy - keep your streak going.</p>
+      setup.innerHTML = `<div class="card"><h2 style="margin-top:0">Calculation practice</h2>
+        <p class="muted">Practise calculation questions with instant marking.</p>
         <div class="filters">${subjectSelect("dSub", sid)}<label class="field">Topic<select id="dTopic"></select></label></div>
-        <div class="btn-row" style="margin:14px 0"><span class="pill good" id="streak">Streak 0</span><span class="pill" id="dScore">0/0 correct</span></div>
+        <div class="btn-row" style="margin:14px 0"><span class="pill" id="dScore">0/0 correct</span></div>
         <div id="dQ"></div></div>`;
-      let streak = 0, right = 0, total = 0;
+      let right = 0, total = 0;
       const fill = () => {
         const s = IB.qs("#dSub").value;
         const ts = IB.generatorTopics(s);
@@ -291,9 +291,8 @@ IB.page = function () {
           if (!inp.value.trim()) return;
           const ok = IB.checkNumeric(q, inp.value);
           total++;
-          if (ok) { right++; streak++; } else streak = 0;
+          if (ok) right++;
           IB.recordAttempt(q, ok ? q.marks : 0, q.marks, "drill");
-          IB.qs("#streak").textContent = `Streak ${streak}${streak >= 5 ? " 🔥" : ""}`;
           IB.qs("#dScore").textContent = `${right}/${total} correct`;
           const res = IB.qs("#dRes");
           res.innerHTML = `<div class="feedback ${ok ? "good" : "low"}"><h4>${ok ? "Correct!" : `Not quite - answer: ${q.numeric.value}`}</h4><ul class="small">${q.ms.map((m) => `<li>${m}</li>`).join("")}</ul></div><div class="btn-row" style="margin-top:8px"><button class="btn primary" id="dNext">Next question →</button></div>`;
