@@ -45,7 +45,8 @@
     if (!cloud.configured) return null;
     if (starting) return starting;
     starting = (async () => {
-      for (const s of SDK) await load(s);
+      await load(SDK[0]);
+      await Promise.all(SDK.slice(1).map(load));
       fb = window.firebase;
       fb.initializeApp(window.IB_FIREBASE);
       auth = fb.auth();
