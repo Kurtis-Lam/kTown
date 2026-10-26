@@ -1,6 +1,10 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" class="kt-ready">
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kRevisionNotes - IB revision notes</title>
+<meta name="description" content="Every IB topic. Every paper. Notes, an exam-style question bank, IB-style papers and mocks, marked instantly against the markscheme.">
 <link rel="icon" type="image/png" href="/imgs/logos/krevisionnotes.png?v=3">
 <link rel="preload" href="/nebula.css" as="style">
 <link rel="stylesheet" href="/nebula.css">
@@ -8,113 +12,151 @@
 <link rel="preload" href="/shell.js" as="script">
 <link rel="preload" href="/background.html" as="fetch" crossorigin>
 <link rel="preload" href="/footer.html" as="fetch" crossorigin>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>kRevisionNotes - IB revision notes</title>
-<meta name="description" content="IB revision notes and practice questions for SL and HL subjects, with subject-based study tools and private progress tracking.">
-<link rel="stylesheet" href="vendor/katex/katex.min.css">
-<script defer src="vendor/katex/katex.min.js"></script>
-<script defer src="vendor/katex/contrib/auto-render.min.js"></script>
+<link rel="preload" href="/imgs/logos/krevisionnotes.png?v=3" as="image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <link rel="stylesheet" href="css/style.css">
-<!-- NOTES SCRIPT PRELOADS START -->
-<link rel="preload" href="vendor/katex/katex.min.js" as="script">
-<link rel="preload" href="vendor/katex/contrib/auto-render.min.js" as="script">
-<link rel="preload" href="js/app.js" as="script">
-<link rel="preload" href="js/data/econ.js" as="script">
-<link rel="preload" href="js/data/chem.js" as="script">
-<link rel="preload" href="js/data/geo.js" as="script">
-<link rel="preload" href="js/data/math.js" as="script">
-<link rel="preload" href="js/data/bio.js" as="script">
-<link rel="preload" href="js/data/engb.js" as="script">
-<link rel="preload" href="js/data/chia.js" as="script">
-<link rel="preload" href="js/data/econ-plus.js" as="script">
-<link rel="preload" href="js/data/chem-plus.js" as="script">
-<link rel="preload" href="js/data/geo-plus.js" as="script">
-<link rel="preload" href="js/data/math-plus.js" as="script">
-<link rel="preload" href="js/data/bio-plus.js" as="script">
-<link rel="preload" href="js/data/engb-plus.js" as="script">
-<link rel="preload" href="js/data/chia-plus.js" as="script">
-<link rel="preload" href="js/data/econ-bank.js" as="script">
-<link rel="preload" href="js/data/chem-bank.js" as="script">
-<link rel="preload" href="js/data/geo-bank.js" as="script">
-<link rel="preload" href="js/data/math-bank.js" as="script">
-<link rel="preload" href="js/data/bio-bank.js" as="script">
-<link rel="preload" href="js/data/engb-bank.js" as="script">
-<link rel="preload" href="js/data/chia-bank.js" as="script">
-<link rel="preload" href="js/data/phys.js" as="script">
-<link rel="preload" href="js/data/phys2.js" as="script">
-<link rel="preload" href="js/data/phys-bank.js" as="script">
-<link rel="preload" href="js/data/econ-hl.js" as="script">
-<link rel="preload" href="js/data/chem-hl.js" as="script">
-<link rel="preload" href="js/data/math-hl.js" as="script">
-<link rel="preload" href="js/data/bio-hl.js" as="script">
-<link rel="preload" href="js/data/geo-hl.js" as="script">
-<link rel="preload" href="js/data/hl-bank.js" as="script">
-<link rel="preload" href="js/data/frameworks.js" as="script">
-<link rel="preload" href="js/data/markdb.js" as="script">
-<link rel="preload" href="js/data/yue.js" as="script">
-<link rel="preload" href="js/marker.js" as="script">
-<link rel="preload" href="js/firebase-config.js" as="script">
-<link rel="preload" href="js/cloud.js" as="script">
-<link rel="preload" href="js/generators.js" as="script">
-<link rel="preload" href="js/bankbuild.js" as="script">
-<link rel="preload" href="js/plot.js" as="script">
-<link rel="preload" href="js/motion.js" as="script">
-<link rel="preload" href="js/pdfnotes.js" as="script">
-<link rel="preload" href="js/notes.js" as="script">
-<!-- NOTES SCRIPT PRELOADS END -->
+<link rel="stylesheet" href="css/home.css">
 <script>window.KT_FOOTER_NOTE="kRevisionNotes is original IB-style revision material. It is not official IB content and is not affiliated with or endorsed by the International Baccalaureate Organization.";</script>
-<script>window.KT_PREFETCH=["js/bank.js","js/practice.js"];</script>
+<script>window.KT_PREFETCH=["notes.html","js/app.js","js/notes.js"];</script>
 <script src="/shell.js" async></script>
 <script src="/nebula.js" async></script>
-<script defer src="js/app.js"></script>
-<script defer src="js/data/econ.js"></script>
-<script defer src="js/data/chem.js"></script>
-<script defer src="js/data/geo.js"></script>
-<script defer src="js/data/math.js"></script>
-<script defer src="js/data/bio.js"></script>
-<script defer src="js/data/engb.js"></script>
-<script defer src="js/data/chia.js"></script>
-<script defer src="js/data/econ-plus.js"></script>
-<script defer src="js/data/chem-plus.js"></script>
-<script defer src="js/data/geo-plus.js"></script>
-<script defer src="js/data/math-plus.js"></script>
-<script defer src="js/data/bio-plus.js"></script>
-<script defer src="js/data/engb-plus.js"></script>
-<script defer src="js/data/chia-plus.js"></script>
-<script defer src="js/data/econ-bank.js"></script>
-<script defer src="js/data/chem-bank.js"></script>
-<script defer src="js/data/geo-bank.js"></script>
-<script defer src="js/data/math-bank.js"></script>
-<script defer src="js/data/bio-bank.js"></script>
-<script defer src="js/data/engb-bank.js"></script>
-<script defer src="js/data/chia-bank.js"></script>
-<script defer src="js/data/phys.js"></script>
-<script defer src="js/data/phys2.js"></script>
-<script defer src="js/data/phys-bank.js"></script>
-<script defer src="js/data/econ-hl.js"></script>
-<script defer src="js/data/chem-hl.js"></script>
-<script defer src="js/data/math-hl.js"></script>
-<script defer src="js/data/bio-hl.js"></script>
-<script defer src="js/data/geo-hl.js"></script>
-<script defer src="js/data/hl-bank.js"></script>
-<script defer src="js/data/frameworks.js"></script>
-<script defer src="js/data/markdb.js"></script>
-<script defer src="js/data/yue.js"></script>
-<script defer src="js/marker.js"></script>
-<script defer src="js/firebase-config.js"></script>
-<script defer src="js/cloud.js"></script>
-<script defer src="js/generators.js"></script>
-<script defer src="js/bankbuild.js"></script>
-<script defer src="js/plot.js"></script>
-<script defer src="js/motion.js"></script>
-<script defer src="js/pdfnotes.js"></script>
-<script defer src="js/notes.js"></script>
 </head>
-<body data-page="notes">
-<main class="container" id="app"></main>
+<body>
+<header class="site-header"><div class="container nav">
+  <a class="brand" href="index.html" aria-label="kRevisionNotes home"><img class="brand-logo" src="/imgs/logos/krevisionnotes.png?v=3" alt="kRevisionNotes" width="38" height="38"><span class="brand-text">kRevisionNotes</span></a>
+  <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+    <a href="notes.html">Notes</a>
+    <a href="questionbank.html">Questions</a>
+    <a href="practice.html">Practice</a>
+    <details class="nav-more">
+      <summary>More</summary>
+      <div class="nav-more-menu">
+        <a href="mistakes.html">Mistakes</a>
+        <a href="skills.html">Study skills</a>
+        <a href="ia.html">IA &amp; EE</a>
+        <a href="mypapers.html">My papers</a>
+        <a href="progress.html">Progress</a>
+      </div>
+    </details>
+  </nav>
+  <span id="acctSlot"></span>
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false">☰</button>
+</div></header>
+<main class="container lp-main" id="app">
+  <section class="lp-hero">
+    <div class="lp-copy">
+      <span class="eyebrow">IB Diploma · 8 subjects · SL &amp; HL · Notes · Questions · Mocks · IA &amp; EE</span>
+      <h1>Every topic. Every paper. <span class="ul">Marked like the real thing.</span></h1>
+      <p class="lead">Notes with answer frameworks for every topic, an exam-style question bank, IB-style PDF papers and mocks, marked instantly and strictly against the markscheme.</p>
+      <div class="btn-row">
+        <a class="btn primary" href="practice.html">Start a quiz</a>
+        <a class="btn" href="notes.html">Browse notes →</a>
+      </div>
+    </div>
+    <div class="lp-demo" aria-label="Examples of markscheme marking across subjects">
+      <div class="lp-stack" id="lpStack">
+        <a class="lp-card is-active" href="notes.html?subject=econ" style="--c:var(--econ)" aria-label="Economics example, open Economics notes">
+          <div class="lp-top"><span class="pill">Econ SL · Paper 2</span><span class="lp-marks">[4 marks]</span></div>
+          <div class="lp-q">Using a diagram, explain how a severe drought in Brazil is likely to affect the world price of coffee.</div>
+          <div class="lp-ans">Drought reduces crop yields, so supply shifts left from S₁ to S₂. At the old price there is a shortage, so the price rises to P₂…</div>
+          <div class="lp-verdict"><div class="lp-score"><span class="lp-big">3/4</span><span class="pill lp-tag">Markscheme marker</span></div><div><b class="ok">✓</b> Supply shifts left · <b class="ok">✓</b> Shortage → price rises · <b class="ok">✓</b> Diagram</div><div><b class="no">✗</b> Missing: label the new equilibrium Q₂</div></div>
+        </a>
+        <a class="lp-card" href="notes.html?subject=chem" style="--c:var(--chem)" aria-label="Chemistry example, open Chemistry notes" tabindex="-1" aria-hidden="true">
+          <div class="lp-top"><span class="pill">Chem SL · Paper 2</span><span class="lp-marks">[3 marks]</span></div>
+          <div class="lp-q">Calculate the pH of 0.020 mol dm⁻³ hydrochloric acid.</div>
+          <div class="lp-ans">HCl is a strong acid so it dissociates fully: [H⁺] = 0.020 mol dm⁻³. pH = −log(0.020) = 1.7</div>
+          <div class="lp-verdict"><div class="lp-score"><span class="lp-big">3/3</span><span class="pill lp-tag">Markscheme marker</span></div><div><b class="ok">✓</b> Strong acid, full dissociation · <b class="ok">✓</b> [H⁺] = 0.020 · <b class="ok">✓</b> pH = 1.7 (2 s.f.)</div><div><b class="ok">✓</b> Full marks: every markscheme point matched</div></div>
+        </a>
+        <a class="lp-card" href="notes.html?subject=phys" style="--c:var(--phys)" aria-label="Physics example, open Physics notes" tabindex="-1" aria-hidden="true">
+          <div class="lp-top"><span class="pill">Physics SL · Paper 2</span><span class="lp-marks">[3 marks]</span></div>
+          <div class="lp-q">A 2.0 kg trolley accelerates from rest to 3.0 m s⁻¹ in 1.5 s. Calculate the resultant force.</div>
+          <div class="lp-ans">a = Δv / Δt = 3.0 / 1.5 = 2.0 m s⁻². F = ma = 2.0 × 2.0 = 4.0 N</div>
+          <div class="lp-verdict"><div class="lp-score"><span class="lp-big">3/3</span><span class="pill lp-tag">Markscheme marker</span></div><div><b class="ok">✓</b> Acceleration = 2.0 m s⁻² · <b class="ok">✓</b> F = ma · <b class="ok">✓</b> F = 4.0 N</div><div><b class="ok">✓</b> Full marks: every markscheme point matched</div></div>
+        </a>
+        <a class="lp-card" href="notes.html?subject=geo" style="--c:var(--geo)" aria-label="Geography example, open Geography notes" tabindex="-1" aria-hidden="true">
+          <div class="lp-top"><span class="pill">Geography SL · Paper 1</span><span class="lp-marks">[4 marks]</span></div>
+          <div class="lp-q">Explain one reason why rates of coastal erosion vary along a coastline.</div>
+          <div class="lp-ans">Soft rock such as clay erodes faster than hard rock such as granite because it is less resistant to hydraulic action and abrasion…</div>
+          <div class="lp-verdict"><div class="lp-score"><span class="lp-big">3/4</span><span class="pill lp-tag">Markscheme marker</span></div><div><b class="ok">✓</b> Rock type identified · <b class="ok">✓</b> Contrasting rock resistance · <b class="ok">✓</b> Erosion processes named</div><div><b class="no">✗</b> Missing: link to wave energy or fetch</div></div>
+        </a>
+        <a class="lp-card" href="notes.html?subject=math" style="--c:var(--math)" aria-label="Mathematics AA example, open Mathematics AA notes" tabindex="-1" aria-hidden="true">
+          <div class="lp-top"><span class="pill">Maths AA SL · Paper 1</span><span class="lp-marks">[5 marks]</span></div>
+          <div class="lp-q">Differentiate f(x) = x²e³ˣ.</div>
+          <div class="lp-ans">Product rule: f′(x) = 2x·e³ˣ + x²·3e³ˣ</div>
+          <div class="lp-verdict"><div class="lp-score"><span class="lp-big">4/5</span><span class="pill lp-tag">Markscheme marker</span></div><div><b class="ok">✓</b> Product rule used · <b class="ok">✓</b> Correct derivative of e³ˣ · <b class="ok">✓</b> Correct unsimplified result</div><div><b class="no">✗</b> Missing: factorise to x e³ˣ(2 + 3x)</div></div>
+        </a>
+        <a class="lp-card" href="notes.html?subject=bio" style="--c:var(--bio)" aria-label="Biology example, open Biology notes" tabindex="-1" aria-hidden="true">
+          <div class="lp-top"><span class="pill">Biology SL · Paper 2</span><span class="lp-marks">[3 marks]</span></div>
+          <div class="lp-q">Outline the role of helicase in DNA replication.</div>
+          <div class="lp-ans">Helicase unwinds the double helix at the replication fork so each strand can be copied.</div>
+          <div class="lp-verdict"><div class="lp-score"><span class="lp-big">2/3</span><span class="pill lp-tag">Markscheme marker</span></div><div><b class="ok">✓</b> Unwinds the DNA double helix · <b class="ok">✓</b> At the replication fork</div><div><b class="no">✗</b> Missing: breaks hydrogen bonds between base pairs</div></div>
+        </a>
+        <a class="lp-card" href="notes.html?subject=engb" style="--c:var(--engb)" aria-label="English B example, open English B notes" tabindex="-1" aria-hidden="true">
+          <div class="lp-top"><span class="pill">English B HL · Paper 2</span><span class="lp-marks">[30 marks]</span></div>
+          <div class="lp-q">Write a blog post persuading teenagers to spend less time on social media.</div>
+          <div class="lp-ans">Ever scrolled for an hour and felt worse than when you started? You are not alone, and you can change it…</div>
+          <div class="lp-verdict"><div class="lp-score"><span class="lp-big">26/30</span><span class="pill lp-tag">Markscheme marker</span></div><div><b class="ok">✓</b> Text type conventions · <b class="ok">✓</b> Persuasive devices</div><div><b class="no">✗</b> Missing: address a counter-argument</div></div>
+        </a>
+        <a class="lp-card" href="notes.html?subject=chia" style="--c:var(--chia)" aria-label="Chinese A example, open Chinese A notes" tabindex="-1" aria-hidden="true">
+          <div class="lp-top"><span class="pill">Chinese A L&amp;L SL · Paper 1</span><span class="lp-marks">[5 marks]</span></div>
+          <div class="lp-q">Explain how the writer uses the image of an empty courtyard to convey the narrator’s sense of loss.</div>
+          <div class="lp-ans">The empty courtyard symbolises the absence of the family, so its silence mirrors the narrator’s loneliness…</div>
+          <div class="lp-verdict"><div class="lp-score"><span class="lp-big">4/5</span><span class="pill lp-tag">Markscheme marker</span></div><div><b class="ok">✓</b> Image identified · <b class="ok">✓</b> Link to loss explained · <b class="ok">✓</b> Effect on reader</div><div><b class="no">✗</b> Missing: quote a specific phrase as evidence</div></div>
+        </a>
+      </div>
+      <div class="lp-dots" id="lpDots"><button type="button" class="is-active" aria-label="Show Economics example"></button><button type="button" class="" aria-label="Show Chemistry example"></button><button type="button" class="" aria-label="Show Physics example"></button><button type="button" class="" aria-label="Show Geography example"></button><button type="button" class="" aria-label="Show Mathematics AA example"></button><button type="button" class="" aria-label="Show Biology example"></button><button type="button" class="" aria-label="Show English B example"></button><button type="button" class="" aria-label="Show Chinese A example"></button></div>
+    </div>
+  </section>
+
+  <h2 class="lp-h2">Your subjects</h2>
+  <section class="lp-grid" aria-label="Subjects">
+      <a class="lp-subject" href="notes.html?subject=chia" style="--c:var(--chia)"><span class="lp-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><text x="12" y="17.4" text-anchor="middle" font-size="15.5" font-weight="700" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" fill="currentColor" stroke="none">中</text></svg></span><h3>Chinese A: Language &amp; Literature</h3><p>SL</p><span class="lp-cta">Open notes →</span></a>
+      <a class="lp-subject" href="notes.html?subject=engb" style="--c:var(--engb)"><span class="lp-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C9.8 4.8 6.8 4.2 3.5 4.2v13.6c3.3 0 6.3.6 8.5 2.3 2.2-1.7 5.2-2.3 8.5-2.3V4.2c-3.3 0-6.3.6-8.5 2.3zM12 6.5v13.6"/></svg></span><h3>English B</h3><p>HL</p><span class="lp-cta">Open notes →</span></a>
+      <a class="lp-subject" href="notes.html?subject=math" style="--c:var(--math)"><span class="lp-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 7.5h15M9 7.5c0 4-.5 8-2 11M15 7.5c0 4.5 0 8.5 2.8 11"/></svg></span><h3>Mathematics AA</h3><p>SL &amp; HL</p><span class="lp-cta">Open notes →</span></a>
+      <a class="lp-subject" href="notes.html?subject=phys" style="--c:var(--phys)"><span class="lp-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="9.5" ry="3.8"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(120 12 12)"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/></svg></span><h3>Physics</h3><p>SL &amp; HL</p><span class="lp-cta">Open notes →</span></a>
+      <a class="lp-subject" href="notes.html?subject=chem" style="--c:var(--chem)"><span class="lp-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 3.5h5M10.5 3.5v6L4.8 19a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L13.5 9.5v-6"/><path d="M7.6 15.5h8.8"/></svg></span><h3>Chemistry</h3><p>SL &amp; HL</p><span class="lp-cta">Open notes →</span></a>
+      <a class="lp-subject" href="notes.html?subject=bio" style="--c:var(--bio)"><span class="lp-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 3c0 6 9 6 9 9s-9 3-9 9M16.5 3c0 6-9 6-9 9s9 3 9 9"/><path d="M8.8 6.5h6.4M8.8 17.5h6.4"/></svg></span><h3>Biology</h3><p>SL &amp; HL</p><span class="lp-cta">Open notes →</span></a>
+      <a class="lp-subject" href="notes.html?subject=econ" style="--c:var(--econ)"><span class="lp-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 3.5v17h17"/><path d="M7.5 15l4-4.5 3 3 5.5-6.5"/><path d="M16 7h3.5v3.5"/></svg></span><h3>Economics</h3><p>SL &amp; HL</p><span class="lp-cta">Open notes →</span></a>
+      <a class="lp-subject" href="notes.html?subject=geo" style="--c:var(--geo)"><span class="lp-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M4.5 7.5h15M4.5 16.5h15"/></svg></span><h3>Geography</h3><p>SL &amp; HL</p><span class="lp-cta">Open notes →</span></a>
+  </section>
+
+  <h2 class="lp-h2">Everything you need for a 7</h2>
+  <section class="lp-grid" aria-label="Features">
+      <a class="lp-feature" href="notes.html"><span class="lp-ico" aria-hidden="true" style="font-size:1.4rem;font-weight:800">∑</span><span class="eyebrow">01 · Learn</span><h3>Topic notes + PDFs</h3><p>Concepts, fastest methods, traps, worked examples and a four-colour highlight key, with every topic or subject downloadable as a designed PDF booklet.</p><span class="lp-cta">Browse notes →</span></a>
+      <a class="lp-feature" href="questionbank.html"><span class="lp-ico" aria-hidden="true" style="font-size:1.4rem;font-weight:800">?</span><span class="eyebrow">02 · Practise</span><h3>Exam-style question bank</h3><p>A structured bank for every topic: exam-style questions, calculations, worked-example replays, explain-the-concept, key-term drills and spot-the-mistake.</p><span class="lp-cta">Open the bank →</span></a>
+      <a class="lp-feature" href="practice.html?mode=mock"><span class="lp-ico" aria-hidden="true" style="font-size:1.4rem;font-weight:800">⏱</span><span class="eyebrow">03 · Test yourself</span><h3>Quizzes & mock papers</h3><p>Timed papers in the real structure, unit quizzes and smart quizzes that target your weakest topics, all marked instantly.</p><span class="lp-cta">Sit a mock →</span></a>
+      <a class="lp-feature" href="skills.html"><span class="lp-ico" aria-hidden="true" style="font-size:1.4rem;font-weight:800">✎</span><span class="eyebrow">04 · Exam technique</span><h3>Answer frameworks</h3><p>A framework for every question type, sentence starters, top-band checklists and the markscheme decoded band by band.</p><span class="lp-cta">Learn the frameworks →</span></a>
+      <a class="lp-feature" href="ia.html"><span class="lp-ico" aria-hidden="true" style="font-size:1.4rem;font-weight:800">◎</span><span class="eyebrow">05 · Coursework</span><h3>IA &amp; EE predictor</h3><p>Score yourself on every criterion against the official descriptors and see your predicted grade and core points.</p><span class="lp-cta">Predict my grade →</span></a>
+      <a class="lp-feature" href="mistakes.html"><span class="lp-ico" aria-hidden="true" style="font-size:1.4rem;font-weight:800">✗</span><span class="eyebrow">06 · Fix your gaps</span><h3>Mistakes notebook</h3><p>Every question you get wrong is saved automatically. Retry them until you get them right, then they graduate out.</p><span class="lp-cta">Open my mistakes →</span></a>
+  </section>
+</main>
+<script>
+(function () {
+  var cards = document.querySelectorAll("#lpStack .lp-card");
+  var dots = document.querySelectorAll("#lpDots button");
+  var i = 0, timer;
+  function show(n) {
+    i = (n + cards.length) % cards.length;
+    cards.forEach(function (c, k) {
+      var on = k === i;
+      c.classList.toggle("is-active", on);
+      if (on) { c.removeAttribute("tabindex"); c.removeAttribute("aria-hidden"); }
+      else { c.setAttribute("tabindex", "-1"); c.setAttribute("aria-hidden", "true"); }
+    });
+    dots.forEach(function (d, k) { d.classList.toggle("is-active", k === i); });
+  }
+  function start() { clearInterval(timer); timer = setInterval(function () { show(i + 1); }, 5000); }
+  dots.forEach(function (d, k) { d.addEventListener("click", function () { show(k); start(); }); });
+  start();
+  var menuBtn = document.getElementById("menuBtn"), nav = document.getElementById("navLinks");
+  menuBtn.addEventListener("click", function () {
+    var open = nav.classList.toggle("open");
+    menuBtn.setAttribute("aria-expanded", String(open));
+    menuBtn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  });
+})();
+</script>
 </body>
 </html>
