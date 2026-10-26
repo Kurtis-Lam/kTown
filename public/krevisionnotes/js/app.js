@@ -4,7 +4,7 @@
 
   const IB = (window.IB = window.IB || {});
   IB.subjects = IB.subjects || {};
-  IB.order = ["engb", "math", "phys", "chem", "bio", "econ", "geo"];
+  IB.order = ["engb", "math", "phys", "chem", "bio", "econ", "geo", "chia"];
 
   // ---------- subject symbols ----------
   const ICONS = {
@@ -14,6 +14,7 @@
     chem: '<path d="M9.5 3.5h5M10.5 3.5v6L4.8 19a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L13.5 9.5v-6"/><path d="M7.6 15.5h8.8"/>',
     bio: '<path d="M7.5 3c0 6 9 6 9 9s-9 3-9 9M16.5 3c0 6-9 6-9 9s9 3 9 9"/><path d="M8.8 6.5h6.4M8.8 17.5h6.4"/>',
     econ: '<path d="M3.5 3.5v17h17"/><path d="M7.5 15l4-4.5 3 3 5.5-6.5"/><path d="M16 7h3.5v3.5"/>',
+    chia: '<text x="12" y="17.4" text-anchor="middle" font-size="15.5" font-weight="700" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" fill="currentColor" stroke="none">中</text>',
     geo: '<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M4.5 7.5h15M4.5 16.5h15"/>',
   };
   IB.subjectIcon = (sid, size = 22) => `<svg class="sub-ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[sid] || ""}</svg>`;
@@ -201,6 +202,7 @@
     math: [["P1", "Paper 1"], ["P2", "Paper 2"], ["P3", "Paper 3 (HL)"]],
     bio: [["P1A", "Paper 1A (MCQ)"], ["P1B", "Paper 1B"], ["P2", "Paper 2"]],
     engb: [["P1", "Paper 1 (writing)"], ["P2", "Paper 2 (reading/listening)"], ["IO", "Individual oral"]],
+    chia: [["P1", "試卷一"], ["P2", "試卷二"], ["IO", "個人口試"]],
   };
   IB.paperName = (subjectId, code) => ((IB.paperOptions[subjectId] || []).find(([c]) => c === code) || [code, code])[1];
   IB.mySource = (r) => [r.session, IB.paperName(r.subject, r.paper), r.qnum ? "Q" + r.qnum : ""].filter(Boolean).join(" · ");
@@ -468,6 +470,7 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
     math: [0, 15, 28, 41, 54, 67, 80],
     bio: [0, 17, 29, 41, 52, 63, 74],
     engb: [0, 14, 30, 45, 58, 70, 82],
+    chia: [0, 13, 26, 40, 53, 66, 78],
     phys: [0, 16, 28, 40, 51, 63, 75],
     // HL boundaries (approximate - they vary by session)
     "econ:HL": [0, 15, 29, 41, 52, 63, 74],
@@ -545,8 +548,8 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
   // Two back ends with one interface:
   //  - hosted on claude.ai: the page's built-in "ask Claude" ability (runs on the viewer's Claude account);
   //  - self-hosted: server.js (/api/*) with an Anthropic API key.
-  const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", math: "IB Mathematics: Analysis and Approaches SL", phys: "IB Physics", bio: "IB Biology SL", engb: "IB English B HL" };
-  const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Physics, Biology SL and English B HL.
+  const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", math: "IB Mathematics: Analysis and Approaches SL", phys: "IB Physics", bio: "IB Biology SL", engb: "IB English B HL", chia: "IB Chinese A: Language and Literature SL (answer in Traditional Chinese)" };
+  const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Physics, Biology SL, English B HL and Chinese A: Language & Literature SL. For Chinese A, reply in Traditional Chinese unless the student writes in English.
 - Guide rather than hand over answers: when asked for help with a problem, give the next hint or ask what they have tried, unless they explicitly ask for the full worked solution.
 - Use IB command terms precisely and say what each demands in marks.
 - Use correct IB terminology, units, significant figures and notation. Economics: say which diagram to draw and how to label it. Geography: push for named, located case studies with data. Chemistry: units, state symbols, s.f. Maths: show working and note Paper 1 (no calculator) vs Paper 2.
@@ -978,18 +981,19 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
   // Run the current page's IB.page(), then the shared intro band and motion.
   IB.renderChrome = chrome;
   IB.runPage = function () {
-    if (IB.subjects) delete IB.subjects.chia;
-    if (IB.frameworks) delete IB.frameworks.chia;
-    if (IB.ia) delete IB.ia.chia;
     IB._renderedUid = (IB.cloud && IB.cloud.user && IB.cloud.user.uid) || null;
     IB._renderedReady = !IB.cloud || !!IB.cloud.ready;
     const ret = typeof IB.page === "function" ? IB.page() : null;
+    const ready = () => {
+      window.KT_CONTENT_READY = true;
+      document.dispatchEvent(new Event("ktown:content-ready"));
+    };
     return Promise.resolve(ret).then(() => {
       introBand();
       if (IB.pageEnter) IB.pageEnter();
       const app = document.getElementById("app");
       if (IB.animate) IB.animate(app);
-    });
+    }).then(ready, (err) => { ready(); throw err; });
   };
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -1143,7 +1147,7 @@ IB.HIGHLIGHTS = [
 
 /* ---------- essay plans built from extended-response markschemes ---------- */
 IB.essayPlan = function (q) {
-  if (q.type !== "extended" || !q.ms || q.subject === "engb") return null;
+  if (q.type !== "extended" || !q.ms || q.subject === "engb" || q.subject === "chia") return null;
   const rows = { Intro: [], Diagram: [], For: [], Against: [], Examples: [], Evaluate: [] };
   q.ms.forEach((p) => {
     const x = p.replace(/<[^>]+>/g, "").trim();
