@@ -67,7 +67,7 @@
     const nebSeed = Math.random() * 100;
     const fbm = (x, y) => {
       let sum = 0, a = 0.5;
-      for (let i = 0; i < 5; i++) { sum += a * valueNoise(x, y); x = x * 2.03 + 17.1; y = y * 2.03 + 9.7; a *= 0.5; }
+      for (let i = 0; i < 3; i++) { sum += a * valueNoise(x, y); x = x * 2.03 + 17.1; y = y * 2.03 + 9.7; a *= 0.5; }
       return sum;
     };
     const sstep = (a, b, x) => { x = Math.min(1, Math.max(0, (x - a) / (b - a))); return x * x * (3 - 2 * x); };
@@ -94,7 +94,7 @@
       const my = ++drawToken;
       neb.innerHTML = '';
       nebLayers = []; nebCtx = null;
-      const M = 160, W = width + M * 2, H = height + M * 2, sc = 6;
+      const M = 96, W = width + M * 2, H = height + M * 2, sc = 12;
       const w = Math.ceil(W / sc), h = Math.ceil(H / sc);
 
       const bc = document.createElement('canvas');
@@ -173,7 +173,7 @@
       const step = () => {
         if (my !== drawToken) return;
         const t0 = performance.now();
-        while (performance.now() - t0 < 7) { if (gen.next().done) { finish(); return; } }
+        while (performance.now() - t0 < 10) { if (gen.next().done) { finish(); return; } }
         setTimeout(step, 0);
       };
       step();
@@ -207,7 +207,7 @@
     drawNebula();
 
     (function addGrain() {
-      const n = 160;
+      const n = 96;
       const c = document.createElement('canvas');
       c.width = c.height = n;
       const g = c.getContext('2d');
@@ -228,7 +228,7 @@
     window.addEventListener('scroll', () => { scrolling = true; clearTimeout(scrollTimer); scrollTimer = setTimeout(() => { scrolling = false; }, 140); }, { passive: true });
 
     let dirty = true;
-    const NEB_MS = 1000 / 10;
+    const NEB_MS = 1000 / 8;
     let lastNeb = 0;
 
     function animate(now) {
