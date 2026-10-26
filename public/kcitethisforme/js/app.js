@@ -27,6 +27,11 @@
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
     renderHistory();
+    window.addEventListener('ktown:cite-history-loaded', (event) => {
+      history = Array.isArray(event.detail && event.detail.history) ? event.detail.history : [];
+      localStorage.setItem('cite_history', JSON.stringify(history));
+      renderHistory();
+    });
 
     function formatDateString(rawDate) {
       if (!rawDate) return null;
@@ -261,6 +266,7 @@
       if (history.length > 5) history.pop();
       localStorage.setItem('cite_history', JSON.stringify(history));
       renderHistory();
+      window.dispatchEvent(new CustomEvent('ktown:cite-history-changed', { detail: { history } }));
     }
 
     function renderHistory() {
@@ -288,5 +294,6 @@
       history = [];
       localStorage.removeItem('cite_history');
       renderHistory();
+      window.dispatchEvent(new CustomEvent('ktown:cite-history-changed', { detail: { history } }));
     });
   
