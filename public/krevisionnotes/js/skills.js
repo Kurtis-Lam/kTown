@@ -4,10 +4,10 @@ IB.page = function () {
   let sid = IB.param("subject") || "econ";
   if (!IB.frameworks[sid]) sid = "econ";
 
-  app.innerHTML = `<h1 style="margin-bottom:.2em">Exam skills</h1>
-    <p class="muted" style="margin-top:0">An answer framework for every question type, sentence starters, worked examples, and the markscheme decoded - so you know exactly where every mark comes from.</p>
+  app.innerHTML = `<h1 style="margin-bottom:.2em">Study skills</h1>
+    <p class="muted" style="margin-top:0">Answer structures, command terms, and markscheme guidance for each subject.</p>
     <div class="subject-tabs" id="subTabs"></div>
-    <div class="tabs" id="modeTabs" style="margin-top:14px"><button data-m="frameworks" class="active">Answer frameworks</button><button data-m="decoder">Markscheme decoder</button><button data-m="terms">Command terms</button></div>
+    <div class="tabs" id="modeTabs" style="margin-top:14px"><button data-m="frameworks" class="active">Answer structures</button><button data-m="decoder">Markscheme decoder</button><button data-m="terms">Command terms</button></div>
     <div id="skillBody"></div>`;
 
   let mode = "frameworks";
