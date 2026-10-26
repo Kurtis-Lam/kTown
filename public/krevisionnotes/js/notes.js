@@ -46,7 +46,7 @@ IB.page = function () {
         </div></a>`;
     };
     app.innerHTML = `<h1 style="margin-bottom:.2em">Topic notes</h1>
-      <p class="muted" style="margin-top:0">Choose a subject to open its revision notes: concepts, key terms, exam skills and worked examples for every syllabus topic.</p>
+      <p class="muted" style="margin-top:0">Pick a subject to open its notes.</p>
       <h2 class="chooser-h">${prefs ? "Your subjects" : "All subjects"}</h2>
       <section class="subject-grid">${mine.map(card).join("")}</section>
       ${rest.length ? `<h2 class="chooser-h">Other subjects</h2><section class="subject-grid">${rest.map(card).join("")}</section>` : ""}`;
@@ -120,14 +120,14 @@ IB.page = function () {
     const t = topicId ? s.topics.find((x) => x.id === topicId) : null;
     const hidden = !t && topicId ? s.allTopics.find((x) => x.id === topicId) : null;
     if (hidden) {
-      IB.qs("#content").innerHTML = `<div class="card" data-reveal style="text-align:center;padding:40px 24px"><span class="ahl-badge">AHL · HL only</span><h2 style="margin:.6em 0 .2em">${IB.esc(hidden.code)} ${IB.esc(hidden.title)}</h2><p class="muted">This topic is part of the higher level course. Switch ${IB.esc(s.baseName)} to HL to open it.</p>${IB.levelSwitch(s.id, { action: true })}</div>`;
+      IB.qs("#content").innerHTML = `<div class="card" data-reveal style="text-align:center;padding:40px 24px"><span class="ahl-badge">AHL</span><h2 style="margin:.6em 0 .2em">${IB.esc(hidden.code)} ${IB.esc(hidden.title)}</h2><p class="muted">Higher level only.</p>${IB.levelSwitch(s.id, { action: true })}</div>`;
       return;
     }
     t ? renderTopic(s, t, data) : renderOverview(s, data);
   }
 
   function legend() {
-    return `<div class="legend">${IB.CALLOUTS.map(([k, title, d]) => `<div class="callout ${k} mini"><strong class="callout-title">${title}</strong><span class="small">${d}</span></div>`).join("")}</div>`;
+    return `<div class="key-row" aria-label="Colour key">${IB.CALLOUTS.map(([k, title, d]) => `<span class="key-chip ${k}" title="${d}">${title}</span>`).join("")}</div>`;
   }
 
   function overviewTopic(s) {
@@ -236,23 +236,21 @@ IB.page = function () {
     }).join("");
     c.innerHTML = `<div class="subject-hero" style="--c:${s.color}" data-reveal>
       <div class="btn-row" style="justify-content:space-between"><span class="eyebrow">${IB.esc(s.guide)}</span><div class="btn-row level-actions"><span class="lv-badge on-dark">${IB.levelOf(s.id)}</span>${IB.levelSwitch(s.id, { action: true })}</div></div>
-      <h1>${s.name} revision notes</h1>
-      ${IB.hasHL(s.id) ? '<p class="small muted">Higher-level topics are marked AHL.</p>' : ""}
+      <h1>${s.name}</h1>
       <div class="hero-progress"><div class="bar"><span style="width:${IB.pct(read, s.topics.length)}%"></span></div><span class="small">${read}/${s.topics.length} topics revised</span></div>
       <div class="btn-row no-print"><button class="btn mark" id="downloadNotes" type="button">Download</button></div>
     </div>
-    <h2>How to read these notes</h2>
     ${legend()}
-    ${gp ? `<h2>Exam game plan</h2>
+    ${gp ? `<h2>Game plan</h2>
     <div class="card" data-reveal><p style="margin-top:0">${gp.intro}</p>
       <div class="table-wrap"><table class="compare"><tr><th>Part</th><th>What it looks like</th><th>Strategy</th></tr>${gp.rows.map((r) => `<tr><th scope="row">${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div></div>
     ${gp.codes ? `<section class="callout tip" data-reveal><h3 class="callout-title">How the markscheme gives marks</h3><div class="table-wrap"><table class="compare"><tr><th>Code</th><th>Meaning</th><th>What it means for you</th></tr>${gp.codes.map((r) => `<tr><th scope="row" class="mono">${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div></section>` : ""}
     <section class="callout method" data-reveal><h3 class="callout-title">Habits of 7-scorers</h3><ol class="habits">${gp.habits.map((h) => `<li>${h}</li>`).join("")}</ol></section>
     ${gp.extra ? `<section class="callout formula" data-reveal><h3 class="callout-title">${gp.extra.title}</h3><div class="table-wrap">${gp.extra.html}</div></section>` : ""}` : ""}
-    <h2>Assessment overview</h2>
+    <h2>Assessment</h2>
     <div class="card" data-reveal><div class="table-wrap"><table class="compare"><tr><th>Component</th><th>Time</th><th>Marks</th><th>Weight</th><th>Format</th></tr>
       ${s.assessment.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${x}</td>` : `<th scope="row">${x}</th>`)).join("")}</tr>`).join("")}</table></div>
-      <p class="small muted">Always confirm details against the current IB subject guide - assessment details can change between sessions.</p></div>
+      <p class="small muted">Check the current IB subject guide for changes.</p></div>
     <h2>Command terms</h2>
     <div class="card" data-reveal><dl>${s.commandTerms.map(([k, v]) => `<div class="keyterm"><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl></div>
     <h2>Topics</h2>
@@ -284,15 +282,15 @@ IB.page = function () {
       <button class="btn ${hlOn() ? "on" : ""}" id="hlBtn" aria-pressed="${hlOn()}">Highlights</button>
       <button class="btn" id="printBtn">Print</button>
     </div>
-    <div class="hl-legend no-print ${hlOn() ? "" : "hidden"}">${IB.highlightKey()}</div>
+    <details class="hl-legend no-print ${hlOn() ? "" : "hidden"}"><summary>Highlight key</summary>${IB.highlightKey()}</details>
     <nav class="jumpbar no-print" aria-label="Jump to section" style="--c:${s.color}">
       ${sections.map(([id, label]) => `<a href="#sec-${id}" class="jump ${id}">${label}</a>`).join("")}<a href="#sec-quiz" class="jump practice">Take quiz</a>
     </nav>
     <div class="topic-sections ${hlOn() ? "" : "hl-off"}" style="--c:${s.color}">${sections.map((x) => x[2]).join("")}
       <section class="card quiz-cta no-print" id="sec-quiz" data-reveal>
-        <div><span class="eyebrow">Check your understanding</span><h3 style="margin:.2em 0 .3em">Finished revising ${IB.esc(t.title)}?</h3>
-          <p class="small muted" style="margin:0">Take a short timed quiz on this topic (about ${quizPlan.minutes} minutes, ${quizPlan.qs.length} questions). You can come straight back to these notes or move on to the next topic afterwards.</p></div>
-        <div class="btn-row"><button type="button" class="btn primary" id="takeQuiz">Take quiz · ${quizPlan.minutes} min</button><a class="btn small" href="questionbank.html?subject=${s.id}&topic=${t.id}">Open question bank</a></div>
+        <div><h3 style="margin:0 0 .15em">Test yourself</h3>
+          <p class="small muted" style="margin:0">${quizPlan.qs.length} questions · ${quizPlan.minutes} min</p></div>
+        <div class="btn-row"><button type="button" class="btn primary" id="takeQuiz">Start quiz</button><a class="btn small" href="questionbank.html?subject=${s.id}&topic=${t.id}">Question bank</a></div>
       </section>
     </div>
     <div class="btn-row no-print" style="justify-content:space-between;margin-top:16px">
@@ -303,6 +301,7 @@ IB.page = function () {
     IB.qsa(".jumpbar a", c).forEach((a) => (a.onclick = (e) => {
       e.preventDefault();
       const el = document.querySelector(a.getAttribute("href"));
+      if (el && el.tagName === "DETAILS") el.open = true;
       if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 150, behavior: "smooth" });
     }));
     topicVisitStartedAt = Date.now();
@@ -406,7 +405,7 @@ IB.page = function () {
       sum.innerHTML = `<div class="card quiz-result" style="--c:${s.color}">
         <h2 style="margin-top:0">Quiz result</h2>
         <div class="btn-row" style="gap:20px"><span class="score-ring">${got}/${totalMarks}</span><span class="stat-big">${pct}%</span></div>
-        <p class="small muted">Check each answer against its markscheme above. Your result is saved to <a href="progress.html">My Progress</a>.</p>
+        <p class="small muted">Saved to <a href="progress.html">My Progress</a>.</p>
         <div class="btn-row" style="margin-top:14px"><button type="button" class="btn" id="qNotes">← Back to notes</button><button type="button" class="btn" id="qAgain">Try a new quiz</button>${next ? `<button type="button" class="btn primary" id="qNext">Next: ${IB.esc(next.title)} →</button>` : ""}</div></div>`;
       btn.textContent = "Marked";
       IB.qs("#qNotes").onclick = backToNotes;
@@ -420,7 +419,7 @@ IB.page = function () {
 
   // Highlights "draw on" like a marker pen as each section scrolls into view.
   function marker(root) {
-    const secs = IB.qsa(".topic-sections > section, .topic-sections > .callout", root);
+    const secs = IB.qsa(".topic-sections > section, .topic-sections > details, .topic-sections > .callout", root);
     if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return secs.forEach((x) => x.classList.add("lit"));
     const io = new IntersectionObserver((es) => es.forEach((en) => {
       if (en.isIntersecting) { en.target.classList.add("lit"); io.unobserve(en.target); }
