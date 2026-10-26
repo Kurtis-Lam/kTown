@@ -1,4 +1,4 @@
-/* Firebase settings for Google sign-in, cloud progress and friends.
+/* Firebase settings for Google sign-in and private cloud progress.
    kRevisionNotes shares the kTown Firebase project (ktown-45), so one Google sign-in works across kTown.
    Set window.IB_FIREBASE = null to run the hub without accounts (everything still works as a guest). */
 window.IB_FIREBASE = {
