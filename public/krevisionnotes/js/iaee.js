@@ -7,8 +7,8 @@ IB.page = function () {
   let sid = IB.param("subject") || "econ";
   if (!IB.ia[sid] || !IB.subjectList().some((x) => x.id === sid)) sid = "econ";
 
-  app.innerHTML = `<h1 style="margin-bottom:.2em">IA &amp; Extended Essay</h1>
-    <p class="muted" style="margin-top:0">Criteria explained in plain language, a self-assessment marker that predicts your IA mark and subject grade, a research-question checker, and the TOK/EE points calculator.</p>
+  app.innerHTML = `<h1 style="margin-bottom:.2em">IA &amp; EE</h1>
+    <p class="muted" style="margin-top:0">Review criteria, assess your draft, and check research questions.</p>
     <div class="tabs" id="viewTabs"><button data-v="ia">Internal assessment</button><button data-v="ee">Extended Essay</button><button data-v="core">TOK / EE points</button></div>
     <div id="iaBody"></div>`;
   IB.qsa("#viewTabs button").forEach((b) => (b.onclick = () => { view = b.dataset.v; render(); }));
@@ -95,7 +95,8 @@ IB.page = function () {
       btn.textContent = "Marking… (this can take a minute)";
       const crit = spec.criteria.concat(spec.extra ? [spec.extra] : []);
       const rubric = crit.map((c) => `${c.k} (max ${c.max}):\n` + c.levels.map((l) => `  ${l[0]}: ${l[1]}`).join("\n")).join("\n\n");
-      const prompt = `You are an experienced IB examiner and ${kind} moderator for ${subjectName}. Mark the student's draft against these criteria (level descriptors paraphrased from the IB guide):
+      const responseLanguage = /中文A|中文|Chinese A/i.test(subjectName) ? "Traditional Chinese (繁體中文)" : "English";
+      const prompt = `You are an experienced IB examiner and ${kind} moderator for ${subjectName}. Write all feedback in ${responseLanguage}; do not switch language based on the draft. Mark the student's draft against these criteria (level descriptors paraphrased from the IB guide):
 
 ${rubric}
 
@@ -134,7 +135,6 @@ Reply with only a JSON object: {"criteria": [{"k": "<criterion name exactly as g
     IB.qsa("input", box).forEach((cb) => (cb.onchange = () => {
       done[cb.dataset.i] = cb.checked;
       save(key, Object.assign({}, st()[key] || {}, { done }));
-      if (cb.checked) IB.celebrate(cb);
     }));
     return box;
   }
@@ -206,7 +206,8 @@ Reply with only a JSON object: {"criteria": [{"k": "<criterion name exactly as g
       }
       IB.qs("#rqBtn").disabled = true;
       try {
-        const r = await IB.ai.json(`You are an IB Extended Essay supervisor for ${subj}. Evaluate this research question: "${q}".
+        const responseLanguage = /中文A|中文|Chinese A/i.test(subj) ? "Traditional Chinese (繁體中文)" : "English";
+        const r = await IB.ai.json(`You are an IB Extended Essay supervisor for ${subj}. Write all feedback in ${responseLanguage}; do not switch language based on the question. Evaluate this research question: "${q}".
 Judge it on: focus/specificity, arguability, feasibility in 4000 words with accessible sources, and fit with ${subj} methods. Reply with only JSON: {"score": <1-10>, "verdict": "one sentence", "strengths": ["..."], "problems": ["..."], "better": ["2-3 improved versions of the RQ"]}`);
         out.innerHTML = `<div class="feedback ${r.score >= 7 ? "good" : r.score >= 4 ? "mid" : "low"}"><h4>${IB.esc(r.score)}/10 · ${IB.esc(r.verdict || "")}</h4>
           ${(r.strengths || []).length ? `<p class="small"><strong>Strengths</strong></p><ul class="small">${r.strengths.map((x) => `<li>${IB.esc(x)}</li>`).join("")}</ul>` : ""}
