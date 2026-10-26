@@ -48,10 +48,10 @@ const SUBJECT_NAMES = {
   math: "IB Mathematics: Analysis and Approaches SL",
   bio: "IB Biology SL",
   engb: "IB English B HL",
-  chia: "IB Chinese A: Language and Literature SL (answer in Traditional Chinese)",
+  chia: "中文A：語言與文學 SL",
 };
 
-const TUTOR_SYSTEM = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Biology SL, English B HL and Chinese A: Language & Literature SL. For Chinese A, reply in Traditional Chinese unless the student writes in English.
+const TUTOR_SYSTEM = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Biology SL, English B HL and Chinese A: Language & Literature SL. Always answer in English by default. If the selected subject is chia (中文A), answer only in Traditional Chinese (繁體中文), regardless of the language used by the student. For every other subject, answer only in English.
 
 How to tutor:
 - Guide rather than hand over answers. When a student asks for help with a problem, first ask what they have tried or give the next hint, unless they explicitly ask for the full worked solution.
@@ -172,7 +172,9 @@ async function structured(system, user, schema, effort = "medium") {
 async function handleMark(req, res) {
   const b = await readBody(req);
   const max = Math.max(1, Math.min(60, parseInt(b.marks, 10) || 1));
-  const prompt = `Subject: ${SUBJECT_NAMES[b.subject] || b.subject}
+  const responseLanguage = b.subject === "chia" ? "Traditional Chinese (繁體中文)" : "English";
+  const prompt = `Required response language: ${responseLanguage}. Keep JSON keys in English, but write every JSON text value in the required language.
+Subject: ${SUBJECT_NAMES[b.subject] || b.subject}
 Topic: ${str(b.topic, 200)}
 Maximum marks: ${max}
 
@@ -199,7 +201,8 @@ async function handleGenerate(req, res) {
   const b = await readBody(req);
   const n = Math.max(1, Math.min(10, parseInt(b.count, 10) || 5));
   const style = b.style === "mcq" ? "multiple-choice (4 options)" : b.style === "extended" ? "extended-response" : "a mix of short-answer and structured";
-  const prompt = `Write ${n} ORIGINAL exam-style practice questions for ${SUBJECT_NAMES[b.subject] || b.subject}, topic "${str(b.topic, 200)}".
+  const responseLanguage = b.subject === "chia" ? "Traditional Chinese (繁體中文)" : "English";
+  const prompt = `Write all question text, options, answers and markscheme points in ${responseLanguage}; keep JSON property names in English. Write ${n} ORIGINAL exam-style practice questions for ${SUBJECT_NAMES[b.subject] || b.subject}, topic "${str(b.topic, 200)}".
 Style: ${style}. Difficulty: ${str(b.difficulty, 20) || "mixed"}.
 Match IB command terms, mark allocations and markscheme conventions. Do not copy real IB past-paper questions verbatim.
 For each question give the markscheme as a list of mark points (one creditworthy point per mark where possible; for extended responses give indicative content plus level descriptors).
@@ -248,7 +251,8 @@ async function handleTutor(req, res) {
   if (!history.length || history[history.length - 1].role !== "user") {
     return sendJson(res, 400, { error: "Last message must be from the student." });
   }
-  const context = b.subject ? `\n\nThe student is currently studying ${SUBJECT_NAMES[b.subject] || b.subject}${b.topic ? `, topic: ${str(b.topic, 200)}` : ""}.` : "";
+  const responseLanguage = b.subject === "chia" ? "Traditional Chinese (繁體中文)" : "English";
+  const context = b.subject ? `\n\nThe student is currently studying ${SUBJECT_NAMES[b.subject] || b.subject}${b.topic ? `, topic: ${str(b.topic, 200)}` : ""}. Required response language: ${responseLanguage}. Do not switch languages based on the student's input.` : "\n\nNo subject is selected. Respond only in English.";
 
   res.writeHead(200, {
     "Content-Type": "text/event-stream; charset=utf-8",
