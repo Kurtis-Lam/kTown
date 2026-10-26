@@ -11,6 +11,7 @@
             onAuthStateChanged,
             signOut
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // ── config ──
         const firebaseConfig = {
@@ -25,6 +26,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
         // ── state ──
@@ -177,6 +179,12 @@
             const heroWelcome = document.getElementById('heroWelcome');
 
             if (user) {
+                setDoc(doc(db, "users", user.uid), {
+                    name: user.displayName || "Student",
+                    photo: user.photoURL || "",
+                    email: user.email || "",
+                    updatedAt: Date.now()
+                }, { merge: true }).catch((error) => console.warn("Could not update shared kTown profile:", error));
                 guestControls.style.display = 'none';
                 userMenu.style.display = 'flex';
                 const displayName = user.displayName || 'User';
