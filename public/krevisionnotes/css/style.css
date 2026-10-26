@@ -750,7 +750,7 @@ main > h1, main > h2, #app > h2 { text-shadow: 0 1px 14px rgba(0, 0, 0, .55); }
 .jumpbar { background: rgba(11, 20, 34, .96); }
 
 /* --- header logo + level switch button --- */
-.brand-logo { width: 38px; height: 38px; border-radius: 10px; display: block; object-fit: cover; box-shadow: 0 0 16px rgba(139, 92, 246, .45); }
+.brand-logo { width: 38px; height: 38px; border-radius: 10px; display: block; object-fit: cover; border: 0; outline: 0; box-shadow: none; }
 .lvl-switch-btn { white-space: nowrap; font-weight: 800; font-size: .8rem; padding: 0 14px; background: linear-gradient(135deg, rgba(139,92,246,.35), rgba(236,72,153,.28)); border-color: rgba(167,139,250,.55); color: #fff; }
 .lvl-switch-btn:hover { background: linear-gradient(135deg, rgba(139,92,246,.55), rgba(236,72,153,.45)); }
 @media (max-width: 640px) { .lvl-btn { display: inline-flex !important; font-size: .7rem; padding: 0 9px; } .brand-text { display: none; } }
@@ -967,7 +967,10 @@ details.hl-legend.hidden { display: none; }
 .nav-more > summary::after { content: "⌄"; margin-left: 6px; font-size: .8em; opacity: .75; }
 .nav-more > summary:hover, .nav-more[open] > summary, .nav-more > summary.active { color: #fff; }
 .nav-more > summary.active { border-bottom-color: var(--mark); }
-.nav-more-menu { position: absolute; top: calc(100% + 6px); right: 0; min-width: 170px; z-index: 60; display: flex; flex-direction: column; padding: 7px; border: 1px solid var(--ink-2); border-radius: 12px; background: rgba(7, 14, 25, .98); box-shadow: 0 16px 40px rgba(0,0,0,.35); }
+.nav-more-menu { position: absolute; top: calc(100% + 6px); right: 0; min-width: 170px; z-index: 60; display: flex; flex-direction: column; padding: 7px; border: 1px solid var(--ink-2); border-radius: 12px; background: rgba(7, 14, 25, .98); box-shadow: 0 16px 40px rgba(0,0,0,.35); transform-origin: top right; }
+.nav-more[open] > .nav-more-menu { animation: navMoreEnter .2s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes navMoreEnter { from { opacity: 0; transform: translateY(-7px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .nav-more[open] > .nav-more-menu { animation: none; } }
 .nav-more-menu a { display: block; border: 0 !important; border-radius: 7px; padding: 9px 11px !important; }
 .nav-more-menu a:hover, .nav-more-menu a.active { background: rgba(255,255,255,.08); }
 .menu-btn { display: none; }
@@ -1017,4 +1020,26 @@ details.hl-legend.hidden { display: none; }
   .subject-search-wrap { width: 100%; }
   .subject-card-main { padding: 14px; }
   .progress-summary { grid-template-columns: 1fr; }
+}
+
+/* kTown shell integration: the header and footer fade into the animated backdrop. */
+.site-header { background: linear-gradient(to bottom, rgba(7,14,25,.92) 0%, rgba(7,14,25,.68) 56%, rgba(7,14,25,0) 100%) !important; border-bottom: 0 !important; box-shadow: none; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.site-header.scrolled { box-shadow: none; }
+.site-header .brand-logo { border: 0 !important; outline: 0 !important; box-shadow: none !important; }
+.nav-more-menu { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+@media (max-width: 920px) { .nav-links { background: linear-gradient(to bottom, rgba(7,14,25,.96), rgba(7,14,25,.88)) !important; } }
+
+.acct-profile { display: inline-flex; align-items: center; gap: 7px; min-width: 0; max-width: 210px; color: var(--on-ink); font-size: .8rem; font-weight: 700; }
+.acct-profile img, .acct-profile .av { width: 28px; height: 28px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; object-fit: cover; background: linear-gradient(135deg,#8b5cf6,#ec4899); color: #fff; font-weight: 800; }
+.acct-identity { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 700px) { .acct-profile { max-width: 38px; } .acct-identity { display: none; } }
+
+/* Never hide page content behind reveal/loading transitions while local notes render. */
+main { animation: none !important; }
+.rv { opacity: 1 !important; transform: none !important; }
+#app.page-in { animation: none !important; }
+
+.site-footer {
+  border-top: 0 !important;
+  background: linear-gradient(to bottom, transparent 0%, rgba(7,14,25,.14) 22%, rgba(7,14,25,.28) 52%, rgba(7,14,25,.14) 82%, transparent 100%);
 }
