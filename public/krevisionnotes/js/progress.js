@@ -9,7 +9,6 @@ IB.page = function () {
     const dayKey = (ts) => new Date(ts).toISOString().slice(0, 10);
     const perDay = {};
     A.forEach((a) => (perDay[dayKey(a.at)] = (perDay[dayKey(a.at)] || 0) + 1));
-    const streak = IB.streak(d).days;
     const readCount = Object.keys(d.read).length;
     const totalTopics = IB.subjectList().reduce((n, s) => n + s.topics.length, 0);
 
@@ -27,30 +26,28 @@ IB.page = function () {
       heat += `<span title="${dt.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" })}: ${n} question${n === 1 ? "" : "s"}" style="${n ? `background:color-mix(in srgb, var(--primary) ${Math.round(lvl * 100)}%, var(--surface-2))` : ""}"></span>`;
     }
 
-    app.innerHTML = `<h1 style="margin-bottom:.2em">My progress</h1>
+    app.innerHTML = `<h1 style="margin-bottom:.2em">Progress</h1>
       <p class="muted" style="margin-top:0">${IB.cloud && IB.cloud.user ? "Synced to your Google account - available on any device you sign in on." : "Saved privately in this browser. Sign in with Google to sync it, or export a backup."}</p>
-      ${IB.gamePanel(d)}
-      <section class="grid grid-4">
-        <div class="card"><div class="stat-big">${unique}</div><div class="small muted">different questions attempted (${A.length} attempts)</div></div>
-        <div class="card"><div class="stat-big">${A.length ? avg + "%" : "-"}</div><div class="small muted">average score</div></div>
-        <div class="card"><div class="stat-big">${streak}</div><div class="small muted">day revision streak</div></div>
-        <div class="card"><div class="stat-big">${readCount}/${totalTopics}</div><div class="small muted">topics marked as revised</div></div>
+      <section class="grid grid-3 progress-summary">
+        <div class="card"><div class="stat-big">${unique}</div><div class="small muted">Unique questions tried</div></div>
+        <div class="card"><div class="stat-big">${A.length ? avg + "%" : "-"}</div><div class="small muted">Average score</div></div>
+        <div class="card"><div class="stat-big">${readCount}/${totalTopics}</div><div class="small muted">Topics revised</div></div>
       </section>
-      <div class="card" style="margin-top:16px"><h3 style="margin-top:0">Activity - last 12 weeks</h3>
+      <div class="card" style="margin-top:16px"><h3 style="margin-top:0">Activity · last 12 weeks</h3>
         <div class="heat" style="grid-template-rows:repeat(7,14px);grid-auto-flow:column;grid-template-columns:none">${heat}</div>
         <div class="small muted" style="margin-top:8px;display:flex;align-items:center;gap:6px">Less <span style="width:12px;height:12px;border-radius:3px;background:var(--surface-2);display:inline-block"></span><span style="width:12px;height:12px;border-radius:3px;background:color-mix(in srgb,var(--primary) 50%,var(--surface-2));display:inline-block"></span><span style="width:12px;height:12px;border-radius:3px;background:var(--primary);display:inline-block"></span> More · hover a day for its count</div>
       </div>
-      <h2>Mastery by subject and topic</h2>
+      <h2>Subject mastery</h2>
       <p class="small muted">Mastery is a recency-weighted average of your last 20 attempts in each topic. Grade estimates use typical recent boundaries - they are a guide, not a prediction.</p>
       <div class="grid grid-2" id="subjects"></div>
-      <h2>Focus next</h2><div class="card" id="weak"></div>
+      <h2>Review next</h2><div class="card" id="weak"></div>
       <h2>Saved for review</h2><div class="card" id="saved"></div>
-      <h2>Quizzes & mock exams</h2><div class="card table-wrap" id="exams"></div>
-      <h2>Your data</h2>
+      <h2>Quiz and mock results</h2><div class="card table-wrap" id="exams"></div>
+      <h2>Backups</h2>
       <div class="card"><div class="btn-row">
-        <button class="btn primary" id="exp">⬇ Export progress backup</button>
-        <label class="btn">⬆ Import backup<input type="file" id="imp" accept="application/json,.json" hidden></label>
-        <button class="btn" id="csv">⬇ Attempts as CSV</button>
+        <button class="btn primary" id="exp">Export backup</button>
+        <label class="btn">Import backup<input type="file" id="imp" accept="application/json,.json" hidden></label>
+        <button class="btn" id="csv">Export attempts (CSV)</button>
         <button class="btn" id="reset" style="color:var(--bad)">Reset all progress</button>
       </div></div>`;
 
