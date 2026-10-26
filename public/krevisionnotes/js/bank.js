@@ -5,8 +5,8 @@ IB.page = function () {
   let extra = []; // generated / AI questions added this session
 
   app.innerHTML = `<h1 style="margin-bottom:.2em">Question bank</h1>
-    <p class="muted" style="margin-top:0">Exam-style questions by subject and topic with full markschemes. Answer in the box and it is marked instantly against the markscheme (or self-mark). Every attempt is saved to your progress.</p>
-    <div class="notice warn small">These are <strong>original IB-style questions</strong> modelled on the format, command terms and markscheme style of IB papers - official IB past papers are copyright of the IBO and are not reproduced here. Use them alongside the official past papers from your school.</div>
+    <p class="muted" style="margin-top:0">Browse questions by subject and topic. Check your answer against the markscheme and track your attempts.</p>
+    <div class="notice warn small"><strong>Original IB-style questions.</strong> Official past-paper questions are not reproduced here.</div>
     <div class="card no-print">
       <div class="filters">
         <label class="field">Subject<select id="fSub"><option value="">All subjects</option>${IB.subjectList().map((s) => `<option value="${s.id}">${s.name}</option>`).join("")}</select></label>
