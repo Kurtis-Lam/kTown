@@ -1115,3 +1115,15 @@
     
 
         .brand-logo { width: 36px; height: 36px; border-radius: 9px; display: block; object-fit: cover; }
+
+/* Keep the app logo artwork unframed. */
+.brand-logo { border: 0 !important; outline: 0 !important; box-shadow: none !important; }
+
+
+/* Fade the workspace toolbar into the shared animated background. */
+.top-bar {
+    background: linear-gradient(to bottom, rgba(12, 16, 26, .48) 0%, rgba(12, 16, 26, .24) 52%, rgba(12, 16, 26, 0) 100%) !important;
+    border-bottom: 0 !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
