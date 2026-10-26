@@ -5,7 +5,7 @@
   "use strict";
   const IB = window.IB;
   const PAGES = {
-    "index.html": ["home", "js/home.js"],
+    "index.html": ["notes", "js/notes.js"],
     "notes.html": ["notes", "js/notes.js"],
     "questionbank.html": ["bank", "js/bank.js"],
     "practice.html": ["practice", "js/practice.js"],
