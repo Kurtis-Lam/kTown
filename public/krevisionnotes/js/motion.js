@@ -1,4 +1,4 @@
-/* Motion: scroll reveals, count-ups, celebrations. Everything is skipped under prefers-reduced-motion,
+/* Motion: scroll reveals and count-ups. Everything is skipped under prefers-reduced-motion,
    and content always ends up visible (a safety timer reveals anything the observer missed). */
 (function () {
   const IB = window.IB;
@@ -42,21 +42,6 @@
     });
   }
 
-  // Confetti burst from an element (used for full marks, revised topics, drill streaks).
-  IB.celebrate = function (el) {
-    if (reduce() || !el) return;
-    const r = el.getBoundingClientRect();
-    const colors = ["#FFC53D", "#2D5BFF", "#1F8A4C", "#D9480F", "#6741D9", "#0B8AA8"];
-    for (let i = 0; i < 22; i++) {
-      const s = document.createElement("span");
-      s.className = "confetti";
-      const ang = (Math.PI * 2 * i) / 22 + Math.random() * 0.4;
-      const dist = 60 + Math.random() * 90;
-      s.style.cssText = `left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;background:${colors[i % colors.length]};--dx:${Math.cos(ang) * dist}px;--dy:${Math.sin(ang) * dist - 40}px;--rot:${Math.random() * 540}deg`;
-      document.body.appendChild(s);
-      setTimeout(() => s.remove(), 1000);
-    }
-  };
 
   // Header gains a shadow once the page scrolls.
   window.addEventListener("scroll", () => {
