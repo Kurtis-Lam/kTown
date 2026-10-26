@@ -949,9 +949,9 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
     const link = (href, label, id) => `<a href="${href}" class="${page === id ? "active" : ""}">${label}</a>`;
     const secondary = ["mistakes", "skills", "ia", "mypapers", "progress", "tutor"].includes(page);
     const header = IB.el(`<header class="site-header"><div class="container nav">
-      <a class="brand" href="index.html" aria-label="kRevisionNotes notes home"><img class="brand-logo" src="/imgs/logos/krevisionnotes.png" alt="kRevisionNotes" width="38" height="38"><span class="brand-text">kRevisionNotes</span></a>
+      <a class="brand" href="index.html" aria-label="kRevisionNotes home"><img class="brand-logo" src="/imgs/logos/krevisionnotes.png" alt="kRevisionNotes" width="38" height="38"><span class="brand-text">kRevisionNotes</span></a>
       <nav class="nav-links" id="navLinks" aria-label="Main navigation">
-        ${link("index.html", "Notes", "notes")}
+        ${link("notes.html", "Notes", "notes")}
         ${link("questionbank.html", "Questions", "bank")}
         ${link("practice.html", "Practice", "practice")}
         <details class="nav-more" ${secondary ? "open" : ""}>
