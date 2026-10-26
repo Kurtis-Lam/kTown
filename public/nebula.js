@@ -1,4 +1,7 @@
-(function () {
+(function boot() {
+
+    // shell.js mounts #nebula (from background.html); wait for it if this script ran first.
+    if (!document.getElementById('nebula')) { document.addEventListener('ktown:layers-ready', boot, { once: true }); return; }
 
     const STATIC_MODE = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);   // true = nothing moves (single rendered frame)
     const NEB_SPEED = 1;         // speed of the drifting background colours (try 0.5 - 2)
