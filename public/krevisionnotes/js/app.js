@@ -4,7 +4,7 @@
 
   const IB = (window.IB = window.IB || {});
   IB.subjects = IB.subjects || {};
-  IB.order = ["engb", "math", "phys", "chem", "bio", "econ", "geo", "chia"];
+  IB.order = ["chia", "engb", "math", "phys", "chem", "bio", "econ", "geo"];
 
   // ---------- subject symbols ----------
   const ICONS = {
@@ -103,8 +103,8 @@
 
   IB.register = function (subject) {
     subject.levels = subject.levels || (/\bHL$/.test(subject.name) ? ["HL"] : /\bSL$/.test(subject.name) && !subject.hlAvailable ? ["SL"] : ["SL", "HL"]);
-    subject.baseName = subject.baseName || subject.name.replace(/\s+(SL|HL)$/, "");
-    subject.baseShort = subject.baseShort || (subject.short || subject.baseName).replace(/\s+(SL|HL)$/, "");
+    subject.baseName = subject.id === "chia" ? "中文A：語言與文學" : (subject.baseName || subject.name.replace(/\s+(SL|HL)$/, ""));
+    subject.baseShort = subject.id === "chia" ? "中文A" : (subject.baseShort || (subject.short || subject.baseName).replace(/\s+(SL|HL)$/, ""));
     subject.allTopics = subject.topics;
     subject.allPapers = subject.papers || {};
     subject.allTopics.forEach((t) => prepTopic(subject, t));
@@ -408,10 +408,12 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
       } catch (e) {
         IB.toast("Could not save progress in this browser (storage blocked or full).");
       }
-      // XP, quests and cloud sync react after the current change has finished.
-      if (IB.afterSave && !afterPending) {
+      if (!afterPending) {
         afterPending = true;
-        setTimeout(() => { afterPending = false; IB.afterSave(); }, 0);
+        setTimeout(() => {
+          afterPending = false;
+          if (IB.cloud && IB.cloud.queueSave) IB.cloud.queueSave();
+        }, 0);
       }
     },
     update(fn) {
@@ -548,8 +550,8 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
   // Two back ends with one interface:
   //  - hosted on claude.ai: the page's built-in "ask Claude" ability (runs on the viewer's Claude account);
   //  - self-hosted: server.js (/api/*) with an Anthropic API key.
-  const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", math: "IB Mathematics: Analysis and Approaches SL", phys: "IB Physics", bio: "IB Biology SL", engb: "IB English B HL", chia: "IB Chinese A: Language and Literature SL (answer in Traditional Chinese)" };
-  const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Physics, Biology SL, English B HL and Chinese A: Language & Literature SL. For Chinese A, reply in Traditional Chinese unless the student writes in English.
+  const SUBJECT_NAMES = { econ: "IB Economics SL", chem: "IB Chemistry SL", geo: "IB Geography SL", math: "IB Mathematics: Analysis and Approaches SL", phys: "IB Physics", bio: "IB Biology SL", engb: "IB English B HL", chia: "中文A：語言與文學 SL" };
+  const TUTOR_RULES = `You are an experienced IB Diploma teacher and examiner tutoring a student in IB Economics SL, Chemistry SL, Geography SL, Mathematics: Analysis & Approaches SL, Physics, Biology SL, English B HL and Chinese A: Language & Literature SL. Always answer in English by default. If the selected subject is chia (中文A), answer only in Traditional Chinese (繁體中文), regardless of the language used by the student. For every other subject, answer only in English.
 - Guide rather than hand over answers: when asked for help with a problem, give the next hint or ask what they have tried, unless they explicitly ask for the full worked solution.
 - Use IB command terms precisely and say what each demands in marks.
 - Use correct IB terminology, units, significant figures and notation. Economics: say which diagram to draw and how to label it. Geography: push for named, located case studies with data. Chemistry: units, state symbols, s.f. Maths: show working and note Paper 1 (no calculator) vs Paper 2.
@@ -617,7 +619,9 @@ table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:5p
       if (IB.hosted) {
         const sample = await this.sampler();
         if (!sample) throw new Error("AI isn't available here.");
+        const responseLanguage = q.subject === "chia" ? "Traditional Chinese (繁體中文)" : "English";
         const prompt = `${MARK_RULES}
+Required response language: ${responseLanguage}. Keep JSON keys in English, but write every JSON text value in the required language.
 
 Subject: ${SUBJECT_NAMES[q.subject] || q.subject}
 Topic: ${t ? t.title : ""}
@@ -685,7 +689,9 @@ Mark the student answer out of ${q.marks}. Reply with only a JSON object of this
         if (!sample) throw new Error("AI isn't available here.");
         const n = Math.max(1, Math.min(8, opts.count || 4));
         const style = opts.style === "mcq" ? "multiple-choice (4 options)" : opts.style === "extended" ? "extended-response" : "a mix of short-answer and structured";
+        const responseLanguage = opts.subject === "chia" ? "Traditional Chinese (繁體中文)" : "English";
         const prompt = `You are a senior IB examiner who writes original exam-style questions with accurate markschemes.
+Required content language: ${responseLanguage}. Write question text, options, answers, and markscheme points in this language. Keep JSON property names in English.
 Write ${n} ORIGINAL practice questions for ${SUBJECT_NAMES[opts.subject] || opts.subject}, topic "${opts.topic}". Style: ${style}.
 Match IB command terms, mark allocations and markscheme conventions. Do not copy real IB past-paper questions.
 Markscheme: a list of mark points (one creditworthy point per mark where possible; for extended responses give indicative content plus level descriptors).
@@ -710,7 +716,8 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
       if (IB.hosted) {
         const sample = await this.sampler();
         if (!sample) throw new Error("AI isn't available here.");
-        const ctx = payload.subject ? `\n\nThe student is currently studying ${SUBJECT_NAMES[payload.subject] || payload.subject}${payload.topic ? ", topic: " + payload.topic : ""}.` : "";
+        const responseLanguage = payload.subject === "chia" ? "Traditional Chinese (繁體中文)" : "English";
+        const ctx = payload.subject ? `\n\nThe student is currently studying ${SUBJECT_NAMES[payload.subject] || payload.subject}${payload.topic ? ", topic: " + payload.topic : ""}. Required response language: ${responseLanguage}. Do not switch languages based on the student's input.` : "\n\nNo subject is selected. Respond only in English.";
         const turns = [{ role: "user", content: TUTOR_RULES + ctx }].concat(
           (payload.messages || []).filter((m) => m.content && (m.role === "user" || m.role === "assistant")).slice(-20).map((m) => ({ role: m.role, content: String(m.content).slice(0, 12000) }))
         );
@@ -783,7 +790,6 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
       card.classList.remove("pop", "shake");
       void card.offsetWidth;
       card.classList.add(score >= max ? "pop" : score === 0 ? "shake" : "pop");
-      if (score >= max && max > 0 && opts.mode !== "exam" && IB.celebrate) IB.celebrate(IB.qs(".q-result", card) || card);
       if (opts.onScored) opts.onScored(score, max);
     };
 
@@ -941,26 +947,44 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
     IB.qsa("body > .site-header, body > .site-footer").forEach((el) => el.remove());
     const page = document.body.dataset.page || "";
     const link = (href, label, id) => `<a href="${href}" class="${page === id ? "active" : ""}">${label}</a>`;
+    const secondary = ["mistakes", "skills", "ia", "mypapers", "progress", "tutor"].includes(page);
     const header = IB.el(`<header class="site-header"><div class="container nav">
       <a class="brand" href="index.html" aria-label="kRevisionNotes home"><img class="brand-logo" src="/imgs/logos/krevisionnotes.png" alt="kRevisionNotes" width="38" height="38"><span class="brand-text">kRevisionNotes</span></a>
-      <nav class="nav-links" id="navLinks">
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        ${link("index.html", "Subjects", "home")}
         ${link("notes.html", "Notes", "notes")}
         ${link("questionbank.html", "Questions", "bank")}
-        ${link("practice.html", "Quizzes", "practice")}
-        ${link("mistakes.html", "Mistakes", "mistakes")}
-        ${link("skills.html", "Skills", "skills")}
-        ${link("ia.html", "IA &amp; EE", "ia")}
-        ${link("mypapers.html", "Papers", "mypapers")}
-        ${link("friends.html", "Friends", "friends")}
-        ${link("progress.html", "Progress", "progress")}
-        ${IB.config.ai ? link("tutor.html", "AI Tutor", "tutor") : ""}
+        ${link("practice.html", "Practice", "practice")}
+        <details class="nav-more" ${secondary ? "open" : ""}>
+          <summary class="${secondary ? "active" : ""}">More</summary>
+          <div class="nav-more-menu">
+            ${link("mistakes.html", "Mistakes", "mistakes")}
+            ${link("skills.html", "Study skills", "skills")}
+            ${link("ia.html", "IA &amp; EE", "ia")}
+            ${link("mypapers.html", "My papers", "mypapers")}
+            ${link("progress.html", "Progress", "progress")}
+            ${IB.config.ai ? link("tutor.html", "AI tutor", "tutor") : ""}
+          </div>
+        </details>
       </nav>
-      ${IB.gameChip ? IB.gameChip() : ""}
       <span id="acctSlot"></span>
-      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false">☰</button>
     </div></header>`);
     document.body.prepend(header);
-    IB.qs("#menuBtn").onclick = () => IB.qs("#navLinks").classList.toggle("open");
+    const menuBtn = IB.qs("#menuBtn");
+    const nav = IB.qs("#navLinks");
+    menuBtn.onclick = () => {
+      const open = nav.classList.toggle("open");
+      menuBtn.setAttribute("aria-expanded", String(open));
+      menuBtn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    };
+    nav.addEventListener("click", (event) => {
+      const anchor = event.target.closest("a[href]");
+      if (!anchor) return;
+      nav.classList.remove("open");
+      menuBtn.setAttribute("aria-expanded", "false");
+      menuBtn.setAttribute("aria-label", "Open navigation");
+    });
   }
   document.documentElement.dataset.theme = "dark"; // kTown uses one dark look over the nebula background
 
