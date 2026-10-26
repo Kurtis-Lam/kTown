@@ -6,15 +6,15 @@ IB.page = function () {
   let view = IB.param("view") === "fixed" ? "fixed" : "open";
   let sort = "recent";
 
-  app.innerHTML = `<h1 style="margin-bottom:.2em">Mistakes notebook</h1>
-    <p class="muted" style="margin-top:0">Every question where you lost marks is saved automatically, with your answer and the markscheme points you missed. Retry until you get full marks, then it moves to Fixed.</p>
+  app.innerHTML = `<h1 style="margin-bottom:.2em">Mistakes</h1>
+    <p class="muted" style="margin-top:0">Review missed marks, compare the markscheme, and retry questions.</p>
     <div class="mk-stats" id="mkStats"></div>
     <div class="subject-tabs" id="mkSubs"></div>
     <div class="mk-bar card">
       <div class="seg" role="tablist" id="mkView"></div>
       <label class="small">Sort <select id="mkSort"><option value="recent">Most recent</option><option value="often">Most often wrong</option><option value="topic">By topic</option><option value="marks">Most marks lost</option></select></label>
       <div class="btn-row" style="margin-left:auto">
-        <button class="btn primary small" id="mkQuiz">↻ Retry all as a quiz</button>
+        <button class="btn primary small" id="mkQuiz">↻ Retry as quiz</button>
         <button class="btn mark small" id="mkPdf">⬇ IB-style PDF of my mistakes</button>
       </div>
     </div>
@@ -89,7 +89,7 @@ IB.page = function () {
         ${e.m.miss && e.m.miss.length ? `<div class="mk-miss small"><strong>Missed</strong><ul>${e.m.miss.map((x) => `<li>${IB.esc(x)}</li>`).join("")}</ul></div>` : ""}
       </section>`);
       const card = IB.renderQuestion(e.q, { number: i + 1, onScored: (sc, mx) => setTimeout(() => {
-        if (sc >= mx) { IB.toast("Fixed! Moved to the Fixed list."); IB.celebrate && IB.celebrate(wrap); }
+        if (sc >= mx) { IB.toast("Fixed! Moved to the Fixed list."); }
       }, 50) });
       wrap.appendChild(card);
       box.appendChild(wrap);
