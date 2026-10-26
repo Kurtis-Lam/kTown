@@ -267,7 +267,6 @@ IB.page = function () {
     const prev = s.topics[idx - 1], next = s.topics[idx + 1];
     const m = IB.mastery(t.id, data);
     const sections = IB.topicSections(t);
-    const quizPlan = makeQuiz(t);
     c.innerHTML = `<div class="topic-banner" style="--c:${s.color}" data-reveal>
       <span class="topic-big-num">${String(idx + 1).padStart(2, "0")}</span>
       <div class="topic-banner-body">
@@ -289,7 +288,7 @@ IB.page = function () {
     <div class="topic-sections ${hlOn() ? "" : "hl-off"}" style="--c:${s.color}">${sections.map((x) => x[2]).join("")}
       <section class="card quiz-cta no-print" id="sec-quiz" data-reveal>
         <div><h3 style="margin:0 0 .15em">Test yourself</h3>
-          <p class="small muted" style="margin:0">${quizPlan.qs.length} questions · ${quizPlan.minutes} min</p></div>
+          <p class="small muted" style="margin:0">Timed quiz · generated when started</p></div>
         <div class="btn-row"><button type="button" class="btn primary" id="takeQuiz">Start quiz</button><a class="btn small" href="questionbank.html?subject=${s.id}&topic=${t.id}">Question bank</a></div>
       </section>
     </div>
@@ -305,7 +304,7 @@ IB.page = function () {
       if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 150, behavior: "smooth" });
     }));
     topicVisitStartedAt = Date.now();
-    IB.qs("#takeQuiz").onclick = () => { markCurrentReadIfEarned(); renderQuiz(s, t, quizPlan); };
+    IB.qs("#takeQuiz").onclick = () => { markCurrentReadIfEarned(); renderQuiz(s, t); };
     IB.qsa("a[data-t]", c).forEach((a) => (a.onclick = (e) => { e.preventDefault(); go(s.id, a.dataset.t); }));
     IB.qs("#downloadNotes").onclick = () => openDownloadPicker(s, t);
     IB.qs("#hlBtn").onclick = (e) => {
@@ -321,7 +320,13 @@ IB.page = function () {
       IB.print();
     };
     IB.math(c);
-    IB.highlight(IB.qs(".topic-sections", c), { terms: (t.terms || []).map((x) => x[0]) });
+    const highlightRoot = IB.qs(".topic-sections", c);
+    const applyHighlights = () => {
+      if (!highlightRoot || !highlightRoot.isConnected || IB.qs(".topic-sections", c) !== highlightRoot) return;
+      IB.highlight(highlightRoot, { terms: (t.terms || []).map((x) => x[0]) });
+    };
+    if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(applyHighlights, { timeout: 1200 });
+    else window.setTimeout(applyHighlights, 40);
     marker(c);
     IB.animate(c);
     if (IB.scrollSpy) IB.scrollSpy(c);
