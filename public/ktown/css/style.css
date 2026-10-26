@@ -1,4 +1,4 @@
-        /* ── root ── */
+/* ── root ── */
         :root {
             --bg-dark: #07090e;
             --card-bg: rgba(18, 24, 38, 0.86);
@@ -33,7 +33,7 @@
             flex-direction: column;
             position: relative;
             opacity: 0;
-            animation: pageFadeIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: pageFadeIn .45s ease-out forwards;
         }
 
         @keyframes pageFadeIn {
@@ -54,10 +54,8 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: linear-gradient(to bottom, rgba(7, 9, 14, 0.9) 0%, rgba(7, 9, 14, 0.62) 48%, rgba(7, 9, 14, 0) 100%);
+            background: linear-gradient(to bottom, rgba(7, 9, 14, 0.95) 0%, rgba(7, 9, 14, 0.75) 48%, rgba(7, 9, 14, 0) 100%);
             border-bottom: 0;
-            -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
         }
 
         .brand {
@@ -112,6 +110,7 @@
             border-radius: 50%;
             box-shadow: 0 0 10px #10b981;
             animation: pulseDot 2s infinite;
+            will-change: opacity, transform;
         }
 
         /* ── auth / user ── */
@@ -681,6 +680,7 @@
     width: 56px;
     height: 56px;
     border-radius: 0;
+    content-visibility: auto;
 }
 
 /* App marks are clean artwork, without an added frame or glow. */
