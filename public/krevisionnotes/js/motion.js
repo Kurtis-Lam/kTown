@@ -44,21 +44,28 @@
 
 
   // Header gains a shadow once the page scrolls.
+  let hdrTick = false;
   window.addEventListener("scroll", () => {
-    const h = document.querySelector(".site-header");
-    if (h) h.classList.toggle("scrolled", window.scrollY > 8);
+    if (hdrTick) return; hdrTick = true;
+    requestAnimationFrame(() => {
+      hdrTick = false;
+      const h = document.querySelector(".site-header");
+      if (h) h.classList.toggle("scrolled", window.scrollY > 8);
+    });
   }, { passive: true });
 
   // Reading-progress bar under the header + header shadow.
   const bar = document.createElement("div");
   bar.className = "read-progress";
   bar.setAttribute("aria-hidden", "true");
+  let barTick = false;
   const setBar = () => {
+    barTick = false;
     const max = document.documentElement.scrollHeight - innerHeight;
     bar.style.transform = `scaleX(${max > 200 ? Math.min(1, scrollY / max) : 0})`;
   };
   document.addEventListener("DOMContentLoaded", () => { document.body.appendChild(bar); setBar(); });
-  window.addEventListener("scroll", setBar, { passive: true });
+  window.addEventListener("scroll", () => { if (!barTick) { barTick = true; requestAnimationFrame(setBar); } }, { passive: true });
 
   // Back-to-top button for long notes.
   document.addEventListener("DOMContentLoaded", () => {
