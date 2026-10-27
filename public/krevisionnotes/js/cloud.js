@@ -108,7 +108,7 @@
   // On a normal page load the page waits for sign-in and draws once, so nothing needs redrawing.
   function needsRerender(uid) {
     if (IB._renderedUid === undefined) return false;          // nothing drawn yet: the page will draw itself
-    return IB._renderedUid !== uid || !IB._renderedReady;
+    return IB._renderedUid !== uid;
   }
 
   function rerender() {
