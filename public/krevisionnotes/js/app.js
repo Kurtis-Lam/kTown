@@ -1020,8 +1020,7 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
   };
 
   document.addEventListener("DOMContentLoaded", async () => {
-    // Wait (briefly) for the first sign-in check so the page draws once instead of twice.
-    if (IB.cloud && IB.cloud.whenReady) await IB.cloud.whenReady;
+    // Draw straight away; the account sync redraws only if the signed-in user turns out to differ.
     // The hosted copy is a single page with a router (js/router.js) so every screen keeps the AI connection.
     if (IB.router) return IB.router();
     chrome();
