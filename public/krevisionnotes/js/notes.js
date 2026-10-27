@@ -55,15 +55,62 @@ IB.page = function () {
   }
 
   // ---------- step 2: notes for one subject ----------
+  // ---------- search (filters the topic list and the cards of the open topic) ----------
+  let query = "";
+  const isZh = () => subjectId === "chia";
+  const plain = (h) => String(h || "").replace(/<[^>]+>/g, " ").toLowerCase();
+  const textCache = {};
+  const topicText = (t) => textCache[t.id] || (textCache[t.id] = plain([t.code, t.title, t.summary, ...(t.concepts || []).map((c) => (c.g || "") + " " + c.h + " " + c.b), ...(t.terms || []).map((x) => x.join(" "))].join(" ")));
+  const topicMatches = (t) => !query || topicText(t).indexOf(query) !== -1;
+  function applySearch() {
+    const root = IB.qs("#content");
+    if (!root) return;
+    const cards = IB.qsa(".dcard, .topic-sections > details.fold, .topic-sections > .callout", root);
+    let any = false;
+    cards.forEach((c) => {
+      const hit = !query || plain(c.textContent).indexOf(query) !== -1;
+      c.style.display = hit ? "" : "none";
+      if (hit) { any = true; if (query && c.tagName === "DETAILS") c.open = true; }
+    });
+    IB.qsa(".dgroup", root).forEach((g) => { g.style.display = IB.qsa(".dcard", g).some((c) => c.style.display !== "none") ? "" : "none"; });
+    let hint = IB.qs("#emptyHint", root);
+    if (cards.length && !any) {
+      if (!hint) { hint = document.createElement("div"); hint.id = "emptyHint"; hint.className = "empty-hint"; root.appendChild(hint); }
+      hint.textContent = isZh() ? "找不到符合的內容，換個關鍵字試試。" : "No matching content in this topic. Try another keyword.";
+      hint.style.display = "block";
+    } else if (hint) hint.style.display = "none";
+  }
+  function setAllOpen(open) { IB.qsa("#content details").forEach((d) => { d.open = open; }); }
+
   function renderShell() {
-    app.innerHTML = `<div class="notes-bar no-print">
-        <button type="button" class="btn small bar-btn" id="sideShow" aria-controls="side" hidden>» Show topics</button>
-        <button type="button" class="btn small bar-btn" id="changeSubject">⇄ Change subject</button>
-        <span class="notes-bar-title"><span id="barTitle"></span></span>
-      </div>
-      <div class="notes-layout"><aside class="side card" id="side"></aside><section id="content"></section></div>`;
+    const zh = isZh();
+    app.innerHTML = `<header class="dtop no-print">
+        <div class="dbrand"><h1 id="barTitle"></h1><span id="barSub">${zh ? "溫習筆記" : "REVISION NOTES"}</span></div>
+        <div class="dtools">
+          <div class="dsearch"><input id="nsearch" type="search" placeholder="${zh ? "搜尋關鍵字…" : "Search notes…"}" autocomplete="off" aria-label="${zh ? "搜尋" : "Search notes"}"></div>
+          <button type="button" class="mini" id="expandAll">${zh ? "全部展開" : "Expand all"}</button>
+          <button type="button" class="mini" id="collapseAll">${zh ? "全部收起" : "Collapse all"}</button>
+          <button type="button" class="mini bar-btn" id="sideShow" aria-controls="side" hidden>» ${zh ? "主題" : "Topics"}</button>
+          <button type="button" class="mini bar-btn" id="changeSubject">⇄ ${zh ? "換科目" : "Change subject"}</button>
+        </div>
+      </header>
+      <div class="notes-layout"><aside class="side card" id="side"></aside><section id="content"></section></div>
+      <button type="button" class="totop no-print" id="toTop" title="${zh ? "回到頂部" : "Back to top"}" aria-label="${zh ? "回到頂部" : "Back to top"}">↑</button>`;
+    query = "";
     IB.qs("#sideShow").onclick = () => setSide(true);
     IB.qs("#changeSubject").onclick = () => go(null);
+    IB.qs("#expandAll").onclick = () => setAllOpen(true);
+    IB.qs("#collapseAll").onclick = () => setAllOpen(false);
+    IB.qs("#nsearch").addEventListener("input", (e) => {
+      query = e.target.value.trim().toLowerCase();
+      const s = IB.subjects[subjectId];
+      if (s) renderSide(s, IB.store.get());
+      applySearch();
+    });
+    const toTop = IB.qs("#toTop");
+    const onScroll = () => toTop.classList.toggle("show", window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    toTop.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function setSide(open) { sideOpen = open; store("ibrev:sideOpen", open ? "1" : "0"); applySide(); }
   function applySide() {
@@ -77,11 +124,16 @@ IB.page = function () {
   function renderSide(s, data) {
     const active = s.topics.find((x) => x.id === topicId);
     const units = [];
-    s.topics.forEach((t) => { let u = units[units.length - 1]; if (!u || u.name !== t.unit) units.push((u = { name: t.unit, items: [] })); u.items.push(t); });
+    s.topics.filter(topicMatches).forEach((t) => { let u = units[units.length - 1]; if (!u || u.name !== t.unit) units.push((u = { name: t.unit, items: [], paper: t.paper || null })); u.items.push(t); });
+    const anyPaper = s.topics.some((t) => t.paper);
+    const coreLabel = isZh() ? "CORE · 通用基礎" : "CORE";
     let side = `<div class="side-top"><a href="#" data-t="" class="btn small side-overview">${IB.esc(s.name)} overview</a>
       <button type="button" class="btn small side-collapse" id="sideHide" title="Collapse topics panel" aria-label="Collapse topics panel">«</button></div>`;
+    let lastPaper;
     units.forEach((u, i) => {
-      const shut = openUnit !== u.name;
+      const paperLabel = anyPaper ? (u.paper || coreLabel) : null;
+      if (paperLabel && paperLabel !== lastPaper) { side += `<div class="nav-paper">${IB.esc(paperLabel)}</div>`; lastPaper = paperLabel; }
+      const shut = !query && openUnit !== u.name;
       const has = !!active && active.unit === u.name;
       side += `<div class="unit ${shut ? "shut" : ""} ${has ? "has-active" : ""}" data-u="${i}">
         <button type="button" class="unit-head" aria-expanded="${!shut}"><span class="chev" aria-hidden="true">▾</span><span>${IB.esc(u.name)}</span><span class="unit-n">${u.items.length}</span></button>
@@ -102,6 +154,7 @@ IB.page = function () {
         IB.qs(".unit-head", x).setAttribute("aria-expanded", String(!shut));
       });
     }));
+    if (!units.length) el.insertAdjacentHTML("beforeend", `<p class="muted small" style="padding:8px 10px">${isZh() ? "沒有符合的主題" : "No matching topics"}</p>`);
     IB.qs("#sideHide", el).onclick = () => setSide(false);
     IB.qsa("a[data-t]", el).forEach((a) => (a.onclick = (e) => { e.preventDefault(); go(subjectId, a.dataset.t); }));
   }
@@ -114,6 +167,7 @@ IB.page = function () {
     document.body.style.setProperty("--c", s.color);
     if (shellFor !== subjectId || !IB.qs("#side")) { renderShell(); shellFor = subjectId; }
     IB.qs("#barTitle").textContent = s.baseName;
+    const sb = IB.qs("#nsearch"); if (sb && sb.value.trim().toLowerCase() !== query) sb.value = query;
     applySide();
     renderSide(s, data);
 
@@ -267,6 +321,7 @@ IB.page = function () {
     const prev = s.topics[idx - 1], next = s.topics[idx + 1];
     const m = IB.mastery(t.id, data);
     const sections = IB.topicSections(t);
+    const hasQuiz = IB.topicQuestions(t.id).length > 0 || (IB.hasGenerator && IB.hasGenerator(t.id));
     c.innerHTML = `<div class="topic-banner" style="--c:${s.color}" data-reveal>
       <span class="topic-big-num">${String(idx + 1).padStart(2, "0")}</span>
       <div class="topic-banner-body">
@@ -283,14 +338,14 @@ IB.page = function () {
     </div>
     <details class="hl-legend no-print ${hlOn() ? "" : "hidden"}"><summary>Highlight key</summary>${IB.highlightKey()}</details>
     <nav class="jumpbar no-print" aria-label="Jump to section" style="--c:${s.color}">
-      ${sections.map(([id, label]) => `<a href="#sec-${id}" class="jump ${id}">${label}</a>`).join("")}<a href="#sec-quiz" class="jump practice">Take quiz</a>
+      ${sections.map(([id, label]) => `<a href="#sec-${id}" class="jump ${id}">${label}</a>`).join("")}${hasQuiz ? '<a href="#sec-quiz" class="jump practice">Take quiz</a>' : ""}
     </nav>
     <div class="topic-sections ${hlOn() ? "" : "hl-off"}" style="--c:${s.color}">${sections.map((x) => x[2]).join("")}
-      <section class="card quiz-cta no-print" id="sec-quiz" data-reveal>
+      ${hasQuiz ? `<section class="card quiz-cta no-print" id="sec-quiz" data-reveal>
         <div><h3 style="margin:0 0 .15em">Test yourself</h3>
           <p class="small muted" style="margin:0">Timed quiz · generated when started</p></div>
         <div class="btn-row"><button type="button" class="btn primary" id="takeQuiz">Start quiz</button><a class="btn small" href="questionbank.html?subject=${s.id}&topic=${t.id}">Question bank</a></div>
-      </section>
+      </section>` : ""}
     </div>
     <div class="btn-row no-print" style="justify-content:space-between;margin-top:16px">
       ${prev ? `<a class="btn" href="#" data-t="${prev.id}">← ${IB.esc(prev.title)}</a>` : "<span></span>"}
@@ -304,7 +359,8 @@ IB.page = function () {
       if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 150, behavior: "smooth" });
     }));
     topicVisitStartedAt = Date.now();
-    IB.qs("#takeQuiz").onclick = () => { markCurrentReadIfEarned(); renderQuiz(s, t); };
+    const tq = IB.qs("#takeQuiz");
+    if (tq) tq.onclick = () => { markCurrentReadIfEarned(); renderQuiz(s, t); };
     IB.qsa("a[data-t]", c).forEach((a) => (a.onclick = (e) => { e.preventDefault(); go(s.id, a.dataset.t); }));
     IB.qs("#downloadNotes").onclick = () => openDownloadPicker(s, t);
     IB.qs("#hlBtn").onclick = (e) => {
@@ -330,6 +386,7 @@ IB.page = function () {
     marker(c);
     IB.animate(c);
     if (IB.scrollSpy) IB.scrollSpy(c);
+    applySearch();
   }
 
   // ---------- timed quiz for one subtopic (opens after the notes, not alongside them) ----------
