@@ -1054,6 +1054,18 @@ IB.topicSections = function (t, opts = {}) {
   if (t.formulas && t.formulas.length) out.push(["formulas", "Formulas", sec("formulas", "formula", "Formulas", `<div class="formula-grid">${t.formulas.map((f) => `<div class="formula">${f}</div>`).join("")}</div>`, { open: true })]);
   const ahl = (x) => (x.hl ? ' <span class="ahl-badge" title="Additional higher level">AHL</span>' : "");
   const concepts = t.concepts.filter((x) => IB.showItem(t.subject, x));
+  if (t.paper) {
+    // Deep-dive notes (e.g. the Chinese A Paper 1 / Paper 2 files): every card is its own collapsible card, grouped under small headings.
+    let html = "", open = false;
+    concepts.forEach((x) => {
+      if (x.g || !open) { if (open) html += "</div>"; html += `<div class="dgroup">${x.g ? `<h3 class="group-title">${x.g}</h3>` : ""}`; open = true; }
+      html += fold
+        ? `<details class="dcard${x.ex ? " example" : ""}"${x.open ? " open" : ""}><summary class="dcard-head"><h3>${x.h}</h3><span class="dchev" aria-hidden="true">▾</span></summary><div class="dcard-body">${x.b}</div></details>`
+        : `<section class="dcard${x.ex ? " example" : ""}"><h3 class="dcard-title">${x.h}</h3><div class="dcard-body">${x.b}</div></section>`;
+    });
+    if (open) html += "</div>";
+    out.push(["concepts", "Notes", `<div class="deep-notes" id="sec-concepts">${html}</div>`]);
+  } else
   out.push(["concepts", "Concepts", sec("concepts", "card", "Key concepts", `${concepts.map((x) => `<div class="concept${x.hl ? " is-ahl" : ""}"><h3>${x.h}${ahl(x)}</h3>${x.b}</div>`).join("")}`, { cls: "concepts", open: true })]);
   if (t.table) out.push(["table", "Compare", sec("table", "card", "Compare at a glance", `<div class="table-wrap"><table class="compare"><tr>${t.table.head.map((h) => `<th>${h}</th>`).join("")}</tr>${t.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${x}</td>` : `<th scope="row">${x}</th>`)).join("")}</tr>`).join("")}</table></div>`)]);
   if (t.diagrams && t.diagrams.length && IB.plot) out.push(["diagrams", "Diagrams", sec("diagrams", "card", "Diagrams", `<div class="plot-grid">${t.diagrams.map(IB.plot).join("")}</div>`, { n: t.diagrams.length })]);
