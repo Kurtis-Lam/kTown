@@ -80,37 +80,30 @@ IB.page = function () {
       hint.style.display = "block";
     } else if (hint) hint.style.display = "none";
   }
-  function setAllOpen(open) { IB.qsa("#content details").forEach((d) => { d.open = open; }); }
 
   function renderShell() {
     const zh = isZh();
     app.innerHTML = `<header class="dtop no-print">
-        <div class="dbrand"><h1 id="barTitle"></h1><span id="barSub">${zh ? "溫習筆記" : "REVISION NOTES"}</span></div>
+        <div class="dbrand"><h1 id="barTitle"></h1><span id="barSub">${zh ? "溫習筆記" : "Revision notes"}</span></div>
         <div class="dtools">
           <div class="dsearch"><input id="nsearch" type="search" placeholder="${zh ? "搜尋關鍵字…" : "Search notes…"}" autocomplete="off" aria-label="${zh ? "搜尋" : "Search notes"}"></div>
-          <button type="button" class="mini" id="expandAll">${zh ? "全部展開" : "Expand all"}</button>
-          <button type="button" class="mini" id="collapseAll">${zh ? "全部收起" : "Collapse all"}</button>
           <button type="button" class="mini bar-btn" id="sideShow" aria-controls="side" hidden>» ${zh ? "主題" : "Topics"}</button>
-          <button type="button" class="mini bar-btn" id="changeSubject">⇄ ${zh ? "換科目" : "Change subject"}</button>
         </div>
       </header>
-      <div class="notes-layout"><aside class="side card" id="side"></aside><section id="content"></section></div>
-      <button type="button" class="totop no-print" id="toTop" title="${zh ? "回到頂部" : "Back to top"}" aria-label="${zh ? "回到頂部" : "Back to top"}">↑</button>`;
+      <div class="notes-layout"><aside class="side card" id="side"></aside><section id="content"></section></div>`;
     query = "";
     IB.qs("#sideShow").onclick = () => setSide(true);
-    IB.qs("#changeSubject").onclick = () => go(null);
-    IB.qs("#expandAll").onclick = () => setAllOpen(true);
-    IB.qs("#collapseAll").onclick = () => setAllOpen(false);
+    let searchTimer = 0;
     IB.qs("#nsearch").addEventListener("input", (e) => {
-      query = e.target.value.trim().toLowerCase();
-      const s = IB.subjects[subjectId];
-      if (s) renderSide(s, IB.store.get());
-      applySearch();
+      const v = e.target.value.trim().toLowerCase();
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        query = v;
+        const s = IB.subjects[subjectId];
+        if (s) renderSide(s, IB.store.get());
+        applySearch();
+      }, 120);
     });
-    const toTop = IB.qs("#toTop");
-    const onScroll = () => toTop.classList.toggle("show", window.scrollY > 400);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    toTop.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function setSide(open) { sideOpen = open; store("ibrev:sideOpen", open ? "1" : "0"); applySide(); }
   function applySide() {
