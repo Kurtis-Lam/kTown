@@ -1,0 +1,1 @@
+This directory contains ALL compressed pdfs notes, later to be migrated to kRevisionNotes. 
