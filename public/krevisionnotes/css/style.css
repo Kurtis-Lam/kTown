@@ -1232,3 +1232,310 @@ body[data-page="notes"] .topic-sections { contain: layout style; }
   body[data-page="notes"] .dcard,
   body[data-page="notes"] .topic-card { content-visibility: visible; }
 }
+/* ================= Notes-only reader layout =================
+   Uses the existing nebula backdrop; these rules only reshape the notes UI. */
+body[data-page="notes"] .container {
+  width: 100%;
+  max-width: none;
+  padding-inline: clamp(16px, 2.8vw, 48px);
+}
+body[data-page="notes"] main#app {
+  width: 100%;
+  max-width: none;
+  min-height: calc(100vh - 72px);
+  padding: 0 clamp(16px, 2.8vw, 48px) 52px;
+}
+body[data-page="notes"] .notes-site-header .nav {
+  min-height: 72px;
+  gap: 18px;
+}
+body[data-page="notes"] .notes-site-header .brand { margin-right: 0; }
+body[data-page="notes"] .header-context {
+  flex: 1;
+  color: rgba(226, 232, 240, .62);
+  font-size: .86rem;
+  letter-spacing: .02em;
+}
+body[data-page="notes"] .notes-site-header #acctSlot { margin-left: auto; }
+body[data-page="notes"] .notes-site-header .acct-btn { min-height: 40px; }
+
+/* Wide, calm subject picker */
+body[data-page="notes"] .notes-welcome {
+  max-width: 920px;
+  margin: clamp(36px, 7vh, 84px) auto 34px;
+  text-align: center;
+}
+body[data-page="notes"] .notes-welcome .eyebrow {
+  color: #c4b5fd;
+  font-size: .78rem;
+  letter-spacing: .16em;
+}
+body[data-page="notes"] .notes-welcome h1 {
+  color: #fff;
+  font-size: clamp(2.4rem, 5vw, 4.3rem);
+  line-height: 1.05;
+  margin: 12px 0;
+  text-shadow: 0 4px 24px rgba(0,0,0,.3);
+}
+body[data-page="notes"] .notes-welcome p {
+  margin: 0;
+  color: rgba(230,237,249,.78);
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+}
+body[data-page="notes"] .subject-library { width: 100%; margin: 0 auto; }
+body[data-page="notes"] .library-heading,
+body[data-page="notes"] .overview-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 22px 0 14px;
+}
+body[data-page="notes"] .library-heading h2,
+body[data-page="notes"] .overview-heading h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.3rem, 2vw, 1.75rem);
+  text-shadow: 0 2px 14px rgba(0,0,0,.45);
+}
+body[data-page="notes"] .library-heading > span,
+body[data-page="notes"] .overview-heading > span {
+  color: rgba(226,232,240,.66);
+  font-size: .88rem;
+  white-space: nowrap;
+}
+body[data-page="notes"] .other-heading { margin-top: 38px; }
+body[data-page="notes"] .subject-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+body[data-page="notes"] .subject-card {
+  min-height: 176px;
+  border-radius: 18px;
+  border-color: rgba(255,255,255,.12);
+  background: rgba(12,20,36,.84);
+  box-shadow: 0 12px 32px rgba(0,0,0,.16);
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+body[data-page="notes"] .subject-card .stripe { height: 4px; }
+body[data-page="notes"] .subject-card .body {
+  padding: 20px 22px;
+  gap: 16px;
+}
+body[data-page="notes"] .subject-card .sc-top { display: flex; align-items: center; justify-content: space-between; }
+body[data-page="notes"] .subject-card .sc-mono {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border-radius: 13px; color: #fff;
+  background: color-mix(in srgb, var(--c) 36%, rgba(9,16,30,.8));
+}
+body[data-page="notes"] .subject-card h3 {
+  min-height: 0;
+  margin: 0 0 3px;
+  display: block;
+  color: #fff;
+  font-size: 1.12rem;
+  line-height: 1.32;
+}
+body[data-page="notes"] .subject-topic-count { color: rgba(215,225,242,.62); font-size: .82rem; }
+body[data-page="notes"] .subject-card-open {
+  margin-top: auto;
+  display: flex; align-items: center; justify-content: space-between;
+  color: color-mix(in srgb, var(--c) 45%, #e9edff);
+  font-size: .88rem; font-weight: 700;
+}
+body[data-page="notes"] .subject-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--c) 55%, rgba(255,255,255,.28));
+  background: rgba(15,25,44,.94);
+}
+
+/* Full-width reader toolbar and two-pane workspace */
+body[data-page="notes"] .dtop {
+  top: 72px;
+  margin: 0 calc(-1 * clamp(16px, 2.8vw, 48px));
+  padding: 12px clamp(16px, 2.8vw, 48px);
+  min-height: 68px;
+  border: 0;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  border-radius: 0 0 18px 18px;
+  background: rgba(7, 13, 25, .82);
+  box-shadow: 0 12px 24px rgba(0,0,0,.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+body[data-page="notes"] .dbrand { align-items: center; gap: 13px; }
+body[data-page="notes"] .dbrand-copy { display: flex; flex-direction: column; gap: 1px; }
+body[data-page="notes"] .dbrand h1 { font-size: 1.08rem; line-height: 1.2; letter-spacing: 0; color: #fff; }
+body[data-page="notes"] .dbrand span:not(.dbrand-divider) { color: rgba(226,232,240,.58); letter-spacing: .01em; font-size: .76rem; }
+body[data-page="notes"] .dbrand-divider { color: rgba(226,232,240,.35); }
+body[data-page="notes"] .all-subjects-link {
+  display: inline-flex; align-items: center; min-height: 36px;
+  padding: 6px 12px; border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px; color: #e8edfa; font-size: .82rem; font-weight: 600;
+  background: rgba(255,255,255,.045);
+}
+body[data-page="notes"] .all-subjects-link:hover { background: rgba(255,255,255,.1); color: #fff; }
+body[data-page="notes"] .dtools { gap: 10px; }
+body[data-page="notes"] .dsearch input { width: clamp(190px, 20vw, 310px); min-height: 40px; padding-block: 9px; font-size: .88rem; }
+body[data-page="notes"] .notes-layout {
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: clamp(22px, 2.4vw, 40px);
+  margin-top: 24px;
+  align-items: start;
+  min-height: calc(100vh - 190px);
+}
+body[data-page="notes"] .notes-layout.collapsed { grid-template-columns: minmax(0, 1fr); }
+body[data-page="notes"] .side {
+  position: sticky;
+  top: 158px;
+  max-height: calc(100vh - 178px);
+  overflow: auto;
+  padding: 12px 10px 26px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px;
+  background: rgba(8, 15, 28, .66);
+  box-shadow: 0 10px 28px rgba(0,0,0,.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+body[data-page="notes"] .side-top { padding: 0 4px 10px; border-bottom: 1px solid rgba(255,255,255,.1); }
+body[data-page="notes"] .side-top .side-overview { justify-content: flex-start; border: 0 !important; background: transparent !important; color: #fff !important; font-size: .88rem !important; font-weight: 700 !important; }
+body[data-page="notes"] .side-top .side-collapse { width: 34px; height: 34px; padding: 4px !important; }
+body[data-page="notes"] .unit-head { font-size: .78rem; letter-spacing: .02em; text-transform: none; margin: 12px 0 4px; }
+body[data-page="notes"] .topic-list a { font-size: .83rem; padding: 7px 9px; }
+body[data-page="notes"] #content { min-width: 0; width: 100%; }
+body[data-page="notes"] .subject-hero {
+  padding: clamp(26px, 3vw, 42px);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 18px 44px rgba(0,0,0,.2);
+}
+body[data-page="notes"] .subject-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+body[data-page="notes"] .subject-hero h1 { font-size: clamp(2rem, 3.5vw, 3.25rem); margin: 14px 0 8px; }
+body[data-page="notes"] .subject-hero-description { margin: 0 0 18px; max-width: 70ch; color: rgba(255,255,255,.82); font-size: 1.02rem; }
+body[data-page="notes"] .key-row { margin: 20px 0 28px; gap: 9px; }
+body[data-page="notes"] .overview-heading { margin: 26px 0 12px; }
+body[data-page="notes"] .overview-heading p { margin: 4px 0 0; color: rgba(226,232,240,.7); }
+body[data-page="notes"] .topic-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+body[data-page="notes"] .topic-cards .unit-label { grid-column: 1 / -1; margin: 22px 4px 2px; }
+body[data-page="notes"] .topic-card {
+  min-width: 0; min-height: 106px; padding: 17px 18px;
+  align-items: flex-start; border-radius: 14px;
+  background: rgba(12,20,36,.88); border-color: rgba(255,255,255,.12);
+}
+body[data-page="notes"] .topic-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--c) 60%, white); }
+body[data-page="notes"] .topic-card-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+body[data-page="notes"] .topic-card-body strong { font-size: .98rem; line-height: 1.35; }
+body[data-page="notes"] .topic-card-body > .small.muted { line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+body[data-page="notes"] .topic-card-arrow { margin-left: auto; align-self: center; color: color-mix(in srgb, var(--c) 50%, #dbe4ff); font-size: 1.2rem; }
+body[data-page="notes"] .command-terms { margin-top: 28px; padding: 16px 20px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; background: rgba(9,16,29,.72); }
+body[data-page="notes"] .command-terms > summary { cursor: pointer; color: #fff; font-weight: 700; }
+body[data-page="notes"] .command-terms dl { margin: 12px 0 0; }
+
+/* Comfortable topic reading */
+body[data-page="notes"] .topic-banner {
+  padding: clamp(24px, 3vw, 42px);
+  border-radius: 22px;
+  min-height: 170px;
+  box-shadow: 0 18px 44px rgba(0,0,0,.18);
+}
+body[data-page="notes"] .topic-banner h1 { font-size: clamp(1.85rem, 3.1vw, 2.85rem); line-height: 1.16; margin: 12px 0 10px; }
+body[data-page="notes"] .topic-banner p { font-size: 1rem; line-height: 1.65; max-width: 82ch; }
+body[data-page="notes"] .topic-actions { margin: 18px 0 16px; }
+body[data-page="notes"] .jumpbar { top: 148px; margin: 12px 0 18px; border-radius: 13px; background: rgba(7,13,25,.92); backdrop-filter: blur(14px); }
+body[data-page="notes"] .jumpbar a.jump { min-height: 38px; padding: 7px 13px; font-size: .84rem; }
+body[data-page="notes"] .topic-sections { font-size: clamp(1rem, .35vw + .94rem, 1.12rem); line-height: 1.82; }
+body[data-page="notes"] .topic-sections .fold { margin-bottom: 14px; border-radius: 16px; }
+body[data-page="notes"] .topic-sections .fold > summary { padding: 17px 22px; font-size: 1rem; line-height: 1.45; }
+body[data-page="notes"] .topic-sections .fold-body { padding: 2px 24px 24px; font-size: 1rem; line-height: 1.82; }
+body[data-page="notes"] .topic-sections .concept { padding: 17px 0; }
+body[data-page="notes"] .topic-sections .concept h3 { font-size: 1.12rem; margin-bottom: 8px; }
+body[data-page="notes"] .topic-sections .concept p,
+body[data-page="notes"] .topic-sections .fold-body p,
+body[data-page="notes"] .topic-sections .dcard-body p { max-width: 92ch; line-height: 1.82; }
+body[data-page="notes"] .topic-sections li { line-height: 1.8; }
+body[data-page="notes"] .dcard { border-radius: 15px; margin-bottom: 14px; }
+body[data-page="notes"] .dcard-head { padding: 16px 21px; }
+body[data-page="notes"] .dcard-head h3,
+body[data-page="notes"] .dcard-title { font-size: 1rem; line-height: 1.45; }
+body[data-page="notes"] .dcard-body { padding: 0 22px 22px; font-size: 1rem; line-height: 1.82; }
+body[data-page="notes"] .dcard-body p,
+body[data-page="notes"] .dcard-body li { line-height: 1.82; }
+body[data-page="notes"] .topic-pagination { justify-content: space-between; gap: 12px; margin-top: 26px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.12); }
+body[data-page="notes"] .topic-pagination .btn { white-space: normal; max-width: 48%; }
+body[data-page="notes"] .empty-hint { display: block; }
+
+/* Compact mobile navigation: the topic list becomes a slide-in drawer. */
+@media (max-width: 1200px) {
+  body[data-page="notes"] .subject-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body[data-page="notes"] .notes-layout { grid-template-columns: 270px minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  body[data-page="notes"] .notes-layout,
+  body[data-page="notes"] .notes-layout.collapsed { display: block; margin-top: 16px; }
+  body[data-page="notes"] .notes-layout > .side { display: none; }
+  body[data-page="notes"] .notes-layout.mobile-side-open::before {
+    content: ""; position: fixed; inset: 132px 0 0; z-index: 39;
+    background: rgba(2,6,15,.58); backdrop-filter: blur(3px);
+  }
+  body[data-page="notes"] .notes-layout.mobile-side-open > .side {
+    display: block; position: fixed; z-index: 40; left: 12px; top: 142px; bottom: 12px;
+    width: min(360px, calc(100vw - 24px)); max-height: none; overflow: auto;
+    background: rgba(8,15,28,.98); border: 1px solid rgba(255,255,255,.16);
+    box-shadow: 0 24px 60px rgba(0,0,0,.46);
+  }
+  body[data-page="notes"] .notes-layout #content { width: 100%; }
+  body[data-page="notes"] .dtop { position: sticky; top: 72px; flex-wrap: wrap; gap: 10px; }
+  body[data-page="notes"] .jumpbar { top: 150px; }
+}
+@media (max-width: 700px) {
+  body[data-page="notes"] main#app { padding-bottom: 34px; }
+  body[data-page="notes"] .header-context { display: none; }
+  body[data-page="notes"] .notes-welcome { margin: 40px auto 28px; }
+  body[data-page="notes"] .subject-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+  body[data-page="notes"] .subject-card { min-height: 158px; }
+  body[data-page="notes"] .subject-card .body { padding: 15px; gap: 12px; }
+  body[data-page="notes"] .subject-card h3 { font-size: .98rem; }
+  body[data-page="notes"] .dtop { margin-inline: -16px; padding: 10px 16px; }
+  body[data-page="notes"] .dbrand { gap: 8px; }
+  body[data-page="notes"] .dbrand h1 { font-size: .98rem; }
+  body[data-page="notes"] .all-subjects-link { min-height: 34px; padding-inline: 9px; font-size: .75rem; }
+  body[data-page="notes"] .dtools { width: 100%; }
+  body[data-page="notes"] .dsearch { flex: 1; min-width: 0; }
+  body[data-page="notes"] .dsearch input { width: 100%; max-width: none; }
+  body[data-page="notes"] .subject-hero { padding: 22px; }
+  body[data-page="notes"] .subject-hero-top { align-items: flex-start; flex-direction: column; }
+  body[data-page="notes"] .topic-cards { grid-template-columns: minmax(0, 1fr); }
+  body[data-page="notes"] .topic-card { min-height: 96px; }
+  body[data-page="notes"] .topic-banner { padding: 22px; }
+  body[data-page="notes"] .topic-banner h1 { font-size: 1.8rem; }
+  body[data-page="notes"] .topic-actions { gap: 7px; }
+  body[data-page="notes"] .topic-actions .btn { padding-inline: 11px !important; font-size: .78rem !important; }
+  body[data-page="notes"] .jumpbar { top: 142px; }
+  body[data-page="notes"] .topic-sections .fold > summary { padding: 15px 16px; }
+  body[data-page="notes"] .topic-sections .fold-body { padding: 0 17px 19px; }
+  body[data-page="notes"] .dcard-head { padding: 13px 15px; }
+  body[data-page="notes"] .dcard-body { padding: 0 16px 18px; }
+  body[data-page="notes"] .topic-pagination .btn { max-width: 49%; font-size: .75rem !important; }
+}
+@media (max-width: 420px) {
+  body[data-page="notes"] .subject-grid { grid-template-columns: minmax(0, 1fr); }
+  body[data-page="notes"] .subject-card { min-height: 142px; }
+  body[data-page="notes"] .dbrand-divider { display: none; }
+  body[data-page="notes"] .dbrand { flex: 1; min-width: 0; }
+  body[data-page="notes"] .dbrand-copy { min-width: 0; }
+  body[data-page="notes"] .dbrand h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-page="notes"] .subject-card,
+  body[data-page="notes"] .topic-card { transition: none !important; }
+}
+
+/* Leave room for the fixed back-to-top control at the end of long notes. */
+body[data-page="notes"] main#app { padding-bottom: 88px; }
+@media (max-width: 700px) {
+  body[data-page="notes"] main#app { padding-bottom: max(104px, calc(env(safe-area-inset-bottom) + 88px)); }
+  body[data-page="notes"] .topic-pagination { padding-bottom: 18px; }
+  body[data-page="notes"] .topic-pagination .btn { max-width: 100%; }
+}
