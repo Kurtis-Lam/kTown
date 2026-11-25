@@ -79,7 +79,7 @@
   IB.onLevelChange = (sid, lv) => {
     const s = IB.subjects[sid];
     const n = s.allTopics.filter((t) => t.hl).length;
-    if (IB.toast) IB.toast(lv === "HL" ? `${s.baseName} HL on: +${n} AHL topics, HL papers and questions` : `${s.baseName} SL: AHL content hidden`);
+    if (IB.toast) IB.toast(lv === "HL" ? `${s.baseName} HL on: +${n} AHL note topics` : `${s.baseName} SL: AHL notes hidden`);
     const y = window.scrollY;
     Promise.resolve(IB.rerender ? IB.rerender() : IB.runPage && IB.runPage()).then(() => {
       IB.qsa(`[data-lvl-sid="${sid}"]`).forEach((b) => { b.classList.toggle("on", b.dataset.lv === lv); b.setAttribute("aria-pressed", b.dataset.lv === lv); });
@@ -944,48 +944,20 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
   };
 
   function chrome() {
-    if (document.body.dataset.page === "notes" || document.body.dataset.page === "home") return; // notes pages draw their own top bar
     IB.qsa("body > .site-header, body > .site-footer").forEach((el) => el.remove());
-    const page = document.body.dataset.page || "";
-    const link = (href, label, id) => `<a href="${href}" class="${page === id ? "active" : ""}">${label}</a>`;
-    const secondary = ["mistakes", "skills", "ia", "mypapers", "progress", "tutor"].includes(page);
-    const header = IB.el(`<header class="site-header"><div class="container nav">
-      <a class="brand" href="index.html" aria-label="kRevisionNotes home"><img class="brand-logo" src="/imgs/logos/krevisionnotes.png" alt="kRevisionNotes" width="38" height="38"><span class="brand-text">kRevisionNotes</span></a>
-      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
-        ${link("notes.html", "Notes", "notes")}
-        ${link("questionbank.html", "Questions", "bank")}
-        ${link("practice.html", "Practice", "practice")}
-        <details class="nav-more" ${secondary ? "open" : ""}>
-          <summary class="${secondary ? "active" : ""}">More</summary>
-          <div class="nav-more-menu">
-            ${link("mistakes.html", "Mistakes", "mistakes")}
-            ${link("skills.html", "Study skills", "skills")}
-            ${link("ia.html", "IA &amp; EE", "ia")}
-            ${link("mypapers.html", "My papers", "mypapers")}
-            ${link("progress.html", "Progress", "progress")}
-            ${IB.config.ai ? link("tutor.html", "AI tutor", "tutor") : ""}
-          </div>
-        </details>
-      </nav>
-      <span id="acctSlot"></span>
-      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false">☰</button>
-    </div></header>`);
+    const header = IB.el(`<header class="site-header notes-site-header">
+      <div class="container nav">
+        <a class="brand" href="notes.html" aria-label="kRevisionNotes notes">
+          <img class="brand-logo" src="/imgs/logos/krevisionnotes.png" alt="" width="38" height="38">
+          <span class="brand-text">kRevisionNotes</span>
+        </a>
+        <span class="header-context">IB revision notes</span>
+        <span id="acctSlot"></span>
+      </div>
+    </header>`);
     document.body.prepend(header);
-    const menuBtn = IB.qs("#menuBtn");
-    const nav = IB.qs("#navLinks");
-    menuBtn.onclick = () => {
-      const open = nav.classList.toggle("open");
-      menuBtn.setAttribute("aria-expanded", String(open));
-      menuBtn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-    };
-    nav.addEventListener("click", (event) => {
-      const anchor = event.target.closest("a[href]");
-      if (!anchor) return;
-      nav.classList.remove("open");
-      menuBtn.setAttribute("aria-expanded", "false");
-      menuBtn.setAttribute("aria-label", "Open navigation");
-    });
   }
+
   document.documentElement.dataset.theme = "dark"; // kTown uses one dark look over the nebula background
 
   // Wrap each page's opening heading + intro paragraph in the dark header band.
@@ -1073,11 +1045,11 @@ IB.topicSections = function (t, opts = {}) {
   if (methods.length) out.push(["methods", "Methods", sec("methods", "method", "Fastest methods", `<ol>${methods.map((m) => `<li>${m}</li>`).join("")}</ol>`, { n: methods.length, open: true })]);
   if (t.traps && t.traps.length) out.push(["traps", "Traps", sec("traps", "trap", "Traps", `<ul>${t.traps.map((m) => `<li>${m}</li>`).join("")}</ul>`, { n: t.traps.length, open: true })]);
   if (t.examples && t.examples.length) out.push(["examples", "Examples", sec("examples", "example", "Worked examples", t.examples.map((e, i) => `<div class="worked"><strong>Example ${i + 1}.</strong> ${e.q}${opts.static ? `<div class="sol"><strong>Solution:</strong> ${e.a}</div>` : `<details class="sol"><summary>Show solution</summary><div>${e.a}</div></details>`}</div>`).join(""), { n: t.examples.length, open: true })]);
-  const plans = IB.essayPlansHtml ? IB.essayPlansHtml(t) : "";
+  const plans = opts.notesOnly ? "" : (IB.essayPlansHtml ? IB.essayPlansHtml(t) : "");
   if (plans) out.push(["plans", "Essays", sec("plans", "card", "Essay plans", plans, { cls: "plans" })]);
-  const frames = IB.topicFrames ? IB.topicFrames(t) : t.frame || [];
+  const frames = opts.notesOnly ? [] : (IB.topicFrames ? IB.topicFrames(t) : t.frame || []);
   if (frames.length) out.push(["frame", "Frameworks", sec("frame", "card", `Answer frameworks`, `<div class="frame-grid">${frames.map((f) => `<div class="frame-card"><div class="frame-type">${f.type}</div><ol class="frame-steps">${f.steps.map((x) => `<li>${x}</li>`).join("")}</ol></div>`).join("")}</div>`, { cls: "frame-sec", n: frames.length })]);
-  if (t.tips && t.tips.length) out.push(["tips", "Tips", sec("tips", "tip", "Exam tips", `<ul>${t.tips.map((m) => `<li>${m}</li>`).join("")}</ul>`, { n: t.tips.length })]);
+  if (t.tips && t.tips.length) out.push(["tips", "Tips", sec("tips", "tip", "Tips", `<ul>${t.tips.map((m) => `<li>${m}</li>`).join("")}</ul>`, { n: t.tips.length })]);
   if (t.terms && t.terms.length) out.push(["terms", "Terms", sec("terms", "terms", "Key terms", `<div class="table-wrap"><table class="def-table"><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody>${t.terms.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("")}</tbody></table></div>`, { n: t.terms.length })]);
   return out;
 };
@@ -1085,7 +1057,7 @@ IB.topicSections = function (t, opts = {}) {
 IB.topicHtml = function (t, opts = {}) {
   const s = IB.subjects[t.subject];
   let h = `<h2>${IB.esc(t.code)} ${IB.esc(t.title)}</h2><p class="meta">${IB.esc(s.name)} · ${IB.esc(t.unit)}</p><p><em>${t.summary}</em></p>`;
-  h += IB.topicSections(t, { static: true }).map((x) => x[2]).join("");
+  h += IB.topicSections(t, { static: true, notesOnly: true }).map((x) => x[2]).join("");
   if (opts.questions) h += IB.worksheetHtml(t.questions.filter((q) => !q.derived), `Practice questions - ${t.title}`, true);
   return h;
 };
