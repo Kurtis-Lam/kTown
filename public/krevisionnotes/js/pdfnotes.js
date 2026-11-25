@@ -114,19 +114,8 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
     const methods = (t.methods || []).concat((t.skills || []).map((x) => `<strong>${x.h}:</strong> ${x.b}`));
     if (methods.length) b.push(head(L(s, "Fastest methods", "最快方法")) + box("method", L(s, "Fastest method", "最快方法"), `<ol>${methods.map((m) => `<li>${m}</li>`).join("")}</ol>`));
     if (t.traps && t.traps.length) b.push(head(L(s, "Traps", "陷阱")) + box("trap", L(s, "Trap", "陷阱"), `<ul>${t.traps.map((m) => `<li>${m}</li>`).join("")}</ul>`));
-    if (t.examples && t.examples.length) {
-      b.push(head(L(s, "Worked examples", "例題")));
-      t.examples.forEach((e, i) => b.push(box("example", `${L(s, "Worked example", "例題")} ${i + 1}`, `<p><strong>${e.q}</strong></p><div class="sol">${e.a}</div>`)));
-    }
     if (t.tips && t.tips.length) b.push(head(L(s, "Exam tips", "考試貼士")) + box("tip", L(s, "Exam tip", "考試貼士"), `<ul>${t.tips.map((m) => `<li>${m}</li>`).join("")}</ul>`));
-    const frames = IB.topicFrames ? IB.topicFrames(t) : [];
-    if (frames.length) {
-      b.push(head("答題框架 · " + L(s, "Answer frameworks", "答題步驟")));
-      frames.forEach((f) => b.push(box("frame", f.type, `<ol>${f.steps.map((x) => `<li>${x}</li>`).join("")}</ol>${f.yue ? `<p class="yue"><b>廣東話：</b>${f.yue}</p>` : ""}`)));
-    }
     if (t.terms && t.terms.length) b.push(head(L(s, "Key definitions to learn", "關鍵詞")) + `<table class="defs"><thead><tr><th>${ZH(s) ? "術語" : "Term"}</th><th>${ZH(s) ? "定義" : "Definition"}</th></tr></thead><tbody>${t.terms.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("")}</tbody></table>`);
-    const plans = IB.essayPlansHtml(t);
-    if (plans) b.push(head("Practice essay plans") + plans);
     return b;
   }
   const questionBlock = (q, n) => {
@@ -272,12 +261,12 @@ tbody tr:nth-child(even) td{background:#FAFBFD}
       const cover = doc.createElement("div");
       cover.className = "page cover";
       const chips = single
-        ? ["Key concepts", "Fastest methods", "Traps", "Worked examples", "Exam tips", "答題框架", "Definitions"].concat(IB.essayPlansHtml(opts.topics[0]) ? ["Essay plans"] : []).concat(qset.length ? ["Practice paper"] : [])
+        ? ["Key concepts", "Fastest methods", "Traps", "Exam tips", "Definitions"]
         : opts.topics.map((t) => t.title);
       cover.innerHTML = `<div class="cover-card"><div class="cover-big">${IB.esc(single ? opts.topics[0].code : s.short.replace(/\s.*/, ""))}</div>
         <div class="eyebrow">IB ${IB.esc(s.name)}${single ? " · " + IB.esc(opts.topics[0].unit) : ""}</div>
         <h1>${IB.esc(title)}<br>${ZH(s) ? "溫習筆記" : "Revision Notes"}</h1>
-        <p class="sub">${single ? IB.esc(opts.topics[0].code) + " · " : ""}${ZH(s) ? "概念 · 方法 · 陷阱 · 例題" : "Concepts · fastest methods · traps · worked examples"}</p>
+        <p class="sub">${single ? IB.esc(opts.topics[0].code) + " · " : ""}${ZH(s) ? "概念 · 方法 · 陷阱" : "Concepts · fastest methods · traps"}</p>
         <div class="chips">${chips.slice(0, 16).map((x) => `<span class="chip">${IB.esc(x)}</span>`).join("")}${chips.length > 16 ? `<span class="chip">+${chips.length - 16} more</span>` : ""}</div>
         <div class="cover-foot">${qset.length ? `Includes a ${qset.length}-question practice paper with IB-style answer boxes and a full markscheme.<br>` : ""}Original IB-style revision material · not official IB content · ${date}</div></div>`;
       root.appendChild(cover);
