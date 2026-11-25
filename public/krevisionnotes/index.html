@@ -1,125 +1,14 @@
 <!doctype html>
-<html lang="en" data-theme="light">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>kRevisionNotes - IB revision notes</title>
-    <meta
-      name="description"
-      content="Clear, colour-coded IB revision notes for every topic."
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/imgs/logos/krevisionnotes.png?v=3"
-    />
-    <script>
-      (function () {
-        try {
-          var t =
-            localStorage.getItem("kr:theme") ||
-            (matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light");
-          document.documentElement.dataset.theme = t;
-          var z = localStorage.getItem("kr:size");
-          if (z)
-            document.documentElement.style.setProperty(
-              "--fs",
-              [15, 16, 17, 18, 19, 20, 22][+z] + "px",
-            );
-        } catch (e) {}
-      })();
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
-    />
-    <link rel="stylesheet" href="vendor/katex/katex.min.css" />
-    <link rel="stylesheet" href="css/reader.css" />
-  </head>
-  <body data-page="home" data-view="chooser">
-    <header class="kbar">
-      <a class="kbrand" href="index.html"
-        ><img
-          src="/imgs/logos/krevisionnotes.png"
-          alt=""
-          width="28"
-          height="28"
-        /><span>kRevisionNotes</span></a
-      >
-      <div class="kspacer"></div>
-      <div class="ktools">
-        <button
-          type="button"
-          class="kbtn icon"
-          id="themeBtn"
-          aria-label="Toggle light and dark"
-        >
-          ☾</button
-        ><a class="kbtn primary" href="notes.html">Browse notes</a>
-      </div>
-    </header>
-    <main class="kchooser khome">
-      <span class="eyebrow">IBDP · 8 subjects · SL &amp; HL</span>
-      <h1>Every topic, in notes you can actually read.</h1>
-      <p class="klead">
-        Concepts, formulas, methods, traps and worked examples for every topic,
-        colour-coded and laid out to make the most of your screen.
-      </p>
-      <div class="ksubjects" id="subs"></div>
-    </main>
-    <footer class="kfoot">
-      kRevisionNotes is original IB-style revision material. It is not official
-      IB content and is not affiliated with or endorsed by the International
-      Baccalaureate Organization.
-    </footer>
-    <script>
-      (function () {
-        var S = [
-          ("chia", "Chinese A: Language &amp; Literature", "SL"),
-          ("engb", "English B", "HL"),
-          ("math", "Mathematics AA", "SL &amp; HL"),
-          ("phys", "Physics", "SL &amp; HL"),
-          ("chem", "Chemistry", "SL &amp; HL"),
-          ("bio", "Biology", "SL &amp; HL"),
-          ("econ", "Economics", "SL &amp; HL"),
-          ("geo", "Geography", "SL &amp; HL"),
-        ];
-
-        document.getElementById("subs").innerHTML = S.map(function (s) {
-          return (
-            '<a class="ksubject" href="notes.html?subject=' +
-            s[0] +
-            '" style="--c:var(--' +
-            s[0] +
-            ')"><span class="kicon" aria-hidden="true"><span class="kdot lg"></span></span><span class="kname">' +
-            s[1] +
-            '</span><span class="kmeta">' +
-            s[2] +
-            "</span></a>"
-          );
-        }).join("");
-        var b = document.getElementById("themeBtn");
-        function sync() {
-          b.textContent =
-            document.documentElement.dataset.theme === "dark" ? "☀" : "☾";
-        }
-        b.onclick = function () {
-          var t =
-            document.documentElement.dataset.theme === "dark"
-              ? "light"
-              : "dark";
-          document.documentElement.dataset.theme = t;
-          try {
-            localStorage.setItem("kr:theme", t);
-          } catch (e) {}
-          sync();
-        };
-        sync();
-      })();
-    </script>
-  </body>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0; url=notes.html">
+  <title>kRevisionNotes — Notes</title>
+  <link rel="icon" type="image/png" href="/imgs/logos/krevisionnotes.png?v=3">
+  <script>location.replace("notes.html" + location.search + location.hash);</script>
+</head>
+<body>
+  <p><a href="notes.html">Open kRevisionNotes</a></p>
+</body>
 </html>
