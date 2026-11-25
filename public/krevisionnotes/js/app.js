@@ -944,6 +944,7 @@ Reply with only a JSON object: {"questions": [{"q": "...", "marks": 4, "type": "
   };
 
   function chrome() {
+    if (document.body.dataset.page === "notes" || document.body.dataset.page === "home") return; // notes pages draw their own top bar
     IB.qsa("body > .site-header, body > .site-footer").forEach((el) => el.remove());
     const page = document.body.dataset.page || "";
     const link = (href, label, id) => `<a href="${href}" class="${page === id ? "active" : ""}">${label}</a>`;
